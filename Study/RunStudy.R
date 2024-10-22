@@ -18,6 +18,9 @@ cdm <- cdmFromCon(
 info(logger, "CDM OBJECT CREATED")
 
 # create and export snapshot
+info(logger, "Retrieving snapshot")
+resultSnapshot <- OmopSketch::summariseOmopSnapshot(cdm)
+info(logger, "snapshot completed")
 
 # instantiate necessary cohorts ----
 info(logger, "INSTANTIATING STUDY COHORTS")
@@ -36,6 +39,11 @@ info(logger, "ANALYSES FINISHED")
 
 # export results ----
 info(logger, "EXPORTING RESULTS")
+exportSummarisedResult(
+  resultSnapshot,
+  minCellCount = minCellCount,
+  path = resultsFolder
+)
 zip(
   zipfile = file.path(paste0(resultsFolder, "/Results_", cdmName(cdm), ".zip")),
   files = list.files(resultsFolder, full.names = TRUE)
