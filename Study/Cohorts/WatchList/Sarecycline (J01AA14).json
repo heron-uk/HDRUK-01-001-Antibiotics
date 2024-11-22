@@ -1,0 +1,4 @@
+{"items": [
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 35200881}, "isExcluded": false, "includeDescendants": false, "includeMapped": false},
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 35200885}, "isExcluded": false, "includeDescendants": true, "includeMapped": false}
+]}

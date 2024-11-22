@@ -39,4 +39,5 @@ vignettes/*.pdf
 .Renviron
 
 Results/*.csv
+Results/*txt
 CodeToRunLocal.R

@@ -6,20 +6,20 @@ logfile(logger) <- here(resultsFolder, loggerName)
 level(logger) <- "INFO"
 info(logger, "LOG CREATED")
 
-# create cdm object ----
-info(logger, "CREATING CDM OBJECT")
-cdm <- cdmFromCon(
-  con = db,
-  cdmSchema = cdmSchema, 
-  writeSchema = writeSchema, 
-  cdmName = dbName, 
-  achillesSchema = achillesSchema
-)
-info(logger, "CDM OBJECT CREATED")
+# start ----
+
+start_time <- Sys.time()
+maxObsEnd <- cdm$observation_period |>
+  summarise(maxObsEnd = max(observation_period_end_date, na.rm = TRUE)) |>
+  dplyr::pull()
+studyPeriod <- c(as.Date("2012-01-01"), as.Date(maxObsEnd))
 
 # create and export snapshot
 info(logger, "Retrieving snapshot")
-resultSnapshot <- OmopSketch::summariseOmopSnapshot(cdm)
+cli::cli_text("- Getting cdm snapshot ({Sys.time()})")
+write.csv(OmopSketch::summariseOmopSnapshot(cdm), here("Results", paste0(
+  "cdm_snapshot_", cdmName(cdm), ".csv"
+)))
 info(logger, "snapshot completed")
 
 # instantiate necessary cohorts ----
@@ -27,14 +27,10 @@ info(logger, "INSTANTIATING STUDY COHORTS")
 source(here("Cohorts", "InstantiateCohorts.R"))
 info(logger, "STUDY COHORTS INSTANTIATED")
 
-# run diagnostics ----
-info(logger, "RUN PHENOTYPER")
-source(here("PhenotypeR", "PhenotypeR.R"))
-info(logger, "PHENOTYPER FINISHED")
-
 # run analyses ----
 info(logger, "RUN ANALYSES")
-source(here("Analyses", "1-ExampleAnalysis.R"))
+source(here("Analyses", "characteristics.R"))
+source(here("Analyses", "incidence.R"))
 info(logger, "ANALYSES FINISHED")
 
 # export results ----
