@@ -1,0 +1,13 @@
+{"items": [
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 19063874}, "isExcluded": false, "includeDescendants": false, "includeMapped": false},
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 40080750}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 40923828}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 43262884}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 42954956}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 42614865}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 42954890}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 42954957}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 35854642}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 43161139}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 2912746}, "isExcluded": false, "includeDescendants": true, "includeMapped": false}
+]}

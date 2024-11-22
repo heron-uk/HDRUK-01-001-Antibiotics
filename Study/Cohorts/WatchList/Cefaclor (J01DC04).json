@@ -1,0 +1,18 @@
+{"items": [
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 1768849}, "isExcluded": false, "includeDescendants": false, "includeMapped": false},
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 44030003}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 40024028}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 40016502}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 43139469}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 43216349}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 36881816}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 40024036}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 40024030}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 40016503}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 35142346}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 40024032}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 44172054}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 43751311}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 40024038}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
+{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 40024040}, "isExcluded": false, "includeDescendants": true, "includeMapped": false}
+]}
