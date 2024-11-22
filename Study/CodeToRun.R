@@ -3,12 +3,21 @@
 library(CDMConnector)
 library(DBI)
 library(log4r)
+library(DrugUtilisation)
+library(IncidencePrevalence)
 library(dplyr)
 library(here)
+library(tidyr)
+library(CodelistGenerator)
+library(CohortConstructor)
+library(CohortCharacteristics)
+library(PatientProfiles)
 
 # database metadata and connection details
 # The name/ acronym for the database
-dbName <- "..."
+# database metadata and connection details
+# The name/ acronym for the database
+db_name <- "..."
 
 # Database connection details
 # In this study we also use the DBI package to connect to the database
@@ -17,28 +26,30 @@ dbName <- "..."
 # for more details.
 # you may need to install another package for this 
 # eg for postgres 
-# db <- dbConnect(
-#   RPostgres::Postgres(), 
-#   dbname = server_dbi, 
-#   port = port, 
-#   host = host, 
-#   user = user,
-#   password = password
-# )
-db <- dbConnect("...")
 
-# The name of the schema that contains the OMOP CDM with patient-level data
-cdmSchema <- "..."
+db <- dbConnect("...",
+                dbname = "...",
+                port = "...",
+                host = "...", 
+                user = "...", 
+                password = "...")
 
-# A prefix for all permanent tables in the database
-writePrefix <- "..."
+cdm_schema <- "..."
+write_schema <- "..."
 
-# The name of the schema where results tables will be created 
-writeSchema <- c(schema = "...", prefix = writePrefix)
+# Table prefix -----
+# any tables created in the database during the analysis will start with this prefix
+# we provide the default here but you can change it
+# note, any existing tables in your write schema starting with this prefix may
+# be dropped during running this analysis
+study_prefix <- "..."
 
-# The name of the schema that contains the results from running Achilles package
-# it can be removed if Achilles stables are not needed.
-achillesSchema <- "..."
+# create cdm reference -----
+cdm <- CDMConnector::cdm_from_con(con = db,
+                                  cdm_schema = cdm_schema,
+                                  write_schema = c(schema = write_schema,
+                                                   prefix = study_prefix),
+                                  cdm_name = db_name)
 
 # minimum counts that can be displayed according to data governance
 minCellCount <- 5
