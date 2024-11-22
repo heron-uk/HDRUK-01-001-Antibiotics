@@ -41,3 +41,5 @@ vignettes/*.pdf
 Results/*.csv
 Results/*txt
 CodeToRunLocal.R
+
+Cohorts/TopTen/*json
