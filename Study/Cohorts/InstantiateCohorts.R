@@ -71,13 +71,25 @@ if (length(existing_files) > 0) {
 
 codes_ten <- codesFromConceptSet(here::here("Cohorts", "TopTen"), cdm)
 
+codes_routes <- stratifyByRouteCategory(codes_ten, cdm, keepOriginal = FALSE)
+
 cdm <- generateDrugUtilisationCohortSet(
   cdm = cdm,
   name = "top_ten",
   conceptSet = codes_ten
 )
 
+cdm <- generateDrugUtilisationCohortSet(
+  cdm = cdm,
+  name = "top_ten_routes",
+  conceptSet = codes_routes
+)
+
 cdm$top_ten <- cdm$top_ten |>
+  requireDrugInDateRange(
+    dateRange = studyPeriod)
+
+cdm$top_ten_routes <- cdm$top_ten_routes |>
   requireDrugInDateRange(
     dateRange = studyPeriod)
 

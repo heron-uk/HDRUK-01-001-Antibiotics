@@ -12,6 +12,7 @@ library(CodelistGenerator)
 library(CohortConstructor)
 library(CohortCharacteristics)
 library(PatientProfiles)
+library(DrugExposureDiagnostics)
 
 # database metadata and connection details
 # The name/ acronym for the database

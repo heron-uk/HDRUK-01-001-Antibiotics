@@ -29,18 +29,20 @@ info(logger, "STUDY COHORTS INSTANTIATED")
 
 # run analyses ----
 info(logger, "RUN ANALYSES")
+source(here("Analyses", "DrugExposureDiagnostics.R"))
 source(here("Analyses", "characteristics.R"))
 source(here("Analyses", "incidence.R"))
+source(here("Analyses", "age_standardised_incidence.R"))
 info(logger, "ANALYSES FINISHED")
 
 # export results ----
-info(logger, "EXPORTING RESULTS")
-exportSummarisedResult(
-  resultSnapshot,
-  minCellCount = minCellCount,
-  path = resultsFolder
-)
-zip(
-  zipfile = file.path(paste0(resultsFolder, "/Results_", cdmName(cdm), ".zip")),
-  files = list.files(resultsFolder, full.names = TRUE)
-)
+#info(logger, "EXPORTING RESULTS")
+#exportSummarisedResult(
+#  resultSnapshot,
+#  minCellCount = minCellCount,
+#  path = resultsFolder
+#)
+#zip(
+#  zipfile = file.path(paste0(resultsFolder, "/Results_", cdmName(cdm), ".zip")),
+#  files = list.files(resultsFolder, full.names = TRUE)
+#)
