@@ -43,17 +43,6 @@ existing_files <- list.files(output_dir, full.names = TRUE)
 
 # Ask the user if they want to overwrite all existing files
 if (length(existing_files) > 0) {
-  cat("The following files already exist in the output directory (top 10 most used antibiotics):\n")
-  print(basename(existing_files))
-  
-  # Ask the user for confirmation to overwrite
-  overwrite <- readline("Do you want to overwrite all existing files? (y/n): ")
-  
-  if (tolower(overwrite) == "n") {
-    # Abort the operation if the user says no
-    cat("Operation aborted. No files have been replaced.\n")
-  } else if (tolower(overwrite) == "y") {
-    # Delete existing files if user confirms
     file.remove(existing_files)
     cat("All existing files have been deleted.\n")
     
@@ -61,9 +50,6 @@ if (length(existing_files) > 0) {
     file.copy(filtered_files, file.path(output_dir, basename(filtered_files)))
     cat("New files have been copied to the output directory.\n")
   } else {
-    cat("Invalid input. Please answer 'y' or 'n'.\n")
-  }
-} else {
   # If no files exist in the directory, just copy the new files
   file.copy(filtered_files, file.path(output_dir, basename(filtered_files)))
   cat("All files have been copied to the output directory.\n")
@@ -71,7 +57,7 @@ if (length(existing_files) > 0) {
 
 codes_ten <- codesFromConceptSet(here::here("Cohorts", "TopTen"), cdm)
 
-codes_routes <- stratifyByRouteCategory(codes_ten, cdm, keepOriginal = FALSE)
+codes_routes <- stratifyByRouteCategory(codes_ten, cdm, keepOriginal = TRUE)
 
 cdm <- generateDrugUtilisationCohortSet(
   cdm = cdm,

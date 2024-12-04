@@ -1,3 +1,4 @@
+cli::cli_alert_info("- Getting incidence")
 # Incidence
 cdm <- generateDenominatorCohortSet(
   cdm = cdm,
@@ -21,3 +22,4 @@ write.csv(inc, here("Results", paste0(
   "incidence_", cdmName(cdm), ".csv"
 )))
 
+cli::cli_alert_success("- Got incidence")

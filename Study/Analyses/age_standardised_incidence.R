@@ -1,11 +1,9 @@
+cli::cli_alert_info("- Getting age standardised incidence")
+
 cdm <- generateDenominatorCohortSet(cdm = cdm,
                                     name = "denominator_strat",
-                                    ageGroup = list(c(0, 150),
-                                                    c(0, 17), c(18, 150),
-                                                    c(18, 59), c(60, 150),
-                                                    # pediatric
-                                                    c(0, 1), c(1, 4), c(5, 9),
-                                                    c(10, 14), c(15, 17)
+                                    ageGroup = list(c(0, 17),
+                                                    c(18, 59), c(60, 150)
                                     ),
                                     cohortDateRange = studyPeriod,
                                     sex = c("Both"),
@@ -24,3 +22,5 @@ inc_strat <- estimateIncidence(cdm,
 write.csv(inc_strat, here("Results", paste0(
   "incidence_stratified", cdmName(cdm), ".csv"
 )))
+
+cli::cli_alert_success("- Getting age standardised incidence")

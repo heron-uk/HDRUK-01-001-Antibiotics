@@ -1,7 +1,7 @@
-# Characteristics
+cli::cli_alert_info("- Getting characteristics")
 
 characteristics <- summariseCharacteristics(cdm$top_ten,
-  ageGroup = list(c(0, 17), c(18, 59), c(60, 150)))
+  ageGroup = list(c(0, 17),c(18, 59), c(60, 150)))
 
 attrition <- summariseCohortAttrition(cdm$top_ten)
 
@@ -53,4 +53,4 @@ write.csv(route_overlap, here("Results", paste0(
     stratify_by_route <- FALSE
 }
 
-
+cli::cli_alert_success("- Got characteristics")

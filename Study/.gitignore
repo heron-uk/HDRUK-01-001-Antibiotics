@@ -41,10 +41,6 @@ vignettes/*.pdf
 Results/*.csv
 Results/*txt
 Results/*zip
-DED_Results/*.csv
-DED_Results/*txt
-DED_Results/*zip
 CodeToRunLocal.R
-DED_Shiny
 
 Cohorts/TopTen/*json
