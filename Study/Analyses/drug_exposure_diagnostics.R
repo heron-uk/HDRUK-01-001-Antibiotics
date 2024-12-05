@@ -28,7 +28,8 @@ drug_diagnostics <- executeChecks(
     "missing",
     "exposureDuration",
     "sourceConcept"
-  )
+  ),
+  earliestStartDate = "2012-01-01"
 )
 
 for(i in seq_along(drug_diagnostics)){

@@ -11,28 +11,18 @@ cdm <- generateDenominatorCohortSet(cdm = cdm,
 cdm$denominator_strat <- cdm$denominator_strat %>%
   addSex()
 
-inc_strat_q <- estimateIncidence(cdm,
+inc_strat <- estimateIncidence(cdm,
                               denominatorTable = "denominator_strat",
                               outcomeTable = "top_ten",
-                              interval = c("quarters"),
+                              interval = c("quarters", "years"),
                               completeDatabaseIntervals = TRUE,
                               outcomeWashout = 30,
-                              repeatedEvents = TRUE) 
+                              repeatedEvents = TRUE,
+                              minCellCount = 0) 
 
-inc_strat_y <- estimateIncidence(cdm,
-                                 denominatorTable = "denominator_strat",
-                                 outcomeTable = "top_ten",
-                                 interval = c("years"),
-                                 completeDatabaseIntervals = TRUE,
-                                 outcomeWashout = 30,
-                                 repeatedEvents = TRUE)
 
-write.csv(inc_strat_q, here("Results", paste0(
-  "incidence_stratified_quarters", cdmName(cdm), ".csv"
-)))
-
-write.csv(inc_strat_y, here("Results", paste0(
-  "incidence_stratified_years", cdmName(cdm), ".csv"
+write.csv(inc_strat, here("Results", paste0(
+  "incidence_stratified", cdmName(cdm), ".csv"
 )))
 
 

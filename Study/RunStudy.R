@@ -39,9 +39,16 @@ info(logger, "ANALYSES FINISHED")
 # export results ----
 info(logger, "ZIPPING RESULTS")
 
-zip(
-  zipfile = file.path(paste0(resultsFolder, "/Results_", cdmName(cdm), ".zip")),
-  files = list.files(resultsFolder, full.names = TRUE)
-)
+files_to_zip <- list.files(here("Results"))
+files_to_zip <- files_to_zip[stringr::str_detect(files_to_zip,
+                                        db_name)]
+files_to_zip <- files_to_zip[stringr::str_detect(files_to_zip,
+                                        ".csv")]
+
+zip::zip(zipfile = file.path(paste0(
+  here("Results"), "/Results_", db_name, ".zip"
+)),
+files = files_to_zip,
+root = here("Results"))
 
 info(logger, "RESULTS ZIPPED")
