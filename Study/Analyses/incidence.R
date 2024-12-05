@@ -7,19 +7,37 @@ cdm <- generateDenominatorCohortSet(
   daysPriorObservation = 30
 )
 
-inc <- estimateIncidence(
+inc_q <- estimateIncidence(
   cdm = cdm,
   denominatorTable = "denominator",
   outcomeTable = "top_ten",
-  interval = c("quarters","overall"),
+  interval = c("quarters"),
   repeatedEvents = TRUE,
   outcomeWashout = 30,
   completeDatabaseIntervals = TRUE,
   minCellCount = 5
 )
 
-write.csv(inc, here("Results", paste0(
-  "incidence_", cdmName(cdm), ".csv"
+inc_y <- estimateIncidence(
+  cdm = cdm,
+  denominatorTable = "denominator",
+  outcomeTable = "top_ten",
+  interval = c("years"),
+  repeatedEvents = TRUE,
+  outcomeWashout = 30,
+  completeDatabaseIntervals = TRUE,
+  minCellCount = 5
+) 
+
+write.csv(inc_q, here("Results", paste0(
+  "incidence_quarters", cdmName(cdm), ".csv"
 )))
 
+write.csv(inc_y, here("Results", paste0(
+  "incidence_years", cdmName(cdm), ".csv"
+)))
+
+
 cli::cli_alert_success("- Got incidence")
+
+?estimateIncidence

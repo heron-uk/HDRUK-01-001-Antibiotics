@@ -19,7 +19,7 @@ dus_summary[[i]]<- cdm$top_ten |>
    ingredientConceptId = drug_ingredients_codes[i],
    restrictIncident = TRUE,
    gapEra = 7,
-   numberExposures = FALSE,
+   numberExposures = TRUE,
    numberEras = FALSE,
    exposedTime = TRUE,
    timeToExposure = FALSE,

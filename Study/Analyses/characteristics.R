@@ -25,7 +25,11 @@ route_characteristics <- summariseCharacteristics(cdm$top_ten_routes,
   mutate(route = sub(".*_", "", group_level),
          group_level = sub("_[^_]+$", "", group_level))
 
-if(length(unique(route_characteristics$route)) > 1) {
+routes <- route_characteristics %>%
+  filter(!grepl("^j", route)) %>%
+  pull(route)
+
+if(length(unique(routes)) > 1) {
   
   stratify_by_route <- TRUE
   
@@ -54,3 +58,33 @@ write.csv(route_overlap, here("Results", paste0(
 }
 
 cli::cli_alert_success("- Got characteristics")
+
+if(stratify_by_route == FALSE){
+
+top_ten_lsc <- CohortCharacteristics::summariseLargeScaleCharacteristics(cdm$top_ten,
+                                                                     eventInWindow = c("condition_occurrence"),
+                                                                     window = list(c(-7, -1), c(0, 0)))
+
+cohortCount(cdm$condition_occurrence)
+write.csv(top_ten_lsc,
+          here("Results", paste0(
+            "lsc_summary_", cdmName(cdm), ".csv"
+          )))
+
+} else if(stratify_by_route == TRUE) {
+  top_ten_lsc_routes <- CohortCharacteristics::summariseLargeScaleCharacteristics(cdm$top_ten_routes,
+                                                                           eventInWindow = c("condition_occurrence"),
+                                                                           window = list(c(-7, -1), c(0, 0)))
+  
+  write.csv(top_ten_lsc_routes,
+            here("Results", paste0(
+              "lsc_routes_summary_", cdmName(cdm), ".csv"
+            )))
+  
+}
+
+cli::cli_alert_info("- Getting large scale characteristics")
+
+
+
+cli::cli_alert_success("- Got large scale characteristics")
