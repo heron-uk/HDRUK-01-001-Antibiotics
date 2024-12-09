@@ -1,5 +1,5 @@
 # instantiate cancer cohorts
-cli::cli_alert_info("- Getting watch list antibiotics")
+cli::cli_alert_info("- Getting top ten watch list antibiotics")
 
 # get concept sets from cohorts----
 
@@ -11,72 +11,64 @@ cdm$watch_list <- conceptCohort(cdm = cdm, conceptSet = codes, name = "watch_lis
   requireInDateRange(indexDate = "cohort_start_date",
                      dateRange = studyPeriod)
 
-cli::cli_alert_success("- Got watch list antibiotics")
+cli::cli_alert_success("- Got top ten watch list antibiotics")
 
-cli::cli_alert_info("- Getting top ten antibiotics")
+cli::cli_alert_info("- Getting routes of top ten antibiotics")
 
-count_settings <- merge(cohortCount(cdm$watch_list), settings(cdm$watch_list), by = "cohort_definition_id") %>%
+top_ten_cohorts <- merge(cohortCount(cdm$watch_list), settings(cdm$watch_list), by = "cohort_definition_id") %>%
   arrange(desc(number_records)) %>%
-  slice_head(n = 10)
+  slice_head(n = 10) %>%
+  pull(cohort_definition_id) %>%
+  as.vector()
 
-top_ten <- sub("_.*", "", count_settings$cohort_name)
+cdm$watch_list <- cdm$watch_list |> 
+  subsetCohorts(cohortId = top_ten_cohorts)
 
-json_dir <- "Cohorts/WatchList"
+#### Get top ten by route
 
-# List all JSON files in the directory
-json_files <- list.files(json_dir, pattern = "\\.json$", full.names = TRUE)
+top_ten_names <- settings(cdm$watch_list) %>%
+  mutate(cohort_name = sub("_[^_]+$", "", cohort_name)) %>%
+  pull(cohort_name)
 
-pattern <- paste0("\\b(", paste(top_ten, collapse = "|"), ")\\b")
-
-file_names <- basename(json_files)
-filtered_indices <- grep(pattern, file_names, ignore.case = TRUE)
-filtered_files <- json_files[filtered_indices]
-
-output_dir <- "Cohorts/TopTen"
-
-if (!dir.exists(output_dir)) {
-  dir.create(output_dir)
+if("rifampicin" %in% top_ten_names) {
+  top_ten_names[top_ten_names == "rifampicin"] <- "rifampin"
 }
 
-# List all files in the output directory
-existing_files <- list.files(output_dir, full.names = TRUE)
-
-# Ask the user if they want to overwrite all existing files
-if (length(existing_files) > 0) {
-    file.remove(existing_files)
-    cat("All existing files have been deleted.\n")
-    
-    # Copy the new files to the output directory
-    file.copy(filtered_files, file.path(output_dir, basename(filtered_files)))
-    cat("New files have been copied to the output directory.\n")
-  } else {
-  # If no files exist in the directory, just copy the new files
-  file.copy(filtered_files, file.path(output_dir, basename(filtered_files)))
-  cat("All files have been copied to the output directory.\n")
-}
-
-codes_ten <- codesFromConceptSet(here::here("Cohorts", "TopTen"), cdm)
-
-codes_routes <- stratifyByRouteCategory(codes_ten, cdm, keepOriginal = TRUE)
-
-cdm <- generateDrugUtilisationCohortSet(
+drug_ingredients <- getDrugIngredientCodes(
   cdm = cdm,
-  name = "top_ten",
-  conceptSet = codes_ten
+  name = top_ten_names
 )
 
+codes_routes <- stratifyByRouteCategory(drug_ingredients, cdm, keepOriginal = FALSE)
+
 cdm <- generateDrugUtilisationCohortSet(
   cdm = cdm,
-  name = "top_ten_routes",
+  name = "by_route",
   conceptSet = codes_routes
 )
 
-cdm$top_ten <- cdm$top_ten |>
+# filter so that only oral minocycline is included. 
+if("minocycline" %in% top_ten_names) {
+  min_routes <- settings(cdm$by_route) %>%
+    filter(grepl("minocycline", cohort_name)) %>%
+    filter(!grepl("oral", cohort_name))
+  
+  min_oral <- settings(cdm$by_route) %>%
+    filter(!cohort_definition_id %in% min_routes$cohort_definition_id) %>%
+    pull(cohort_definition_id) 
+  
+  cdm$by_route |>
+    subsetCohorts(cohortId = min_oral) 
+}
+
+routes_counts <- cohortCount(cdm$by_route) %>%
+  filter(number_records > 0)
+
+cdm$by_route <- cdm$by_route |>
+  subsetCohorts(cohortId = routes_counts$cohort_definition_id)
+
+cdm$by_route <- cdm$by_route |>
   requireDrugInDateRange(
     dateRange = studyPeriod)
-
-cdm$top_ten_routes <- cdm$top_ten_routes |>
-  requireDrugInDateRange(
-    dateRange = studyPeriod)
-
-cli::cli_alert_success("- Got top ten antibiotics")
+  
+cli::cli_alert_success("- Got routes of top ten antibiotics")

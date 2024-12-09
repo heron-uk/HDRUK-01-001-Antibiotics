@@ -1,29 +1,10 @@
 cli::cli_alert_info("- Running drug exposure diagnostics")
 
-top_ten_names <- top_ten
-
- if("rifampicin" %in% top_ten_names) {
-   top_ten_names[top_ten_names == "rifampicin"] <- "rifampin"
- }
-
-drug_ingredients <- cdm$concept %>%
-  filter(standard_concept == "S") %>%
-  filter(domain_id == "Drug") %>%
-  filter(concept_name %in% local(top_ten_names)) %>%
-  filter(concept_class_id=="Ingredient")    %>%
-  filter(standard_concept =="S") %>%
-  select(c("concept_id", "concept_name")) %>%
-  collect()
-
-drug_ingredients_names <- drug_ingredients %>%
-  pull(concept_name)
-
-drug_ingredients_codes <- drug_ingredients %>%
-  pull(concept_id)
+ingredient_codes <- unlist(ingredient_codes)
 
 drug_diagnostics <- executeChecks(
   cdm = cdm,
-  ingredients = drug_ingredients_codes,
+  ingredients = ingredient_codes,
   checks = c(
     "missing",
     "exposureDuration",
