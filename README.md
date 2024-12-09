@@ -1,7 +1,7 @@
 # Study Title
 <img src="https://img.shields.io/badge/Study%20Status-Started-blue.svg" alt="Study Status: Started">
 
-- **Study title**: 
+- **Study title**: Trends in the use of commonly used antibiotics associated with antimicrobial resistance
 - **Study start date**: 
 - **Study leads**:
 - **Study end date**:
