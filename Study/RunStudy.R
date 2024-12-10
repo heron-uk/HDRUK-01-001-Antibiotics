@@ -13,16 +13,19 @@ start_time <- Sys.time()
 maxObsEnd <- cdm$observation_period |>
   summarise(maxObsEnd = max(observation_period_end_date, na.rm = TRUE)) |>
   dplyr::pull()
-studyPeriod <- c(as.Date("2012-01-01"), as.Date(maxObsEnd))
+studyPeriod <- c(as.Date(study_start), as.Date(maxObsEnd))
 
 # create and export snapshot
 info(logger, "Retrieving snapshot")
 cli::cli_text("- Getting cdm snapshot ({Sys.time()})")
+results[["snap"]] <- OmopSketch::summariseOmopSnapshot(cdm)
+results[["obs_period"]] <- OmopSketch::summariseObservationPeriod(cdm$observation_period)
 write.csv(OmopSketch::summariseOmopSnapshot(cdm), here("Results", paste0(
   "cdm_snapshot_", cdmName(cdm), ".csv"
 )))
-results[["snap"]] <- OmopSketch::summariseOmopSnapshot(cdm)
-results[["obs_period"]] <- OmopSketch::summariseObservationPeriod(cdm$observation_period)
+write.csv(OmopSketch::summariseObservationPeriod(cdm$observation_period), here("Results", paste0(
+  "obs_period_", cdmName(cdm), ".csv"
+)))
 info(logger, "snapshot completed")
 
 # instantiate necessary cohorts ----
@@ -32,6 +35,7 @@ info(logger, "STUDY COHORTS INSTANTIATED")
 
 # run analyses ----
 info(logger, "RUN ANALYSES")
+source(here("Analyses", "functions.R"))
 source(here("Analyses", "initial_dose_duration.R"))
 source(here("Analyses", "drug_exposure_diagnostics.R"))
 source(here("Analyses", "characteristics.R"))
@@ -47,8 +51,8 @@ result <- results |>
   omopgenerics::bind() |>
   omopgenerics::newSummarisedResult()
 
-OmopViewer::exportStaticApp(result = result, directory = "/home/AD_NDORMS/rowelin/R/HDRUK-01-001-Antibiotics/Report",
-                            logo = "hdr",
+OmopViewer::exportStaticApp(result = result, directory = here(),
+                            logo = "hds",
                             theme = "theme1",
                             title = "Commonly used antibiotics",
                             background = TRUE,
