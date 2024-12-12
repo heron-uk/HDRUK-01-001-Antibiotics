@@ -527,6 +527,7 @@ if (run_incidence == TRUE) {
 
 
   agestandardized_results <- bind_rows(
+    inc_crude,
     agestandardizedinc_final_esp,
     agestandardizedinc_wsp_final
   )
@@ -539,11 +540,9 @@ if (run_incidence == TRUE) {
 
   cli::cli_alert_success("- Age standardization for incidence completed")
 
-  results[["age_standardised_incidence"]] <- agestandardized_results
+  #results[["age_standardised_incidence"]] <- agestandardized_results
 
   # Export the results -----
-
-  agestandardized_results <- agestandardized_results
 
   cli::cli_alert_info("- Getting age standardized incidence results")
   write.csv(agestandardized_results, here::here("Results", paste0("incidence_estimates_age_std_", db_name, ".csv")), row.names = FALSE)
