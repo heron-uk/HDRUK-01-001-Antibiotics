@@ -52,8 +52,12 @@ cdm <- CDMConnector::cdm_from_con(con = db,
                                                    prefix = study_prefix),
                                   cdm_name = db_name)
 
-# minimum counts that can be displayed according to data governance
-minCellCount <- 5
+study_start <- "..."
+
+run_drug_exposure_diagnostics <- TRUE
+run_drug_utilisation <- TRUE
+run_incidence <- TRUE
+run_characterisation <- TRUE
 
 # Run the study
 source(here("RunStudy.R"))

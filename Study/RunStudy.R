@@ -1,7 +1,7 @@
 # create logger ----
 resultsFolder <- here("Results")
 results <- list()
-loggerName <- gsub(":| |-", "_", paste0("log_01_001_", Sys.time(),".txt"))
+loggerName <- gsub(":| |-", "_", paste0("log_01_001_", Sys.time(), ".txt"))
 logger <- create.logger()
 logfile(logger) <- here(resultsFolder, loggerName)
 level(logger) <- "INFO"
@@ -16,17 +16,21 @@ maxObsEnd <- cdm$observation_period |>
 studyPeriod <- c(as.Date(study_start), as.Date(maxObsEnd))
 
 # create and export snapshot
-info(logger, "Retrieving snapshot")
-cli::cli_text("- Getting cdm snapshot ({Sys.time()})")
-results[["snap"]] <- OmopSketch::summariseOmopSnapshot(cdm)
-results[["obs_period"]] <- OmopSketch::summariseObservationPeriod(cdm$observation_period)
-write.csv(OmopSketch::summariseOmopSnapshot(cdm), here("Results", paste0(
-  "cdm_snapshot_", cdmName(cdm), ".csv"
-)))
-write.csv(OmopSketch::summariseObservationPeriod(cdm$observation_period), here("Results", paste0(
-  "obs_period_", cdmName(cdm), ".csv"
-)))
-info(logger, "snapshot completed")
+if (run_cdm_snapshot == TRUE) {
+  info(logger, "RETRIEVING SNAPSHOT")
+  cli::cli_text("- GETTING CDM SNAPSHOT ({Sys.time()})")
+  results[["snap"]] <- OmopSketch::summariseOmopSnapshot(cdm)
+  cli::cli_text("- GETTING OBSERVATION PERIOD ({Sys.time()})")
+  obs_period <- OmopSketch::summariseObservationPeriod(cdm$observation_period)
+  results[["obs_period"]] <- obs_period
+  write.csv(OmopSketch::summariseOmopSnapshot(cdm), here("Results", paste0(
+    "cdm_snapshot_", cdmName(cdm), ".csv"
+  )))
+  write.csv(obs_period, here("Results", paste0(
+    "obs_period_", cdmName(cdm), ".csv"
+  )))
+  info(logger, "SNAPSHOT COMPLETED")
+}
 
 # instantiate necessary cohorts ----
 info(logger, "INSTANTIATING STUDY COHORTS")
@@ -36,7 +40,7 @@ info(logger, "STUDY COHORTS INSTANTIATED")
 # run analyses ----
 info(logger, "RUN ANALYSES")
 source(here("Analyses", "functions.R"))
-source(here("Analyses", "initial_dose_duration.R"))
+source(here("Analyses", "drug_utilisation.R"))
 source(here("Analyses", "drug_exposure_diagnostics.R"))
 source(here("Analyses", "characteristics.R"))
 source(here("Analyses", "incidence.R"))
@@ -47,32 +51,39 @@ info(logger, "ANALYSES FINISHED")
 info(logger, "CREATING SHINY DASHBOARD")
 
 result <- results |>
-  vctrs::list_drop_empty() |>
-  omopgenerics::bind() |>
+  dplyr::bind_rows() |>
   omopgenerics::newSummarisedResult()
 
-OmopViewer::exportStaticApp(result = result, directory = here(),
-                            logo = "hds",
-                            theme = "theme1",
-                            title = "Commonly used antibiotics",
-                            background = TRUE,
-                            summary = TRUE,
-                            open = FALSE)
+OmopViewer::exportStaticApp(
+  result = result, directory = here(),
+  logo = "hds",
+  theme = "theme1",
+  title = "Commonly used antibiotics",
+  background = TRUE,
+  summary = TRUE,
+  open = FALSE
+)
 
 info(logger, "CREATED SHINY DASHBOARD")
 
 info(logger, "EXPORTING RESULTS")
 
 files_to_zip <- list.files(here("Results"))
-files_to_zip <- files_to_zip[stringr::str_detect(files_to_zip,
-                                        db_name)]
-files_to_zip <- files_to_zip[stringr::str_detect(files_to_zip,
-                                        ".csv")]
+files_to_zip <- files_to_zip[stringr::str_detect(
+  files_to_zip,
+  db_name
+)]
+files_to_zip <- files_to_zip[stringr::str_detect(
+  files_to_zip,
+  ".csv"
+)]
 
-zip::zip(zipfile = file.path(paste0(
-  here("Results"), "/Results_", db_name, ".zip"
-)),
-files = files_to_zip,
-root = here("Results"))
+zip::zip(
+  zipfile = file.path(paste0(
+    here("Results"), "/Results_", db_name, ".zip"
+  )),
+  files = files_to_zip,
+  root = here("Results")
+)
 
 info(logger, "RESULTS EXPORTED")
