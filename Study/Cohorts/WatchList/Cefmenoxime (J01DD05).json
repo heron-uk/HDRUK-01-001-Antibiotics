@@ -1,6 +1,0 @@
-{"items": [
-{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 40798704}, "isExcluded": false, "includeDescendants": false, "includeMapped": false},
-{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 41205769}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
-{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 41048945}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
-{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 42958889}, "isExcluded": false, "includeDescendants": true, "includeMapped": false}
-]}

@@ -1,9 +1,0 @@
-{"items": [
-{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 19027679}, "isExcluded": false, "includeDescendants": false, "includeMapped": false},
-{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 40071410}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
-{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 36889506}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
-{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 36890531}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
-{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 40071758}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
-{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 35856293}, "isExcluded": false, "includeDescendants": true, "includeMapped": false},
-{"concept": {"CONCEPT_CODE": "1", "CONCEPT_ID": 40071756}, "isExcluded": false, "includeDescendants": true, "includeMapped": false}
-]}

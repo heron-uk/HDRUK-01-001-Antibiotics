@@ -19,27 +19,14 @@ if (run_incidence == TRUE) {
   inc <- estimateIncidence(
     cdm = cdm,
     denominatorTable = "denominator",
-    outcomeTable = "watch_list",
+    outcomeTable = "top_ten_by_route",
     interval = c("quarters", "years", "overall"),
     repeatedEvents = TRUE,
     outcomeWashout = 30
   )
 
-  inc_tidy <- inc %>%
-    visOmopResults::splitAdditional() %>%
-    visOmopResults::splitGroup() %>%
-    visOmopResults::addSettings() %>%
-    pivot_wider(
-      names_from = estimate_name,
-      values_from = c(estimate_value, estimate_type)
-    ) %>%
-    mutate(across(starts_with("estimate_value"), as.numeric)) %>% # Convert estimate_value columns to numeric
-    rename_with(~ gsub("^estimate_value_", "", .), starts_with("estimate_value")) %>%
-    select(-starts_with("estimate_type")) %>%
-    mutate(outcome_count = as.integer(outcome_count))
-
-  write.csv(inc_tidy, here("Results", paste0(
-    "incidence", cdmName(cdm), ".csv"
+  write.csv(inc, here("Results", paste0(
+    "_incidence", cdmName(cdm), ".csv"
   )))
 
   results[["incidence"]] <- inc

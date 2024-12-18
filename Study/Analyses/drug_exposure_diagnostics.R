@@ -1,15 +1,16 @@
 if (run_drug_exposure_diagnostics == TRUE) {
   cli::cli_alert_info("- Running drug exposure diagnostics")
 
-  ingredient_codes <- unlist(ingredient_codes)
-
-  drug_diagnostics <- executeChecks(
+    drug_diagnostics <- executeChecks(
     cdm = cdm,
-    ingredients = ingredient_codes,
+    ingredients = top_ten_ingredients$concept_id,
     checks = c(
       "missing",
       "exposureDuration",
-      "sourceConcept"
+      "sourceConcept",
+      "route",
+      "dose",
+      "quantity"
     ),
     earliestStartDate = "2012-01-01"
   )
