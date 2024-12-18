@@ -32,6 +32,15 @@ if (run_cdm_snapshot == TRUE) {
   info(logger, "SNAPSHOT COMPLETED")
 }
 
+#get top ten antibiotics
+info(logger, "GETTING TOP TEN ANTIBIOTICS")
+source(here("Cohorts", "TopTen.R"))
+info(logger, "GOT TOP TEN ANTIBIOTICS")
+
+info(logger, "RUNNING DRUG EXPOSURE DIAGNOSTICS")
+source(here("Analyses", "drug_exposure_diagnostics.R"))
+info(logger, "GOT DRUG EXPOSURE DIAGNOSTICS")
+
 # instantiate necessary cohorts ----
 info(logger, "INSTANTIATING STUDY COHORTS")
 source(here("Cohorts", "InstantiateCohorts.R"))
@@ -41,30 +50,12 @@ info(logger, "STUDY COHORTS INSTANTIATED")
 info(logger, "RUN ANALYSES")
 source(here("Analyses", "functions.R"))
 source(here("Analyses", "drug_utilisation.R"))
-source(here("Analyses", "drug_exposure_diagnostics.R"))
 source(here("Analyses", "characteristics.R"))
 source(here("Analyses", "incidence.R"))
-source(here("Analyses", "age_standardised_incidence.R"))
+#source(here("Analyses", "age_standardised_incidence.R"))
 info(logger, "ANALYSES FINISHED")
 
 # export results ----
-info(logger, "CREATING SHINY DASHBOARD")
-
-result <- results |>
-  dplyr::bind_rows() |>
-  omopgenerics::newSummarisedResult()
-
-OmopViewer::exportStaticApp(
-  result = result, directory = here(),
-  logo = "hds",
-  theme = "theme1",
-  title = "Commonly used antibiotics",
-  background = TRUE,
-  summary = TRUE,
-  open = FALSE
-)
-
-info(logger, "CREATED SHINY DASHBOARD")
 
 info(logger, "EXPORTING RESULTS")
 

@@ -1,4 +1,8 @@
-# ADD NECESSARY PACKAGES
+# Manage project dependencies ------
+# the following will prompt you to install the various packages used in the study
+# install.packages("renv")
+# renv::activate()
+renv::restore()
 
 library(CDMConnector)
 library(DBI)
@@ -13,6 +17,8 @@ library(CohortConstructor)
 library(CohortCharacteristics)
 library(PatientProfiles)
 library(DrugExposureDiagnostics)
+library(omopgenerics)
+library(stringr)
 
 # database metadata and connection details
 # The name/ acronym for the database
@@ -54,6 +60,7 @@ cdm <- CDMConnector::cdm_from_con(con = db,
 
 study_start <- "..."
 
+run_cdm_snapshot <- TRUE
 run_drug_exposure_diagnostics <- TRUE
 run_drug_utilisation <- TRUE
 run_incidence <- TRUE
