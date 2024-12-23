@@ -57,6 +57,12 @@ info(logger, "ANALYSES FINISHED")
 
 # export results ----
 
+result <- results |>
+  vctrs::list_drop_empty() |>
+  omopgenerics::bind()
+
+OmopViewer::exportStaticApp(result, here(), open = FALSE)
+
 info(logger, "EXPORTING RESULTS")
 
 files_to_zip <- list.files(here("Results"))

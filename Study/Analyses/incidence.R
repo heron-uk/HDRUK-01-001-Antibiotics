@@ -11,7 +11,7 @@ if (run_incidence == TRUE) {
     ),
     cohortDateRange = studyPeriod,
     sex = c("Male", "Female", "Both"),
-    daysPriorObservation = 30
+    daysPriorObservation = c(0,30)
   )
   cdm$denominator <- cdm$denominator %>%
     addSex()
@@ -20,7 +20,7 @@ if (run_incidence == TRUE) {
     cdm = cdm,
     denominatorTable = "denominator",
     outcomeTable = "top_ten_by_route",
-    interval = c("quarters", "years", "overall"),
+    interval = c("quarters"),
     repeatedEvents = TRUE,
     outcomeWashout = 30
   )

@@ -13,7 +13,7 @@ if (run_drug_utilisation == TRUE) {
         indexDate = "cohort_start_date",
         censorDate = "cohort_end_date",
         ingredientConceptId = ingredient_codes[i],
-        restrictIncident = TRUE,
+        restrictIncident = FALSE,
         gapEra = 7,
         numberExposures = TRUE,
         numberEras = FALSE,

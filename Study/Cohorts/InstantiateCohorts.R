@@ -1,21 +1,25 @@
 cli::cli_alert_info("- Creating cohort set")
 
-cdm$top_ten <- conceptCohort(
+cdm <- generateDrugUtilisationCohortSet(
   cdm = cdm,
   name = "top_ten",
-  conceptSet = top_ten
+  conceptSet = top_ten,
+  gapEra = 7
 )
 
-cdm$top_ten |>
-  requireInDateRange(dateRange = studyPeriod)
+cdm$top_ten <- cdm$top_ten |>
+  requireDrugInDateRange(
+    dateRange = studyPeriod)
 
-cdm$top_ten_by_route <- conceptCohort(
+cdm <- generateDrugUtilisationCohortSet(
   cdm = cdm,
   name = "top_ten_by_route",
-  conceptSet = top_ten_by_route
+  conceptSet = top_ten_by_route,
+  gapEra = 7
 )
 
-cdm$top_ten_by_route |>
-  requireInDateRange(dateRange = studyPeriod)
+cdm$top_ten_by_route <- cdm$top_ten_by_route |>
+  requireDrugInDateRange(
+    dateRange = studyPeriod)
 
 cli::cli_alert_success("- Created cohort set")
