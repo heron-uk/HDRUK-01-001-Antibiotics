@@ -22,7 +22,8 @@ if (run_incidence == TRUE) {
     outcomeTable = "top_ten_by_route",
     interval = c("quarters", "years", "overall"),
     repeatedEvents = TRUE,
-    outcomeWashout = 30
+    outcomeWashout = 30,
+    completeDatabaseIntervals = FALSE
   )
 
   write.csv(inc, here("Results", paste0(

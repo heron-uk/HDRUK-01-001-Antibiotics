@@ -9,27 +9,20 @@ atc_code_list <- getATCCodes(cdm = cdm,
 
 # Filter the list using the combined pattern
 watch_list_atc <- atc_code_list[grepl(atc_codes, names(atc_code_list))]
-  
-count <- summariseCodeUse(
-  x = watch_list_atc,
-  cdm = cdm,
-  countBy = "record",
-  byConcept = TRUE,
-  byYear = TRUE
-) 
-  
-top_ten_drugs <- count %>% 
-  mutate(estimate_value = as.numeric(estimate_value)) %>%
-  filter(strata_level >= 2012,
-         strata_name == "year",
-         variable_name == "overall") %>%
-  group_by(group_level) %>%
-  summarise(count = sum(estimate_value)) %>% 
-  arrange(desc(count)) %>%
-  slice_head(n = 10) %>%
-  pull(group_level)
 
-top_ten <- atc_code_list[names(atc_code_list) %in% top_ten_drugs]
+cdm$watch_list <- conceptCohort(cdm = cdm, conceptSet = watch_list_atc, name = "watch_list") |>
+  requireInDateRange(
+    indexDate = "cohort_start_date",
+    dateRange = studyPeriod
+  )
+  
+top_ten_drugs <- merge(cohortCount(cdm$watch_list), settings(cdm$watch_list), by = "cohort_definition_id") %>%
+  arrange(desc(number_records)) %>%
+  slice_head(n = 10) %>%
+  mutate(cohort_name = sub("^([a-z0-9]+)_", "\\U\\1_", cohort_name, perl = TRUE)) %>%
+  pull(cohort_name)
+
+top_ten <- watch_list_atc[names(watch_list_atc) %in% top_ten_drugs]
 
 top_ten_by_route <- stratifyByRouteCategory(top_ten, cdm, keepOriginal = TRUE)
 
