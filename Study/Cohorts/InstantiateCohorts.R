@@ -8,8 +8,6 @@ cdm <- generateDrugUtilisationCohortSet(
 )
 
 cdm$top_ten <- cdm$top_ten |>
-  requirePriorDrugWashout(days = 30) |>
-  requireObservationBeforeDrug(days = 30) |>
   requireDrugInDateRange(
     dateRange = studyPeriod)
 
@@ -21,8 +19,6 @@ cdm <- generateDrugUtilisationCohortSet(
 )
 
 cdm$top_ten_by_route <- cdm$top_ten_by_route |>
-  requirePriorDrugWashout(days = 30) |>
-  requireObservationBeforeDrug(days = 30) |>
   requireDrugInDateRange(
     dateRange = studyPeriod)
 
