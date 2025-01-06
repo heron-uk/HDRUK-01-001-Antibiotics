@@ -24,7 +24,7 @@ top_ten_drugs <- merge(cohortCount(cdm$watch_list), settings(cdm$watch_list), by
 
 top_ten <- watch_list_atc[names(watch_list_atc) %in% top_ten_drugs]
 
-top_ten_by_route <- stratifyByRouteCategory(top_ten, cdm, keepOriginal = TRUE)
+top_ten_by_route <- stratifyByRouteCategory(top_ten, cdm, keepOriginal = FALSE)
 
 ### Get ingredient codes
 

@@ -27,8 +27,8 @@ if (run_cdm_snapshot == TRUE) {
     "cdm_snapshot_", cdmName(cdm), ".csv"
   )))
   write.csv(obs_period, here("Results", paste0(
-    "obs_period_", cdmName(cdm), ".csv"
-  )))
+     "obs_period_", cdmName(cdm), ".csv"
+   )))
   info(logger, "SNAPSHOT COMPLETED")
 }
 
