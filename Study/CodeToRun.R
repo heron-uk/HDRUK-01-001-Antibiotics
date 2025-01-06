@@ -52,11 +52,12 @@ write_schema <- "..."
 study_prefix <- "..."
 
 # create cdm reference -----
-cdm <- CDMConnector::cdm_from_con(con = db,
-                                  cdm_schema = cdm_schema,
-                                  write_schema = c(schema = write_schema,
-                                                   prefix = study_prefix),
-                                  cdm_name = db_name)
+cdm <- CDMConnector::cdmFromCon(con = db,
+                                cdmSchema = cdm_schema,
+                                writeSchema = c(schema = write_schema,
+                                                prefix = study_prefix),
+                                cdmName = db_name,
+                                writePrefix = study_prefix)
 
 study_start <- "..."
 
