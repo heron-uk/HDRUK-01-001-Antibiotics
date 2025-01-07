@@ -1,6 +1,5 @@
 # create logger ----
 resultsFolder <- here("Results")
-results <- list()
 loggerName <- gsub(":| |-", "_", paste0("log_01_001_", Sys.time(), ".txt"))
 logger <- create.logger()
 logfile(logger) <- here(resultsFolder, loggerName)
@@ -20,15 +19,9 @@ if (run_cdm_snapshot == TRUE) {
   info(logger, "RETRIEVING SNAPSHOT")
   cli::cli_text("- GETTING CDM SNAPSHOT ({Sys.time()})")
   results[["snap"]] <- OmopSketch::summariseOmopSnapshot(cdm)
-  cli::cli_text("- GETTING OBSERVATION PERIOD ({Sys.time()})")
-  obs_period <- OmopSketch::summariseObservationPeriod(cdm$observation_period)
-  results[["obs_period"]] <- obs_period
   write.csv(OmopSketch::summariseOmopSnapshot(cdm), here("Results", paste0(
     "cdm_snapshot_", cdmName(cdm), ".csv"
   )))
-  write.csv(obs_period, here("Results", paste0(
-     "obs_period_", cdmName(cdm), ".csv"
-   )))
   info(logger, "SNAPSHOT COMPLETED")
 }
 
@@ -49,19 +42,19 @@ info(logger, "STUDY COHORTS INSTANTIATED")
 # run analyses ----
 info(logger, "RUN ANALYSES")
 source(here("Analyses", "functions.R"))
+info(logger, "RUN DRUG UTILISATION")
 source(here("Analyses", "drug_utilisation.R"))
+info(logger, "DRUG UTILISATION FINISHED")
+info(logger, "RUN CHARACTERISTICS")
 source(here("Analyses", "characteristics.R"))
+info(logger, "CHARACTERISTICS FINISHED")
+info(logger, "RUN INCIDENCE")
 source(here("Analyses", "incidence.R"))
-#source(here("Analyses", "age_standardised_incidence.R"))
+# source(here("Analyses", "age_standardised_incidence.R"))
+info(logger, "INCIDENCE FINISHED")
 info(logger, "ANALYSES FINISHED")
 
 # export results ----
-
-result <- results |>
-  vctrs::list_drop_empty() |>
-  omopgenerics::bind()
-
-OmopViewer::exportStaticApp(result, here(), open = FALSE)
 
 info(logger, "EXPORTING RESULTS")
 
