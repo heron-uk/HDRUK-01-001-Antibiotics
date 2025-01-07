@@ -340,7 +340,27 @@ if (run_incidence == TRUE) {
 
   cli::cli_alert_success("- Age standardization for incidence using world standard population completed")
 
+  inc_crude <- inc_tidy %>% 
+    filter(denominator_age_group == "0 to 150",
+           incidence_start_date != "overall" ,
+           analysis_interval == "years") %>% 
+    mutate(age_standard = "Crude") %>% 
+    select(c(
+      incidence_start_date,            
+      outcome_count,                       
+      person_years,                
+      incidence_100000_pys,
+      incidence_100000_pys_95CI_lower,
+      incidence_100000_pys_95CI_upper,
+      outcome_cohort_name,            
+      cdm_name,                  
+      denominator_sex,                   
+      denominator_age_group,
+      age_standard))
+  
+  
   agestandardized_results <- bind_rows(
+    inc_crude,
     agestandardizedinc_final_esp,
     agestandardizedinc_wsp_final
   )

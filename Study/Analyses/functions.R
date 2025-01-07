@@ -20,9 +20,8 @@ dsr <- function(data, event, fu, subgroup, ..., refdata, mp, method = "normal", 
       st_rate = sum(wts * (!!event / !!fu)),
       st_var = sum(as.numeric((wts^2) * (!!event / (!!fu)^2)))
     ) %>%
-    distinct(!!subgroup, .keep_all = TRUE)
-  # %>%
-  #   select(!!subgroup, n, d, cr_rate, cr_var, st_rate, st_var)
+    distinct(!!subgroup, .keep_all = TRUE) %>%
+    select(!!subgroup, n, d, cr_rate, cr_var, st_rate, st_var)
 
 
 
@@ -36,9 +35,8 @@ dsr <- function(data, event, fu, subgroup, ..., refdata, mp, method = "normal", 
         s_rate = mp * st_rate,
         s_lower = mp * qgamma((1 - sig) / 2, shape = st_rate^2 / st_var) / (st_rate / st_var),
         s_upper = mp * qgamma(1 - ((1 - sig) / 2), shape = 1 + (st_rate^2 / st_var)) / (st_rate / st_var)
-      )
-    # %>%
-    #   select(!!subgroup, n, d, c_rate, c_lower, c_upper, s_rate, s_lower, s_upper)
+      ) %>%
+      select(!!subgroup, n, d, c_rate, c_lower, c_upper, s_rate, s_lower, s_upper)
   } else if (method == "normal") {
     tmp1 <- all_data_st %>%
       mutate(
@@ -48,9 +46,8 @@ dsr <- function(data, event, fu, subgroup, ..., refdata, mp, method = "normal", 
         s_rate = mp * st_rate,
         s_lower = mp * (st_rate + qnorm((1 - sig) / 2) * sqrt(st_var)),
         s_upper = mp * (st_rate - qnorm((1 - sig) / 2) * sqrt(st_var))
-      )
-    # %>%
-    #   select(!!subgroup, n, d, c_rate, c_lower, c_upper, s_rate, s_lower, s_upper)
+      ) %>%
+      select(!!subgroup, n, d, c_rate, c_lower, c_upper, s_rate, s_lower, s_upper)
   } else if (method == "lognormal") {
     tmp1 <- all_data_st %>%
       mutate(
@@ -60,9 +57,8 @@ dsr <- function(data, event, fu, subgroup, ..., refdata, mp, method = "normal", 
         s_rate = mp * st_rate,
         s_lower = mp * exp((log(st_rate) + qnorm((1 - sig) / 2) * sqrt(st_var) / (st_rate))),
         s_upper = mp * exp((log(st_rate) - qnorm((1 - sig) / 2) * sqrt(st_var) / (st_rate)))
-      )
-    # %>%
-    #   select(!!subgroup, n, d, c_rate, c_lower, c_upper, s_rate, s_lower, s_upper)
+      ) %>%
+       select(!!subgroup, n, d, c_rate, c_lower, c_upper, s_rate, s_lower, s_upper)
   }
 
 
