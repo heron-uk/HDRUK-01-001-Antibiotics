@@ -27,4 +27,3 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 CodeToRunLocal.R
-Report/shiny
