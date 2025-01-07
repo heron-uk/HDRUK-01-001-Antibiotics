@@ -28,8 +28,6 @@ if (run_drug_utilisation == TRUE) {
 
   final_summary <- dplyr::bind_rows(dus_summary)
 
-  results[["initial_dose_and_duration"]] <- final_summary
-
   write.csv(
     final_summary,
     here("Results", paste0(
