@@ -160,35 +160,11 @@ if (run_incidence == TRUE) {
     mutate(
       denominator_sex = "Both",
       denominator_age_group = "0 to 150",
-      denominator_cohort_name = "denominator_cohort_12",
+      denominator_cohort_name = "denominator_cohort_23",
       cdm_name = db_name
     ) %>%
     as_tibble() %>%
-    mutate(age_standard = "European Standard Population") %>%
-    mutate(outcome_cohort_name = ifelse(age_standard == "European Standard Population", paste0(outcome_cohort_name, "_esp"), outcome_cohort_name)) %>%
-    select(
-      result_id, cdm_name, denominator_cohort_name, outcome_cohort_name, strata_name, strata_level, variable_name, variable_level, incidence_start_date,
-      incidence_end_date, denominator_count, outcome_count, person_days, person_years, incidence_100000_pys, incidence_100000_pys_95CI_lower, incidence_100000_pys_95CI_upper,
-      age_standard
-    ) %>%
-    pivot_longer(
-      cols = 11:17, # Specify columns by position or by name as a vector
-      names_to = "estimate_name", # Create a new column to hold the names
-      values_to = "estimate_value" # Create a new column to hold the values
-    ) %>%
-    mutate(estimate_type = ifelse(estimate_name == "outcome_count" | estimate_name == "denominator_count", "integer", "numeric")) %>%
-    mutate(
-      additional_name = paste("incidence_start_date", "incidence_end_date", sep = " &&& "),
-      additional_level = paste(incidence_start_date, incidence_end_date, sep = " &&& ")
-    ) %>%
-    mutate(
-      group_name = paste("denominator_cohort_name", "outcome_cohort_name", sep = " &&& "),
-      group_level = paste(denominator_cohort_name, outcome_cohort_name, sep = " &&& ")
-    ) %>%
-    select(-c(3, 4, 9, 10, age_standard)) %>%
-    mutate(estimate_value = as.character(estimate_value)) %>%
-    mutate(variable_name = ifelse(estimate_name == "denominator_count" | estimate_name == "person_days" | estimate_name == "person_years", "Denominator", "Outcome"))
-
+    mutate(age_standard = "European Standard Population") 
 
 
   agestandardizedinc_final_espf <- bind_rows(agestandardizedincf) %>%
@@ -196,70 +172,22 @@ if (run_incidence == TRUE) {
     mutate(
       denominator_sex = "Female",
       denominator_age_group = "0 to 150",
-      denominator_cohort_name = "denominator_cohort_11",
+      denominator_cohort_name = "denominator_cohort_21",
       cdm_name = db_name
     ) %>%
     as_tibble() %>%
-    mutate(age_standard = "European Standard Population") %>%
-    mutate(outcome_cohort_name = ifelse(age_standard == "European Standard Population", paste0(outcome_cohort_name, "_esp"), outcome_cohort_name)) %>%
-    select(
-      result_id, cdm_name, denominator_cohort_name, outcome_cohort_name, strata_name, strata_level, variable_name, variable_level, incidence_start_date,
-      incidence_end_date, denominator_count, outcome_count, person_days, person_years, incidence_100000_pys, incidence_100000_pys_95CI_lower, incidence_100000_pys_95CI_upper,
-      age_standard
-    ) %>%
-    pivot_longer(
-      cols = 11:17, # Specify columns by position or by name as a vector
-      names_to = "estimate_name", # Create a new column to hold the names
-      values_to = "estimate_value" # Create a new column to hold the values
-    ) %>%
-    mutate(estimate_type = ifelse(estimate_name == "outcome_count" | estimate_name == "denominator_count", "integer", "numeric")) %>%
-    mutate(
-      additional_name = paste("incidence_start_date", "incidence_end_date", sep = " &&& "),
-      additional_level = paste(incidence_start_date, incidence_end_date, sep = " &&& ")
-    ) %>%
-    mutate(
-      group_name = paste("denominator_cohort_name", "outcome_cohort_name", sep = " &&& "),
-      group_level = paste(denominator_cohort_name, outcome_cohort_name, sep = " &&& ")
-    ) %>%
-    select(-c(3, 4, 9, 10, age_standard)) %>%
-    mutate(estimate_value = as.character(estimate_value)) %>%
-    mutate(variable_name = ifelse(estimate_name == "denominator_count" | estimate_name == "person_days" | estimate_name == "person_years", "Denominator", "Outcome"))
-
+    mutate(age_standard = "European Standard Population") 
 
   agestandardizedinc_final_espm <- bind_rows(agestandardizedincm) %>%
     mutate(cdm_name = db_name) %>%
     mutate(
       denominator_sex = "Male",
       denominator_age_group = "0 to 150",
-      denominator_cohort_name = "denominator_cohort_10",
+      denominator_cohort_name = "denominator_cohort_19",
       cdm_name = db_name
     ) %>%
     as_tibble() %>%
-    mutate(age_standard = "European Standard Population") %>%
-    mutate(outcome_cohort_name = ifelse(age_standard == "European Standard Population", paste0(outcome_cohort_name, "_esp"), outcome_cohort_name)) %>%
-    select(
-      result_id, cdm_name, denominator_cohort_name, outcome_cohort_name, strata_name, strata_level, variable_name, variable_level, incidence_start_date,
-      incidence_end_date, denominator_count, outcome_count, person_days, person_years, incidence_100000_pys, incidence_100000_pys_95CI_lower, incidence_100000_pys_95CI_upper,
-      age_standard
-    ) %>%
-    pivot_longer(
-      cols = 11:17, # Specify columns by position or by name as a vector
-      names_to = "estimate_name", # Create a new column to hold the names
-      values_to = "estimate_value" # Create a new column to hold the values
-    ) %>%
-    mutate(estimate_type = ifelse(estimate_name == "outcome_count" | estimate_name == "denominator_count", "integer", "numeric")) %>%
-    mutate(
-      additional_name = paste("incidence_start_date", "incidence_end_date", sep = " &&& "),
-      additional_level = paste(incidence_start_date, incidence_end_date, sep = " &&& ")
-    ) %>%
-    mutate(
-      group_name = paste("denominator_cohort_name", "outcome_cohort_name", sep = " &&& "),
-      group_level = paste(denominator_cohort_name, outcome_cohort_name, sep = " &&& ")
-    ) %>%
-    select(-c(3, 4, 9, 10, age_standard)) %>%
-    mutate(estimate_value = as.character(estimate_value)) %>%
-    mutate(variable_name = ifelse(estimate_name == "denominator_count" | estimate_name == "person_days" | estimate_name == "person_years", "Denominator", "Outcome"))
-
+    mutate(age_standard = "European Standard Population") 
 
   agestandardizedinc_final_esp <- bind_rows(
     agestandardizedinc_final_esp,
@@ -378,109 +306,37 @@ if (run_incidence == TRUE) {
     mutate(
       denominator_sex = "Both",
       denominator_age_group = "0 to 150",
-      denominator_cohort_name = "denominator_cohort_12",
+      denominator_cohort_name = "denominator_cohort_23",
       cdm_name = db_name
     ) %>%
     as_tibble() %>%
-    mutate(age_standard = "World Standard Population") %>%
-    mutate(outcome_cohort_name = ifelse(age_standard == "World Standard Population", paste0(outcome_cohort_name, "_wsp"), outcome_cohort_name)) %>%
-    select(
-      result_id, cdm_name, denominator_cohort_name, outcome_cohort_name, strata_name, strata_level, variable_name, variable_level, incidence_start_date,
-      incidence_end_date, denominator_count, outcome_count, person_days, person_years, incidence_100000_pys, incidence_100000_pys_95CI_lower, incidence_100000_pys_95CI_upper,
-      age_standard
-    ) %>%
-    pivot_longer(
-      cols = 11:17, # Specify columns by position or by name as a vector
-      names_to = "estimate_name", # Create a new column to hold the names
-      values_to = "estimate_value" # Create a new column to hold the values
-    ) %>%
-    mutate(estimate_type = ifelse(estimate_name == "outcome_count" | estimate_name == "denominator_count", "integer", "numeric")) %>%
-    mutate(
-      additional_name = paste("incidence_start_date", "incidence_end_date", sep = " &&& "),
-      additional_level = paste(incidence_start_date, incidence_end_date, sep = " &&& ")
-    ) %>%
-    mutate(
-      group_name = paste("denominator_cohort_name", "outcome_cohort_name", sep = " &&& "),
-      group_level = paste(denominator_cohort_name, outcome_cohort_name, sep = " &&& ")
-    ) %>%
-    select(-c(3, 4, 9, 10, age_standard)) %>%
-    mutate(estimate_value = as.character(estimate_value)) %>%
-    mutate(variable_name = ifelse(estimate_name == "denominator_count" | estimate_name == "person_days" | estimate_name == "person_years", "Denominator", "Outcome"))
-
+    mutate(age_standard = "World Standard Population") 
 
   agestandardizedinc_wsp_finalf <- bind_rows(agestandardizedinc_wspf) %>%
     mutate(
       denominator_sex = "Female",
       denominator_age_group = "0 to 150",
-      denominator_cohort_name = "denominator_cohort_11",
+      denominator_cohort_name = "denominator_cohort_21",
       cdm_name = db_name
     ) %>%
     as_tibble() %>%
-    mutate(age_standard = "World Standard Population") %>%
-    mutate(outcome_cohort_name = ifelse(age_standard == "World Standard Population", paste0(outcome_cohort_name, "_wsp"), outcome_cohort_name)) %>%
-    select(
-      result_id, cdm_name, denominator_cohort_name, outcome_cohort_name, strata_name, strata_level, variable_name, variable_level, incidence_start_date,
-      incidence_end_date, denominator_count, outcome_count, person_days, person_years, incidence_100000_pys, incidence_100000_pys_95CI_lower, incidence_100000_pys_95CI_upper,
-      age_standard
-    ) %>%
-    pivot_longer(
-      cols = 11:17, # Specify columns by position or by name as a vector
-      names_to = "estimate_name", # Create a new column to hold the names
-      values_to = "estimate_value" # Create a new column to hold the values
-    ) %>%
-    mutate(estimate_type = ifelse(estimate_name == "outcome_count" | estimate_name == "denominator_count", "integer", "numeric")) %>%
-    mutate(
-      additional_name = paste("incidence_start_date", "incidence_end_date", sep = " &&& "),
-      additional_level = paste(incidence_start_date, incidence_end_date, sep = " &&& ")
-    ) %>%
-    mutate(
-      group_name = paste("denominator_cohort_name", "outcome_cohort_name", sep = " &&& "),
-      group_level = paste(denominator_cohort_name, outcome_cohort_name, sep = " &&& ")
-    ) %>%
-    select(-c(3, 4, 9, 10, age_standard)) %>%
-    mutate(estimate_value = as.character(estimate_value)) %>%
-    mutate(variable_name = ifelse(estimate_name == "denominator_count" | estimate_name == "person_days" | estimate_name == "person_years", "Denominator", "Outcome"))
-
+    mutate(age_standard = "World Standard Population") 
 
   agestandardizedinc_wsp_finalm <- bind_rows(agestandardizedinc_wspm) %>%
     mutate(
       denominator_sex = "Male",
       denominator_age_group = "0 to 150",
-      denominator_cohort_name = "denominator_cohort_10",
+      denominator_cohort_name = "denominator_cohort_19",
       cdm_name = db_name
     ) %>%
     as_tibble() %>%
-    mutate(age_standard = "World Standard Population") %>%
-    mutate(outcome_cohort_name = ifelse(age_standard == "World Standard Population", paste0(outcome_cohort_name, "_wsp"), outcome_cohort_name)) %>%
-    select(
-      result_id, cdm_name, denominator_cohort_name, outcome_cohort_name, strata_name, strata_level, variable_name, variable_level, incidence_start_date,
-      incidence_end_date, denominator_count, outcome_count, person_days, person_years, incidence_100000_pys, incidence_100000_pys_95CI_lower, incidence_100000_pys_95CI_upper,
-      age_standard
-    ) %>%
-    pivot_longer(
-      cols = 11:17, # Specify columns by position or by name as a vector
-      names_to = "estimate_name", # Create a new column to hold the names
-      values_to = "estimate_value" # Create a new column to hold the values
-    ) %>%
-    mutate(estimate_type = ifelse(estimate_name == "outcome_count" | estimate_name == "denominator_count", "integer", "numeric")) %>%
-    mutate(
-      additional_name = paste("incidence_start_date", "incidence_end_date", sep = " &&& "),
-      additional_level = paste(incidence_start_date, incidence_end_date, sep = " &&& ")
-    ) %>%
-    mutate(
-      group_name = paste("denominator_cohort_name", "outcome_cohort_name", sep = " &&& "),
-      group_level = paste(denominator_cohort_name, outcome_cohort_name, sep = " &&& ")
-    ) %>%
-    select(-c(3, 4, 9, 10, age_standard)) %>%
-    mutate(estimate_value = as.character(estimate_value)) %>%
-    mutate(variable_name = ifelse(estimate_name == "denominator_count" | estimate_name == "person_days" | estimate_name == "person_years", "Denominator", "Outcome"))
-
+    mutate(age_standard = "World Standard Population") 
+  
   agestandardizedinc_wsp_final <- bind_rows(
     agestandardizedinc_wsp_final,
     agestandardizedinc_wsp_finalf,
     agestandardizedinc_wsp_finalm
   )
-
 
   cli::cli_alert_success("- Age standardization for incidence using world standard population completed")
 
@@ -501,30 +357,7 @@ if (run_incidence == TRUE) {
         ~ first(na.omit(.), default = NA) # Pick the first non-NA value in each column
       ),
       .groups = "drop"
-    ) %>%
-    select(
-      result_id, cdm_name, denominator_cohort_name, outcome_cohort_name, strata_name, strata_level, variable_name, variable_level, incidence_start_date,
-      incidence_end_date, denominator_count, outcome_count, person_days, person_years, incidence_100000_pys, incidence_100000_pys_95CI_lower, incidence_100000_pys_95CI_upper,
-      age_standard
-    ) %>%
-    pivot_longer(
-      cols = 11:17, # Specify columns by position or by name as a vector
-      names_to = "estimate_name", # Create a new column to hold the names
-      values_to = "estimate_value" # Create a new column to hold the values
-    ) %>%
-    mutate(estimate_type = ifelse(estimate_name == "outcome_count" | estimate_name == "denominator_count", "integer", "numeric")) %>%
-    mutate(
-      additional_name = paste("incidence_start_date", "incidence_end_date", sep = " &&& "),
-      additional_level = paste(incidence_start_date, incidence_end_date, sep = " &&& ")
-    ) %>%
-    mutate(
-      group_name = paste("denominator_cohort_name", "outcome_cohort_name", sep = " &&& "),
-      group_level = paste(denominator_cohort_name, outcome_cohort_name, sep = " &&& ")
-    ) %>%
-    select(-c(3, 4, 9, 10, age_standard)) %>%
-    mutate(estimate_value = as.character(estimate_value)) %>%
-    mutate(variable_name = ifelse(estimate_name == "denominator_count" | estimate_name == "person_days" | estimate_name == "person_years", "Denominator", "Outcome"))
-
+    ) 
 
   agestandardized_results <- bind_rows(
     inc_crude,
@@ -532,15 +365,7 @@ if (run_incidence == TRUE) {
     agestandardizedinc_wsp_final
   )
 
-  order <- as.vector(colnames(inc))
-
-  agestandardized_results <- agestandardized_results[, c(order)]
-
-  class(agestandardized_results) <- c("summarised_result", "omop_result", class(agestandardized_results))
-
   cli::cli_alert_success("- Age standardization for incidence completed")
-
-  #results[["age_standardised_incidence"]] <- agestandardized_results
 
   # Export the results -----
 
