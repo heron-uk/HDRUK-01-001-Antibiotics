@@ -74,100 +74,6 @@ server <- function(input, output, session) {
   )
 
 
-  # summarise_observation_period -----
-  ## tidy summarise_observation_period -----
-  getTidyDataSummariseObservationPeriod <- shiny::reactive({
-    res <- data |>
-      filterData("summarise_observation_period", input) |>
-      omopgenerics::addSettings() |>
-      omopgenerics::splitAll() |>
-      dplyr::select(!"result_id")
-
-    # columns to eliminate
-    colsEliminate <- colnames(res)
-    colsEliminate <- colsEliminate[!colsEliminate %in% c(
-      input$summarise_observation_period_tidy_columns, "variable_name", "variable_level",
-      "estimate_name", "estimate_type", "estimate_value"
-    )]
-
-    # pivot
-    pivot <- input$summarise_observation_period_tidy_pivot
-    if (pivot != "none") {
-      vars <- switch(pivot,
-        "estimates" = "estimate_name",
-        "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
-      )
-      res <- res |>
-        visOmopResults::pivotEstimates(pivotEstimatesBy = vars)
-    }
-
-    res |>
-      dplyr::select(!dplyr::all_of(colsEliminate))
-  })
-  output$summarise_observation_period_tidy <- DT::renderDT({
-    DT::datatable(
-      getTidyDataSummariseObservationPeriod(),
-      options = list(scrollX = TRUE),
-      rownames = FALSE
-    )
-  })
-  output$summarise_observation_period_tidy_download <- shiny::downloadHandler(
-    filename = "tidy_summarise_observation_period.csv",
-    content = function(file) {
-      getTidyDataSummariseObservationPeriod() |>
-        readr::write_csv(file = file)
-    }
-  )
-  ## output summarise_observation_period -----
-  ## output 15 -----
-  createOutput15 <- shiny::reactive({
-    result <- data |>
-      filterData("summarise_observation_period", input)
-    OmopSketch::tableObservationPeriod(
-      result
-    )
-  })
-  output$summarise_observation_period_gt_15 <- gt::render_gt({
-    createOutput15()
-  })
-  output$summarise_observation_period_gt_15_download <- shiny::downloadHandler(
-    filename = paste0("output_gt_summarise_observation_period.", input$summarise_observation_period_gt_15_download_type),
-    content = function(file) {
-      obj <- createOutput15()
-      gt::gtsave(data = obj, filename = file)
-    }
-  )
-
-  ## output 16 -----
-  createOutput16 <- shiny::reactive({
-    result <- data |>
-      filterData("summarise_observation_period", input)
-    OmopSketch::plotObservationPeriod(
-      result,
-      variableName = input$summarise_observation_period_ggplot2_16_variableName,
-      plotType = input$summarise_observation_period_ggplot2_16_plotType,
-      facet = input$summarise_observation_period_ggplot2_16_facet
-    )
-  })
-  output$summarise_observation_period_ggplot2_16 <- shiny::renderPlot({
-    createOutput16()
-  })
-  output$summarise_observation_period_ggplot2_16_download <- shiny::downloadHandler(
-    filename = paste0("output_ggplot2_summarise_observation_period.", "png"),
-    content = function(file) {
-      obj <- createOutput16()
-      ggplot2::ggsave(
-        filename = file,
-        plot = obj,
-        width = as.numeric(input$summarise_observation_period_ggplot2_16_download_width),
-        height = as.numeric(input$summarise_observation_period_ggplot2_16_download_height),
-        units = input$summarise_observation_period_ggplot2_16_download_units,
-        dpi = as.numeric(input$summarise_observation_period_ggplot2_16_download_dpi)
-      )
-    }
-  )
-
-
   # summarise_drug_utilisation -----
   ## tidy summarise_drug_utilisation -----
   getTidyDataSummariseDrugUtilisation <- shiny::reactive({
@@ -520,74 +426,6 @@ server <- function(input, output, session) {
   )
 
 
-  # summarise_large_scale_characteristics -----
-  ## tidy summarise_large_scale_characteristics -----
-  getTidyDataSummariseLargeScaleCharacteristics <- shiny::reactive({
-    res <- data |>
-      filterData("summarise_large_scale_characteristics", input) |>
-      omopgenerics::addSettings() |>
-      omopgenerics::splitAll() |>
-      dplyr::select(!"result_id")
-
-    # columns to eliminate
-    colsEliminate <- colnames(res)
-    colsEliminate <- colsEliminate[!colsEliminate %in% c(
-      input$summarise_large_scale_characteristics_tidy_columns, "variable_name", "variable_level",
-      "estimate_name", "estimate_type", "estimate_value"
-    )]
-
-    # pivot
-    pivot <- input$summarise_large_scale_characteristics_tidy_pivot
-    if (pivot != "none") {
-      vars <- switch(pivot,
-        "estimates" = "estimate_name",
-        "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
-      )
-      res <- res |>
-        visOmopResults::pivotEstimates(pivotEstimatesBy = vars)
-    }
-
-    res |>
-      dplyr::select(!dplyr::all_of(colsEliminate))
-  })
-  output$summarise_large_scale_characteristics_tidy <- DT::renderDT({
-    DT::datatable(
-      getTidyDataSummariseLargeScaleCharacteristics(),
-      options = list(scrollX = TRUE),
-      rownames = FALSE
-    )
-  })
-  output$summarise_large_scale_characteristics_tidy_download <- shiny::downloadHandler(
-    filename = "tidy_summarise_large_scale_characteristics.csv",
-    content = function(file) {
-      getTidyDataSummariseLargeScaleCharacteristics() |>
-        readr::write_csv(file = file)
-    }
-  )
-  ## output summarise_large_scale_characteristics -----
-  ## output 0 -----
-  createOutput0 <- shiny::reactive({
-    result <- data |>
-      filterData("summarise_large_scale_characteristics", input)
-    simpleTable(
-      result,
-      header = input$summarise_large_scale_characteristics_gt_0_header,
-      group = input$summarise_large_scale_characteristics_gt_0_group,
-      hide = input$summarise_large_scale_characteristics_gt_0_hide
-    )
-  })
-  output$summarise_large_scale_characteristics_gt_0 <- gt::render_gt({
-    createOutput0()
-  })
-  output$summarise_large_scale_characteristics_gt_0_download <- shiny::downloadHandler(
-    filename = paste0("output_gt_summarise_large_scale_characteristics.", input$summarise_large_scale_characteristics_gt_0_download_type),
-    content = function(file) {
-      obj <- createOutput0()
-      gt::gtsave(data = obj, filename = file)
-    }
-  )
-
-
   # incidence -----
   ## tidy incidence -----
   getTidyDataIncidence <- shiny::reactive({
@@ -749,6 +587,74 @@ server <- function(input, output, session) {
     filename = paste0("output_gt_incidence_attrition.", input$incidence_attrition_gt_22_download_type),
     content = function(file) {
       obj <- createOutput22()
+      gt::gtsave(data = obj, filename = file)
+    }
+  )
+
+
+  # summarise_large_scale_characteristics -----
+  ## tidy summarise_large_scale_characteristics -----
+  getTidyDataSummariseLargeScaleCharacteristics <- shiny::reactive({
+    res <- data |>
+      filterData("summarise_large_scale_characteristics", input) |>
+      omopgenerics::addSettings() |>
+      omopgenerics::splitAll() |>
+      dplyr::select(!"result_id")
+
+    # columns to eliminate
+    colsEliminate <- colnames(res)
+    colsEliminate <- colsEliminate[!colsEliminate %in% c(
+      input$summarise_large_scale_characteristics_tidy_columns, "variable_name", "variable_level",
+      "estimate_name", "estimate_type", "estimate_value"
+    )]
+
+    # pivot
+    pivot <- input$summarise_large_scale_characteristics_tidy_pivot
+    if (pivot != "none") {
+      vars <- switch(pivot,
+        "estimates" = "estimate_name",
+        "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
+      )
+      res <- res |>
+        visOmopResults::pivotEstimates(pivotEstimatesBy = vars)
+    }
+
+    res |>
+      dplyr::select(!dplyr::all_of(colsEliminate))
+  })
+  output$summarise_large_scale_characteristics_tidy <- DT::renderDT({
+    DT::datatable(
+      getTidyDataSummariseLargeScaleCharacteristics(),
+      options = list(scrollX = TRUE),
+      rownames = FALSE
+    )
+  })
+  output$summarise_large_scale_characteristics_tidy_download <- shiny::downloadHandler(
+    filename = "tidy_summarise_large_scale_characteristics.csv",
+    content = function(file) {
+      getTidyDataSummariseLargeScaleCharacteristics() |>
+        readr::write_csv(file = file)
+    }
+  )
+  ## output summarise_large_scale_characteristics -----
+  ## output 0 -----
+  createOutput0 <- shiny::reactive({
+    result <- data |>
+      filterData("summarise_large_scale_characteristics", input)
+    simpleTable(
+      result,
+      header = input$summarise_large_scale_characteristics_gt_0_header,
+      group = input$summarise_large_scale_characteristics_gt_0_group,
+      hide = input$summarise_large_scale_characteristics_gt_0_hide
+    )
+  })
+  output$summarise_large_scale_characteristics_gt_0 <- gt::render_gt({
+    createOutput0()
+  })
+  output$summarise_large_scale_characteristics_gt_0_download <- shiny::downloadHandler(
+    filename = paste0("output_gt_summarise_large_scale_characteristics.", input$summarise_large_scale_characteristics_gt_0_download_type),
+    content = function(file) {
+      obj <- createOutput0()
       gt::gtsave(data = obj, filename = file)
     }
   )
