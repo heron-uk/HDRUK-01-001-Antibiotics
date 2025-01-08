@@ -11,10 +11,16 @@ if (run_characterisation == TRUE) {
     ) |>
     summariseCharacteristics(
       strata = list("sex", "age_group"))
+  
+  results[["characteristics"]] <- characteristics
 
   attrition <- summariseCohortAttrition(cdm$top_ten)
+  
+  results[["cohort_attrition"]] <- attrition
 
   overlap <- summariseCohortOverlap(cdm$top_ten)
+  
+  results[["cohort_overlap"]] <- overlap
 
   write.csv(characteristics, here("Results", paste0(
     "characteristics_", cdmName(cdm), ".csv"
@@ -35,6 +41,8 @@ if (run_characterisation == TRUE) {
     eventInWindow = c("condition_occurrence"),
     window = list(c(-7, -1), c(0, 0))
   )
+  
+  results[["lsc"]] <- top_ten_lsc
 
   write.csv(
     top_ten_lsc,

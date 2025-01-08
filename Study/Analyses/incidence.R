@@ -51,6 +51,8 @@ if (run_incidence == TRUE) {
   write.csv(inc, here("Results", paste0(
     "incidence_", cdmName(cdm), ".csv"
   )))
+  
+  results[["incidence"]] <- inc
 
 
   cli::cli_alert_success("- Got crude incidence")

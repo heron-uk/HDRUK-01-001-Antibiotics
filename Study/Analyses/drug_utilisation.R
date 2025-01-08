@@ -26,7 +26,9 @@ if (run_drug_utilisation == TRUE) {
       )
   }
 
-  final_summary <- dplyr::bind_rows(dus_summary)
+ final_summary <- dplyr::bind_rows(dus_summary)
+ 
+ results[["drug_utilisation"]] <- final_summary
 
   write.csv(
     final_summary,

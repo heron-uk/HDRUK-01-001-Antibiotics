@@ -1,5 +1,6 @@
 # create logger ----
 resultsFolder <- here("Results")
+results <- list()
 loggerName <- gsub(":| |-", "_", paste0("log_01_001_", Sys.time(), ".txt"))
 logger <- create.logger()
 logfile(logger) <- here(resultsFolder, loggerName)
