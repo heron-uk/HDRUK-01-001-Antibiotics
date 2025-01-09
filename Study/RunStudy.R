@@ -77,4 +77,8 @@ zip::zip(
   root = here("Results")
 )
 
+result <- omopgenerics::bind(results)
+omopgenerics::exportSummarisedResult(result, minCellCount = 5, path = resultsFolder, fileName = paste0(
+  "result_", db_name, ".csv"))
+
 info(logger, "RESULTS EXPORTED")
