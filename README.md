@@ -4,11 +4,8 @@
 ## Overview
 
 - **Study title**: Trends in the use of commonly used antibiotics associated with antimicrobial resistance
-- **Study start date**: 
 - **Study leads**:
-- **Study end date**:
 - **ShinyApp**:
-- **Report**:
 - **Publications**:
 
 ---
