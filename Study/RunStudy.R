@@ -31,10 +31,6 @@ info(logger, "GETTING TOP TEN ANTIBIOTICS")
 source(here("Cohorts", "TopTen.R"))
 info(logger, "GOT TOP TEN ANTIBIOTICS")
 
-info(logger, "RUNNING DRUG EXPOSURE DIAGNOSTICS")
-source(here("Analyses", "drug_exposure_diagnostics.R"))
-info(logger, "GOT DRUG EXPOSURE DIAGNOSTICS")
-
 # instantiate necessary cohorts ----
 info(logger, "INSTANTIATING STUDY COHORTS")
 source(here("Cohorts", "InstantiateCohorts.R"))
