@@ -39,7 +39,8 @@ db <- dbConnect("...",
                 port = "...",
                 host = "...", 
                 user = "...", 
-                password = "...")
+                password = "...",
+                bigint = c("numeric"))
 
 cdm_schema <- "..."
 write_schema <- "..."
@@ -63,9 +64,12 @@ study_start <- "..."
 
 run_cdm_snapshot <- TRUE
 run_drug_exposure_diagnostics <- TRUE
-run_drug_utilisation <- TRUE
-run_incidence <- TRUE
-run_characterisation <- TRUE
+run_instantiate_cohorts <- FALSE
+run_drug_utilisation <- FALSE
+run_incidence <- FALSE
+run_characterisation <- FALSE
+run_indications <- FALSE
+export_results <- FALSE
 
 # Run the study
 source(here("RunStudy.R"))

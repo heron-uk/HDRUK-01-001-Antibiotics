@@ -27,7 +27,6 @@ top_ten <- watch_list_atc[names(watch_list_atc) %in% top_ten_drugs]
 top_ten_by_route <- stratifyByRouteCategory(top_ten, cdm, keepOriginal = FALSE)
 
 ### Get ingredient codes
-
 top_ten_codes <- do.call(rbind, lapply(names(top_ten), function(drug) {
   data.frame(
     name = drug,
@@ -41,10 +40,11 @@ drug_ingredient_codes <- cdm$concept %>%
   filter(concept_class_id == "Ingredient") %>%
   filter(standard_concept == "S") %>%
   select(c("concept_id", "concept_name")) %>%
+  rename(
+    drug_name = concept_name) %>%
   collect()
 
 top_ten_ingredients <- top_ten_codes %>%
   filter(concept_id %in% drug_ingredient_codes$concept_id)
-  
 
 

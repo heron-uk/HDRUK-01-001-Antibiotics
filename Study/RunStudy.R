@@ -31,7 +31,13 @@ info(logger, "GETTING TOP TEN ANTIBIOTICS")
 source(here("Cohorts", "TopTen.R"))
 info(logger, "GOT TOP TEN ANTIBIOTICS")
 
+info(logger, "RUNNING DRUG EXPOSURE DIAGNOSTICS")
+source(here("Analyses", "drug_exposure_diagnostics.R"))
+info(logger, "GOT DRUG EXPOSURE DIAGNOSTICS")
+
 # instantiate necessary cohorts ----
+
+if(run_instantiate_cohorts == TRUE){
 info(logger, "INSTANTIATING STUDY COHORTS")
 source(here("Cohorts", "InstantiateCohorts.R"))
 info(logger, "STUDY COHORTS INSTANTIATED")
@@ -52,8 +58,11 @@ info(logger, "RUN INCIDENCE")
 source(here("Analyses", "incidence.R"))
 source(here("Analyses", "age_standardised_incidence.R"))
 info(logger, "ANALYSES FINISHED")
+}
 
 # export results ----
+
+if(export_results == TRUE){
 
 info(logger, "EXPORTING RESULTS")
 
@@ -80,3 +89,4 @@ omopgenerics::exportSummarisedResult(result, minCellCount = 5, path = resultsFol
   "result_", db_name, ".csv"))
 
 info(logger, "RESULTS EXPORTED")
+}
