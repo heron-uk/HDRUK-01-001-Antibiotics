@@ -11,6 +11,8 @@ cdm$top_ten <- cdm$top_ten |>
   requireDrugInDateRange(
     dateRange = studyPeriod)
 
+top_ten_by_route <- stratifyByRouteCategory(top_ten, cdm, keepOriginal = FALSE)
+
 cdm <- generateDrugUtilisationCohortSet(
   cdm = cdm,
   name = "top_ten_by_route",

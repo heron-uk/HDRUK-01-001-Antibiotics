@@ -37,7 +37,7 @@ info(logger, "GOT DRUG EXPOSURE DIAGNOSTICS")
 
 # instantiate necessary cohorts ----
 
-if(run_instantiate_cohorts == TRUE){
+if(run_main_study == TRUE){
 info(logger, "INSTANTIATING STUDY COHORTS")
 source(here("Cohorts", "InstantiateCohorts.R"))
 info(logger, "STUDY COHORTS INSTANTIATED")
@@ -58,11 +58,8 @@ info(logger, "RUN INCIDENCE")
 source(here("Analyses", "incidence.R"))
 source(here("Analyses", "age_standardised_incidence.R"))
 info(logger, "ANALYSES FINISHED")
-}
 
 # export results ----
-
-if(export_results == TRUE){
 
 info(logger, "EXPORTING RESULTS")
 

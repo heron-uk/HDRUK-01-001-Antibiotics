@@ -10,14 +10,12 @@ if (run_drug_exposure_diagnostics == TRUE) {
       "sourceConcept",
       "route",
       "dose",
-      "quantity"
+      "quantity",
+      "type"
     ),
-    earliestStartDate = "2012-01-01"
-  )
-  
-  writeResultToDisk(drug_diagnostics,
-                    databaseId = paste0("DED_",db_name),
-                    outputFolder = here("Results")
+    earliestStartDate = study_start,
+    outputFolder = here("Results"),
+    filename = paste0("DED_Results_", db_name)
   )
   
   cli::cli_alert_success("- Finished drug exposure diagnostics")
