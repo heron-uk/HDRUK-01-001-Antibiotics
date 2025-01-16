@@ -1,14 +1,25 @@
-# Load the concept codes for each antibiotic.
-concept_codes <- read.csv(here("Cohorts", "concept_codes.csv"))[,2:3]
+atc_codes <- readxl::read_excel("Cohorts/WHO-MHP-HPS-EML-2023.04-eng.xlsx",
+                                sheet = "Watch", skip = 3) %>%
+  pull(`ATC code`) %>%
+  paste(collapse = "|")
 
-concept_codes$concept_id <- lapply(concept_codes$concept_id, function(x) {
-  as.numeric(unlist(strsplit(x, ",\\s*")))
-})
+#
 
-concept_list <- setNames(concept_codes$concept_id, concept_codes$name)
+atc_code_list <- getATCCodes(cdm = cdm,
+                             level = c("ATC 5th"),
+                             type = "codelist")
+
+# Create codelists based on ingredients for antibiotics without ATC codes.
+
+ingredient_code_list <- getDrugIngredientCodes(cdm = cdm,
+                                               name = c("cefoselis", "micronomicin"))
+
+# Filter the list using the combined pattern
+watch_list_atc <- atc_code_list[grepl(atc_codes, names(atc_code_list))]
+watch_list_codes <- c(watch_list_atc, ingredient_code_list)
 
 # Create a cohort for each antibiotic.
-cdm$watch_list <- conceptCohort(cdm = cdm, conceptSet = concept_list, name = "watch_list") |>
+cdm$watch_list <- conceptCohort(cdm = cdm, conceptSet = watch_list_codes, name = "watch_list") |>
   requireInDateRange(
     indexDate = "cohort_start_date",
     dateRange = c(as.Date(study_start), as.Date(maxObsEnd)) 
