@@ -33,7 +33,8 @@ top_ten_drugs <- merge(cohortCount(cdm$watch_list), settings(cdm$watch_list), by
   mutate(cohort_name = sub("^([a-z0-9]+)_", "\\U\\1_", cohort_name, perl = TRUE)) %>%
   pull(cohort_name)
 
-top_ten <- concept_list[names(concept_list) %in% top_ten_drugs]
+top_ten <- watch_list_codes[names(watch_list_codes) %in% top_ten_drugs]
+
 
 ### Get ingredient codes
 top_ten_codes <- do.call(rbind, lapply(names(top_ten), function(drug) {
