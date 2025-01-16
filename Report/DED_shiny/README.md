@@ -4,11 +4,10 @@ A shiny application to view the results of the [DrugExposureDiagnostics](https:/
 
 ### Requirements
 
-* a directory containing the diagnostics result from the DrugExposureDiagnostics package
-* make sure the DATA_DIRECTORY variable in global.R points to your data directory.
-The results from each database should be in a zip file in this directory.
-Th mock data is from diagnostics about "acetaminophen".
-* an environment with R, Rstudio and packages installed.
+* A directory containing the diagnostics result from the DrugExposureDiagnostics package
+* Make sure the DATA_DIRECTORY variable in global.R points to your data directory.
+* The results from each database should be in a zip file in this directory.
+* An environment with R, Rstudio and packages installed.
 
 ### Run
 
