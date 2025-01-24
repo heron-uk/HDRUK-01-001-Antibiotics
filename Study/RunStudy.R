@@ -37,7 +37,6 @@ info(logger, "GOT DRUG EXPOSURE DIAGNOSTICS")
 
 # instantiate necessary cohorts ----
 
-if(run_main_study == TRUE){
 info(logger, "INSTANTIATING STUDY COHORTS")
 source(here("Cohorts", "InstantiateCohorts.R"))
 info(logger, "STUDY COHORTS INSTANTIATED")
@@ -48,9 +47,6 @@ source(here("Analyses", "functions.R"))
 info(logger, "RUN DRUG UTILISATION")
 source(here("Analyses", "drug_utilisation.R"))
 info(logger, "DRUG UTILISATION FINISHED")
-info(logger, "RUN INDICATIONS")
-source(here("Analyses", "indications.R"))
-info(logger, "INDICATIONS FINISHED")
 info(logger, "RUN CHARACTERISTICS")
 source(here("Analyses", "characteristics.R"))
 info(logger, "CHARACTERISTICS FINISHED")
@@ -86,4 +82,3 @@ omopgenerics::exportSummarisedResult(result, minCellCount = 5, path = resultsFol
   "result_", db_name, ".csv"))
 
 info(logger, "RESULTS EXPORTED")
-}

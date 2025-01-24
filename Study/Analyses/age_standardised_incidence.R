@@ -370,7 +370,7 @@ if (run_incidence == TRUE) {
   # Export the results -----
 
   cli::cli_alert_info("- Getting age standardized incidence results")
-  write.csv(agestandardized_results, here::here("Results", "Standardised Incidence", paste0("incidence_estimates_age_std_", db_name, ".csv")), row.names = FALSE)
+  write.csv(agestandardized_results, here::here("Results", paste0("incidence_estimates_age_std_", db_name, ".csv")), row.names = FALSE)
 
   cli::cli_alert_success("Incidence Analysis Complete")
 }
