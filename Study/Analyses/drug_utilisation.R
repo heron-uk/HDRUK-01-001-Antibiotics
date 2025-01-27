@@ -3,17 +3,14 @@ if (run_drug_utilisation == TRUE) {
 
   dus_summary <- list()
 
-  ingredient_codes <- top_ten_ingredients %>%
-    pull(concept_id)
-
-  for (i in seq_along(ingredient_codes)) {
+  for (i in seq_along(ingredient_codes$cohort_name)) {
 
     dus_summary[[i]] <- cdm$top_ten |>
       summariseDrugUtilisation(
-        cohortId = i,
+        cohortId = ingredient_codes$cohort_definition_id[i],
         indexDate = "cohort_start_date",
         censorDate = "cohort_end_date",
-        ingredientConceptId = ingredient_codes[i],
+        ingredientConceptId = ingredient_codes$concept_id[i],
         gapEra = 7,
         numberExposures = TRUE,
         numberEras = FALSE,
@@ -29,13 +26,12 @@ if (run_drug_utilisation == TRUE) {
  final_summary <- dplyr::bind_rows(dus_summary)
  
  results[["drug_utilisation"]] <- final_summary
-
-  write.csv(
-    final_summary,
-    here("Results", paste0(
+ 
+ omopgenerics::exportSummarisedResult(final_summary,
+                        minCellCount = min_cell_count,
+                        fileName = here("Results", paste0(
       "dus_summary_", cdmName(cdm), ".csv"
-    ))
-  )
+    )))
 
   cli::cli_alert_success("- Got initial dose and duration")
 }

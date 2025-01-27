@@ -15,7 +15,8 @@ if (run_drug_exposure_diagnostics == TRUE) {
     ),
     earliestStartDate = study_start,
     outputFolder = here("Results"),
-    filename = paste0("DED_Results_", db_name)
+    filename = paste0("DED_Results_", db_name),
+    minCellCount = min_cell_count
   )
   
   cli::cli_alert_success("- Finished drug exposure diagnostics")

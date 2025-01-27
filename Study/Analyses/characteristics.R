@@ -21,16 +21,22 @@ if (run_characterisation == TRUE) {
   overlap <- summariseCohortOverlap(cdm$top_ten)
   
   results[["cohort_overlap"]] <- overlap
-
-  write.csv(characteristics, here("Results", paste0(
+  
+  omopgenerics::exportSummarisedResult(characteristics,
+                         minCellCount = min_cell_count,
+                         fileName = here("Results", paste0(
     "characteristics_", cdmName(cdm), ".csv"
   )))
-
-  write.csv(attrition, here("Results", paste0(
+  
+  omopgenerics::exportSummarisedResult(attrition,
+                         minCellCount = min_cell_count,
+                         fileName = here("Results", paste0(
     "attrition_", cdmName(cdm), ".csv"
   )))
-
-  write.csv(overlap, here("Results", paste0(
+  
+  omopgenerics::exportSummarisedResult(overlap,
+                         minCellCount = min_cell_count,
+                         fileName = here("Results", paste0(
     "overlap_", cdmName(cdm), ".csv"
   )))
 
@@ -43,13 +49,12 @@ if (run_characterisation == TRUE) {
   )
   
   results[["lsc"]] <- top_ten_lsc
-
-  write.csv(
-    top_ten_lsc,
-    here("Results", paste0(
+  
+  omopgenerics::exportSummarisedResult(top_ten_lsc,
+                         minCellCount = min_cell_count,
+                         fileName = here("Results", paste0(
       "lsc_summary_", cdmName(cdm), ".csv"
-    ))
-  )
+    )))
 
   cli::cli_alert_success("- Got large scale characteristics")
 }

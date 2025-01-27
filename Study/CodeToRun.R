@@ -65,14 +65,16 @@ cdm <- CDMConnector::cdmFromCon(con = db,
 # Please put the study start date as "2012-01-01 if you have usable data from 2012 onwards.
 # If you do not have data from 2012 onwards please put the earliest date possible for your data.
 # For example if you only have usable data from 2015 you would put 2015-01-01.
-
 study_start <- "2012-01-01"
 
-# Run the study ------
-# For now please leave only run_drug_exposure_diagnostics <- TRUE, and keep the
-# rest as FALSE. 
+# Minimum cell count
+# This is the minimum counts that can be displayed according to data governance.
+min_cell_count <- "..."
 
-run_cdm_snapshot <- FALSE
+# Run the study ------
+# For now please leave only run_cdm_snapshot and run_drug_exposure_diagnostics as TRUE, and keep 
+# run_main_study as FALSE. 
+run_cdm_snapshot <- TRUE
 run_drug_exposure_diagnostics <- TRUE
 run_main_study <- FALSE
 
