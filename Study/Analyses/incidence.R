@@ -47,8 +47,10 @@ if (run_incidence == TRUE) {
     )
   
   inc_tidy <- bind_cols(inc_tidy, inc_tidy1)
-
-  write.csv(inc, here("Results", paste0(
+  
+  omopgenerics::exportSummarisedResult(inc,
+                         minCellCount = min_cell_count,
+                         fileName = here("Results", paste0(
     "incidence_", cdmName(cdm), ".csv"
   )))
   

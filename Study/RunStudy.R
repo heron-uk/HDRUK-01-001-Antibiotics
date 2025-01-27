@@ -20,9 +20,12 @@ if (run_cdm_snapshot == TRUE) {
   info(logger, "RETRIEVING SNAPSHOT")
   cli::cli_text("- GETTING CDM SNAPSHOT ({Sys.time()})")
   results[["snap"]] <- OmopSketch::summariseOmopSnapshot(cdm)
-  write.csv(OmopSketch::summariseOmopSnapshot(cdm), here("Results", paste0(
-    "cdm_snapshot_", cdmName(cdm), ".csv"
-  )))
+  omopgenerics::exportSummarisedResult(OmopSketch::summariseOmopSnapshot(cdm),
+                         minCellCount = min_cell_count,
+                         fileName = here("Results", paste0(
+                           "cdm_snapshot_", cdmName(cdm), ".csv"
+                         ))
+                         )
   info(logger, "SNAPSHOT COMPLETED")
 }
 
@@ -31,9 +34,11 @@ info(logger, "GETTING TOP TEN ANTIBIOTICS")
 source(here("Cohorts", "TopTen.R"))
 info(logger, "GOT TOP TEN ANTIBIOTICS")
 
+if(run_drug_exposure_diagnostics == TRUE) {
 info(logger, "RUNNING DRUG EXPOSURE DIAGNOSTICS")
 source(here("Analyses", "drug_exposure_diagnostics.R"))
 info(logger, "GOT DRUG EXPOSURE DIAGNOSTICS")
+}
 
 # instantiate necessary cohorts ----
 
@@ -75,15 +80,15 @@ files_to_zip <- files_to_zip[stringr::str_detect(
 
 zip::zip(
   zipfile = file.path(paste0(
-    here("Results"), "/Results_", db_name, ".zip"
+    here("Results"), "/Results_CSV_", db_name, ".zip"
   )),
   files = files_to_zip,
   root = here("Results")
 )
 
 result <- omopgenerics::bind(results)
-omopgenerics::exportSummarisedResult(result, minCellCount = 5, path = resultsFolder, fileName = paste0(
-  "result_", db_name, ".csv"))
+omopgenerics::exportSummarisedResult(result, minCellCount = min_cell_count, path = resultsFolder, fileName = paste0(
+  "STUDY_RESULTS_", db_name, ".csv"))
 
 info(logger, "RESULTS EXPORTED")
 }
