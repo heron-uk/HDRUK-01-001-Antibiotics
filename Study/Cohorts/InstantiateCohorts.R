@@ -31,4 +31,6 @@ route_counts <- cohortCount(cdm$top_ten_by_route) %>%
 cdm$top_ten_by_route <- cdm$top_ten_by_route |>
   subsetCohorts(cohortId = route_counts)
 
+ingredient_cohorts <- merge(settings(cdm$top_ten), top_ten_ingredients, by = "cohort_name")
+
 cli::cli_alert_success("- Created cohort set")
