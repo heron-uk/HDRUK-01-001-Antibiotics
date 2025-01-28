@@ -3,14 +3,14 @@ if (run_drug_utilisation == TRUE) {
 
   dus_summary <- list()
 
-  for (i in seq_along(ingredient_codes$cohort_name)) {
+  for (i in seq_along(ingredient_cohorts$cohort_name)) {
 
     dus_summary[[i]] <- cdm$top_ten |>
       summariseDrugUtilisation(
-        cohortId = ingredient_codes$cohort_definition_id[i],
+        cohortId = ingredient_cohorts$cohort_definition_id[i],
         indexDate = "cohort_start_date",
         censorDate = "cohort_end_date",
-        ingredientConceptId = ingredient_codes$concept_id[i],
+        ingredientConceptId = ingredient_cohorts$concept_id[i],
         gapEra = 7,
         numberExposures = TRUE,
         numberEras = FALSE,
