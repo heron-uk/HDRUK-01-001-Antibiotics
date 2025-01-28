@@ -24,19 +24,19 @@ if (run_characterisation == TRUE) {
   
   omopgenerics::exportSummarisedResult(characteristics,
                          minCellCount = min_cell_count,
-                         fileName = here("Results", paste0(
+                         fileName = here(resultsFolder, paste0(
     "characteristics_", cdmName(cdm), ".csv"
   )))
   
   omopgenerics::exportSummarisedResult(attrition,
                          minCellCount = min_cell_count,
-                         fileName = here("Results", paste0(
+                         fileName = here(resultsFolder, paste0(
     "attrition_", cdmName(cdm), ".csv"
   )))
   
   omopgenerics::exportSummarisedResult(overlap,
                          minCellCount = min_cell_count,
-                         fileName = here("Results", paste0(
+                         fileName = here(resultsFolder, paste0(
     "overlap_", cdmName(cdm), ".csv"
   )))
 
@@ -52,7 +52,7 @@ if (run_characterisation == TRUE) {
   
   omopgenerics::exportSummarisedResult(top_ten_lsc,
                          minCellCount = min_cell_count,
-                         fileName = here("Results", paste0(
+                         fileName = here(resultsFolder, paste0(
       "lsc_summary_", cdmName(cdm), ".csv"
     )))
 

@@ -29,7 +29,7 @@ if (run_drug_utilisation == TRUE) {
  
  omopgenerics::exportSummarisedResult(final_summary,
                         minCellCount = min_cell_count,
-                        fileName = here("Results", paste0(
+                        fileName = here(resultsFolder, paste0(
       "dus_summary_", cdmName(cdm), ".csv"
     )))
 
