@@ -14,7 +14,7 @@ if (run_drug_exposure_diagnostics == TRUE) {
       "type"
     ),
     earliestStartDate = study_start,
-    outputFolder = here("Results"),
+    outputFolder = resultsFolder,
     filename = paste0("DED_Results_", db_name),
     minCellCount = min_cell_count
   )

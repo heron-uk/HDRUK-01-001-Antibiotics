@@ -43,3 +43,4 @@ Results/*.csv
 Results/*txt
 Results/*zip
 CodeToRunLocal.R
+Results/

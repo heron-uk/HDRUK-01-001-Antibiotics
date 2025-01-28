@@ -1,5 +1,7 @@
 # create logger ----
-resultsFolder <- here("Results")
+resultsFolder <- here("Results", db_name)
+if (!file.exists(resultsFolder)){
+  dir.create(resultsFolder, recursive = TRUE)}
 results <- list()
 loggerName <- gsub(":| |-", "_", paste0("log_01_001_", Sys.time(), ".txt"))
 logger <- create.logger()
@@ -22,7 +24,7 @@ if (run_cdm_snapshot == TRUE) {
   results[["snap"]] <- OmopSketch::summariseOmopSnapshot(cdm)
   omopgenerics::exportSummarisedResult(OmopSketch::summariseOmopSnapshot(cdm),
                          minCellCount = min_cell_count,
-                         fileName = here("Results", paste0(
+                         fileName = here(resultsFolder, paste0(
                            "cdm_snapshot_", cdmName(cdm), ".csv"
                          ))
                          )
