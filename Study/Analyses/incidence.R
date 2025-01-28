@@ -13,6 +13,7 @@ if (run_incidence == TRUE) {
     sex = c("Male", "Female", "Both"),
     daysPriorObservation = c(0,30)
   )
+  
   cdm$denominator <- cdm$denominator %>%
     addSex()
 
@@ -50,7 +51,7 @@ if (run_incidence == TRUE) {
   
   omopgenerics::exportSummarisedResult(inc,
                          minCellCount = min_cell_count,
-                         fileName = here("Results", paste0(
+                         fileName = here(resultsFolder, paste0(
     "incidence_", cdmName(cdm), ".csv"
   )))
   

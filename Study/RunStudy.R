@@ -61,6 +61,7 @@ info(logger, "CHARACTERISTICS FINISHED")
 info(logger, "RUN INCIDENCE")
 source(here("Analyses", "incidence.R"))
 source(here("Analyses", "age_standardised_incidence.R"))
+info(logger, "INCIDENCE FINISHED")
 info(logger, "ANALYSES FINISHED")
 
 # export results ----
