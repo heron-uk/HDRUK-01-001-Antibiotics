@@ -69,7 +69,7 @@ study_start <- "2012-01-01"
 
 # Minimum cell count
 # This is the minimum counts that can be displayed according to data governance.
-min_cell_count <- "..."
+min_cell_count <- 5
 
 # Run the study ------
 # For now please leave only run_cdm_snapshot and run_drug_exposure_diagnostics as TRUE, and keep 
