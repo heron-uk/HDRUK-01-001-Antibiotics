@@ -98,4 +98,4 @@ suppressed_table <- top_ten_drugs %>%
   mutate(number_records = ifelse(number_records < min_cell_count, paste("< ", min_cell_count), number_records)) %>%
   mutate(number_subjects = ifelse(number_subjects < min_cell_count,  paste("< ", min_cell_count), number_records))
 
-write.csv(suppressed_table, here("Results", "top_ten_summary.csv"))
+write.csv(suppressed_table, here(resultsFolder, "top_ten_summary.csv"))
