@@ -30,9 +30,9 @@ ingredient_code_lists_3 <- getDrugIngredientCodes(
 )
 
 # Filter to only include the combinations that are mentioned on the Watch List.
-pip_tazo <- ingredient_code_lists_3[[1]] %>%
+pip_tazo <- ingredient_code_lists_3[["8339_piperacillin"]] %>%
   filter(grepl("tazobactam", concept_name, ignore.case = TRUE))
-imip_cila <- ingredient_code_lists_3[[2]] %>%
+imip_cila <- ingredient_code_lists_3[["5690_imipenem"]] %>%
   filter(grepl("cilastatin", concept_name, ignore.case = TRUE))
 
 routes <- getRouteCategories(cdm)
@@ -48,8 +48,10 @@ ingredient_code_lists_4 <- getDrugIngredientCodes(
 # Combine codelists.
 ingredient_code_lists <- c(ingredient_code_lists_1, ingredient_code_lists_2, ingredient_code_lists_4)
 
+# Add the concept codes for the combined antibiotics to the relevant codelists.
 ingredient_code_lists[["8339_piperacillin"]] <- c(ingredient_code_lists_4[["8339_piperacillin"]], pip_tazo$concept_id)
 ingredient_code_lists[["37617_tazobactam"]] <- c(ingredient_code_lists[["37617_tazobactam"]], pip_tazo$concept_id)
+# Create a new codelist for the imipenem/cilastatin combination. 
 ingredient_code_lists[["5690_imipenem_2540_cilastatin"]] <- c(imip_cila$concept_id)
 
 
@@ -63,6 +65,7 @@ cdm$watch_list <- conceptCohort(cdm = cdm, conceptSet = ingredient_code_lists, n
 # Get record counts for each antibiotic and filter the list to only include the 10
 # most prescribed.
 top_ten_drugs <- merge(cohortCount(cdm$watch_list), settings(cdm$watch_list), by = "cohort_definition_id") %>%
+  # Need to add rows for imipenem_2540_cilastatin since this was not included in the ingredients csv file.
   bind_rows(
     # Add a row for "imipenem"
     merge(cohortCount(cdm$watch_list), settings(cdm$watch_list), by = "cohort_definition_id") %>%
@@ -76,13 +79,23 @@ top_ten_drugs <- merge(cohortCount(cdm$watch_list), settings(cdm$watch_list), by
       mutate(ingredient_name = str_extract(cohort_name, "(?<=_).*")) %>%
       filter(ingredient_name == "imipenem_2540_cilastatin") %>%
       mutate(ingredient_name = "cilastatin")) %>%
+  # Arrange the table in descending order based on the number of records and then filter to only include
+  # the 10 most prescribed antibiotics.
   arrange(desc(number_records)) %>%
   slice_head(n = 10) %>%
   mutate(ingredient_name = str_extract(cohort_name, "(?<=_).*"))
 
+# Filter the codelists to only include the top ten.
 top_ten <- ingredient_code_lists[names(ingredient_code_lists) %in% top_ten_drugs$cohort_name]
 
 top_ten_ingredients <- merge(ingredients, top_ten_drugs, by = "ingredient_name") %>%
   mutate(cohort_name = cohort_name.y) %>%
   select(c(cohort_name, ingredient_name, concept_id)) %>%
   distinct()
+
+# Export a suppressed summary table with the counts for top ten antibiotics.
+suppressed_table <- top_ten_drugs %>%
+  mutate(number_records = ifelse(number_records < min_cell_count, paste("< ", min_cell_count), number_records)) %>%
+  mutate(number_subjects = ifelse(number_subjects < min_cell_count,  paste("< ", min_cell_count), number_records))
+
+write.csv(suppressed_table, here("Results", "top_ten_summary.csv"))
