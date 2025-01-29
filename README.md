@@ -32,7 +32,7 @@
 
     -   Open the `CodeToRun.R` file. This is the main script you’ll use.
     -   Follow the instructions within the file to add your database-specific information.
-    -   Run the code as directed. This will generate a `Results` folder containing the outputs, including a ZIP file with the results for sharing.
+    -   Run the code as directed. This will generate a `Results` folder containing the outputs, including a ZIP file with the results for sharing. The name of the zip file will be of the format `DED_Results_database_name.zip`. 
 
 4.  **OPTIONAL: Visualize Results in Shiny**
 
