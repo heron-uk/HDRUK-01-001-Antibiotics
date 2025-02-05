@@ -32,9 +32,13 @@ if (run_cdm_snapshot == TRUE) {
 }
 
 #get top ten antibiotics
-info(logger, "GETTING TOP TEN ANTIBIOTICS")
-source(here("Cohorts", "TopTen.R"))
-info(logger, "GOT TOP TEN ANTIBIOTICS")
+info(logger, "GETTING TOP TEN INGREDIENTS")
+source(here("Cohorts", "TopTenIngredients.R"))
+info(logger, "GOT TOP TEN INGREDIENTS")
+
+info(logger, "GETTING TOP TEN WATCH LIST ANTIBIOTICS")
+source(here("Cohorts", "TopTenWatchList.R"))
+info(logger, "GOT TOP TEN WATCH LIST ANTIBIOTICS")
 
 if(run_drug_exposure_diagnostics == TRUE) {
 info(logger, "RUNNING DRUG EXPOSURE DIAGNOSTICS")
