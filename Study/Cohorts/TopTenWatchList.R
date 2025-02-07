@@ -1,4 +1,5 @@
 if(isTRUE(run_watch_list)) {
+  cli::cli_text("- GETTING TOP TEN WATCH LIST ANTIBIOTICS ({Sys.time()})")
 # Load csv file with ingredient information.  
 ingredients <- read.csv(here("Cohorts", "ingredients.csv")) %>%
   select(-X)
