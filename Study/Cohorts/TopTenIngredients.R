@@ -1,3 +1,5 @@
+cli::cli_text("- GETTING TOP TEN INGREDIENTS ({Sys.time()})")
+
 ingredients <- read.csv(here("Cohorts", "ingredients.csv")) %>%
   select(-X)
 
@@ -11,15 +13,19 @@ ingredient_codes <- ingredients %>%
 # Create codelist with just ingredient codes.
 ing_list <- setNames(as.list(ingredient_codes$concept_id), ingredient_codes$ingredient_name)
 
-# Only include antibiotic ingredients that are present in the cdm.
-ing_av <- ing_list[names(ing_list) %in% tolower(availableIngredients(cdm))]
+ing_av <- tibble(
+  name = availableIngredients(cdm)) %>%
+  mutate(ingredient_name = tolower(name))
 
-cli::cli_alert(paste0("Ingredient level code for ", length(ing_av), " ingredients found"))
+# Only include antibiotic ingredients that are present in the cdm.
+ing_av <- merge(ingredient_codes, ing_av, by = "ingredient_name")
+
+cli::cli_alert(paste0("Ingredient level code for ",nrow(ing_av), " ingredients found"))
 
 # Create a codelist for the antibiotics that are a combiantion of one or more ingredients.    
 ingredient_desc <- getDrugIngredientCodes(
   cdm = cdm,
-  name = names(ing_list),
+  name = ing_av$name,
   type = "codelist",
   nameStyle = "{concept_name}"
 )
@@ -28,8 +34,8 @@ cli::cli_alert(paste0("Descendent codes found for ",length(ingredient_desc), " i
 
 # Merge ingredient and descendent codelists, ensuring that concept ids are not repeated.
 ing_all <- list()
-for(i in names(ing_av)){
-    ing_all[[i]] <- c(ingredient_desc[[i]],ing_av[[i]])
+for(i in ing_av$ingredient_name){
+    ing_all[[i]] <- c(ingredient_desc[[i]],ing_list[[i]])
     ing_all[[i]] <- unique(ing_all[[i]])
 }
 
