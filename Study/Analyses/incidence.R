@@ -13,14 +13,11 @@ if (run_incidence == TRUE) {
     sex = c("Male", "Female", "Both"),
     daysPriorObservation = c(0,30)
   )
-  
-  cdm$denominator <- cdm$denominator %>%
-    addSex()
 
   inc <- estimateIncidence(
     cdm = cdm,
     denominatorTable = "denominator",
-    outcomeTable = "top_ten_by_route",
+    outcomeTable = "top_ten",
     interval = c("quarters", "years"),
     repeatedEvents = TRUE,
     outcomeWashout = 30,
