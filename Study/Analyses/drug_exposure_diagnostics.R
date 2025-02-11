@@ -1,9 +1,11 @@
 if (run_drug_exposure_diagnostics == TRUE) {
   
-  top_ingredients <- read.csv(here("Results", db_name, paste0("top_ten_ingredients_", db_name, ".csv")))[,-1]
+  top_ingredients <- read.csv(here("Results", db_name, paste0("top_ten_ingredients_", db_name, ".csv")))[,-1] %>%
+    select(-cohort_definition_id)
   
   if(isTRUE(run_watch_list)) {
-  top_watch_list <- read.csv(here("Results", db_name, paste0("top_ten_watch_list_", db_name, ".csv")))[,-1]
+  top_watch_list <- read.csv(here("Results", db_name, paste0("top_ten_watch_list_", db_name, ".csv")))[,-1] %>%
+    select(-cohort_definition_id)
   
   ded_names <- rbind(top_ingredients, top_watch_list) %>%
     select(ingredient_name,concept_id) %>%
