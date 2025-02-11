@@ -159,7 +159,7 @@ top_ten_drugs <- merge(cohortCount(cdm$watch_list), settings(cdm$watch_list), by
   mutate(ingredient_name = cohort_name)
 
 # Filter the codelists to only include the top ten.
-top_ten <- ing_desc[names(ing_desc) %in% top_ten_drugs$cohort_name]
+top_ten_watch_list <- ing_desc[names(ing_desc) %in% top_ten_drugs$cohort_name]
 
 top_ten_drugs <- merge(top_ten_drugs, ingredients, by = c("ingredient_name")) %>%
   select(c(ingredient_name, cohort_definition_id, number_records, number_subjects, cdm_version,vocabulary_version,concept_id)) %>%

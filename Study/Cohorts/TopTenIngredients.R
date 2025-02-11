@@ -55,6 +55,8 @@ if(length(ing_all) > 0){
     slice_head(n = 10) %>%
     rename(ingredient_name = cohort_name)
   
+  top_ten_ingredients <- ing_all[names(ing_all) %in% all_concepts_counts$ingredient_name]
+  
   if(nrow(all_concepts_counts) > 0){
     suppressed_table <- merge(all_concepts_counts, ingredient_codes, by = "ingredient_name") %>%
       mutate(number_records = ifelse(number_records < min_cell_count, paste("< ", min_cell_count), number_records)) %>%
