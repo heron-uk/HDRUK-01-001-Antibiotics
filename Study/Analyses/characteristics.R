@@ -1,7 +1,7 @@
 if (run_characterisation == TRUE) {
   cli::cli_alert_info("- Getting characteristics")
   
-  characteristics <- cdm$top_ten_by_route |>
+  characteristics <- cdm$top_ten |>
     addSex() |>
     addAge(
       ageGroup = list(c(0, 4),c(5, 9), c(10, 14), c(15,19),
@@ -43,9 +43,9 @@ if (run_characterisation == TRUE) {
 
   cli::cli_alert_info("- Getting large scale characteristics")
 
-  top_ten_lsc <- CohortCharacteristics::summariseLargeScaleCharacteristics(cdm$top_ten_by_route,
+  top_ten_lsc <- CohortCharacteristics::summariseLargeScaleCharacteristics(cdm$top_ten,
     eventInWindow = c("condition_occurrence"),
-    window = list(c(-7, -1), c(0, 0))
+    window = list(c(-7, 0), c(0, 0))
   )
   
   results[["lsc"]] <- top_ten_lsc
