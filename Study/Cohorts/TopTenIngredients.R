@@ -7,7 +7,7 @@ ingredients <- read.csv(here("Cohorts", "ingredients.csv")) %>%
 # ingredient name changed to all lower case for consistency
 ingredient_codes <- ingredients %>%
   select(ingredient_name, concept_id) %>%
-  mutate(ingredient_name = tolower(ingredient_name)) %>%
+  mutate(ingredient_name = stringr::str_to_lower(ingredient_name)) %>%
   distinct()
   
 # Create codelist with just ingredient codes.
@@ -15,7 +15,7 @@ ing_list <- setNames(as.list(ingredient_codes$concept_id), ingredient_codes$ingr
 
 ing_av <- tibble(
   name = availableIngredients(cdm)) %>%
-  mutate(ingredient_name = tolower(name))
+  mutate(ingredient_name = stringr::str_to_lower(name))
 
 # Only include antibiotic ingredients that are present in the cdm.
 ing_av <- merge(ingredient_codes, ing_av, by = "ingredient_name")
