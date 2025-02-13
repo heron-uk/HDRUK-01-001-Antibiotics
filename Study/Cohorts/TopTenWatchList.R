@@ -6,7 +6,7 @@ if(isTRUE(run_watch_list)) {
 if("fosfomycin" %in%  ing_av$ingredient_name | "minocycline" %in%  ing_av$ingredient_name){
   desc_code_lists_1 <- getDrugIngredientCodes(
     cdm = cdm,
-    name = ing_av$name[ing_av$ingredient_name %in% c("fosfomycin", "minocycline")],
+    name = unique(ing_av$name[ing_av$ingredient_name %in% c("fosfomycin", "minocycline")]),
     ingredientRange = c(1,1),
     routeCategory = c("oral"),
     nameStyle = "{concept_name}"
@@ -21,7 +21,7 @@ if("fosfomycin" %in%  ing_av$ingredient_name | "minocycline" %in%  ing_av$ingred
 if("kanamycin" %in% ing_av$ingredient_name | "rifamycin SV" %in% ing_av$ingredient_name | "streptomycin" %in% ing_av$ingredient_name | "vancomycin" %in% ing_av$ingredient_name){
   desc_code_lists_2 <- getDrugIngredientCodes(
   cdm = cdm,
-  name = ing_av$name[ing_av$ingredient_name %in% c("kanamycin", "rifamycin SV", "streptomycin", "vancomycin")],
+  name = unique(ing_av$name[ing_av$ingredient_name %in% c("kanamycin", "rifamycin SV", "streptomycin", "vancomycin")]),
   ingredientRange = c(1,1),
   routeCategory = c("oral", "injectable"),
   nameStyle = "{concept_name}"
@@ -36,7 +36,7 @@ if("kanamycin" %in% ing_av$ingredient_name | "rifamycin SV" %in% ing_av$ingredie
 if("piperacillin" %in% ing_av$ingredient_name | "imipenem" %in% ing_av$ingredient_name){
   desc_code_lists_3 <- getDrugIngredientCodes(
   cdm = cdm,
-  name =  ing_av$name[ing_av$ingredient_name %in% c("piperacillin", "imipenem")],
+  name =  unique(ing_av$name[ing_av$ingredient_name %in% c("piperacillin", "imipenem")]),
   ingredientRange = c(2, 2),
   type = "codelist_with_details",
   nameStyle = "{concept_name}"
@@ -66,7 +66,7 @@ routes <- getRouteCategories(cdm)
 if(length(routes) > 0){
 desc_code_lists_4 <- getDrugIngredientCodes(
   cdm = cdm,
-  name = ing_av$name[!ing_av$ingredient_name %in% c("kanamycin", "rifamycin SV", "streptomycin", "vancomycin", "cilastatin", "imipenem", "fosfomycin", "minocycline")],
+  name = unique(ing_av$name[!ing_av$ingredient_name %in% c("kanamycin", "rifamycin SV", "streptomycin", "vancomycin", "cilastatin", "imipenem", "fosfomycin", "minocycline")]),
   ingredientRange = c(1, 1),
   routeCategory = routes[routes != "topical"],
   nameStyle = "{concept_name}"
@@ -105,6 +105,8 @@ if("imipenem" %in% ing_av$ingredient_name & "cilastatin" %in% ing_av$ingredient_
 ing_desc[["imipenem_cilastatin"]] <- unique(c(imip_cila$concept_id, ing_list[["imipenem"]], ing_list[["cilastatin"]]))
 }
 
+names(ing_desc) <- snakecase::to_snake_case(names(ing_desc))
+
 # Create a cohort for each antibiotic using the ingredient codelists.
 cdm$watch_list <- conceptCohort(cdm = cdm, conceptSet = ing_desc, name = "watch_list") |>
   requireInDateRange(
@@ -114,7 +116,7 @@ cdm$watch_list <- conceptCohort(cdm = cdm, conceptSet = ing_desc, name = "watch_
 
 # Get record counts for each antibiotic and filter the list to only include the 10
 # most prescribed.
-top_ten_drugs <- merge(cohortCount(cdm$watch_list), settings(cdm$watch_list), by = "cohort_definition_id") %>%
+top_ten_antibiotics <- merge(cohortCount(cdm$watch_list), settings(cdm$watch_list), by = "cohort_definition_id") %>%
   # Need to add rows for imipenem_2540_cilastatin since this was not included in the ingredients csv file.
   bind_rows(
     # Add a row for "imipenem"
@@ -133,17 +135,18 @@ top_ten_drugs <- merge(cohortCount(cdm$watch_list), settings(cdm$watch_list), by
   mutate(ingredient_name = cohort_name)
 
 # Filter the codelists to only include the top ten.
-top_ten_watch_list <- ing_desc[names(ing_desc) %in% top_ten_drugs$cohort_name]
+top_ten_watch_list <- ing_desc[names(ing_desc) %in% top_ten_antibiotics$cohort_name]
 
-top_ten_drugs <- merge(top_ten_drugs, ingredients, by = c("ingredient_name")) %>%
+top_ten_antibiotics <- merge(top_ten_antibiotics, ingredients, by = c("ingredient_name")) %>%
   select(c(ingredient_name, cohort_definition_id, number_records, number_subjects, cdm_version,vocabulary_version,concept_id)) %>%
-  distinct()
-
-# Export a suppressed summary table with the counts for top ten antibiotics.
-suppressed_table <- top_ten_drugs %>%
-  mutate(number_records = ifelse(number_records < min_cell_count, paste("< ", min_cell_count), number_records)) %>%
-  mutate(number_subjects = ifelse(number_subjects < min_cell_count,  paste("< ", min_cell_count), number_subjects)) %>%
+  distinct() %>%
   mutate(type = "watch_list_level")
 
-write.csv(suppressed_table, here(resultsFolder, paste0("top_ten_watch_list_",db_name, ".csv")))
+sum_watch_list <- summariseCohortCount(cohort = cdm$watch_list) %>%
+  filter(group_level %in% top_ten_antibiotics$ingredient_name)
+
+results[["sum_watch_list"]] <- sum_watch_list
+
+omopgenerics::exportSummarisedResult(sum_watch_list, minCellCount = min_cell_count, path =  here("Results", db_name),
+                                     fileName = paste0("top_ten_watch_list_", db_name))
 }

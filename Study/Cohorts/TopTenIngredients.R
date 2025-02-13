@@ -9,7 +9,7 @@ ingredient_codes <- ingredients %>%
   select(ingredient_name, concept_id) %>%
   mutate(ingredient_name = stringr::str_to_lower(ingredient_name)) %>%
   distinct()
-  
+
 # Create codelist with just ingredient codes.
 ing_list <- setNames(as.list(ingredient_codes$concept_id), ingredient_codes$ingredient_name)
 
@@ -25,7 +25,7 @@ cli::cli_alert(paste0("Ingredient level code for ",nrow(ing_av), " ingredients f
 # Create a codelist for the antibiotics that are a combiantion of one or more ingredients.    
 ingredient_desc <- getDrugIngredientCodes(
   cdm = cdm,
-  name = ing_av$name,
+  name = unique(ing_av$name),
   type = "codelist",
   nameStyle = "{concept_name}"
 )
@@ -38,6 +38,8 @@ for(i in ing_av$ingredient_name){
     ing_all[[i]] <- c(ingredient_desc[[i]],ing_list[[i]])
     ing_all[[i]] <- unique(ing_all[[i]])
 }
+
+names(ing_all) <- snakecase::to_snake_case(names(ing_all))
 
 # If there aren't any codelists in ing_all then the next steps are skipped.
 if(length(ing_all) > 0){
@@ -57,14 +59,20 @@ if(length(ing_all) > 0){
   
   top_ten_ingredients <- ing_all[names(ing_all) %in% all_concepts_counts$ingredient_name]
   
-  if(nrow(all_concepts_counts) > 0){
-    suppressed_table <- merge(all_concepts_counts, ingredient_codes, by = "ingredient_name") %>%
-      mutate(number_records = ifelse(number_records < min_cell_count, paste("< ", min_cell_count), number_records)) %>%
-      mutate(number_subjects = ifelse(number_subjects < min_cell_count,  paste("< ", min_cell_count), number_subjects)) %>%
+  if(nrow(all_concepts_counts > 0)){
+  
+  all_concepts_counts <- merge(all_concepts_counts, ingredient_codes, by = c("ingredient_name")) %>%
       mutate(type = "ingredient_level")
-    
-    write.csv(suppressed_table, here(resultsFolder, paste0("top_ten_ingredients_", db_name, ".csv")))
   }
+    
+   sum_ingredients <- summariseCohortCount(cohort = cdm$all_concepts) %>%
+     filter(group_level %in% all_concepts_counts$ingredient_name)
+   
+   results[["sum_ingredients"]] <- sum_ingredients
+   
+   omopgenerics::exportSummarisedResult(sum_ingredients, minCellCount = min_cell_count, path =  here("Results", db_name),
+                                        fileName = paste0("top_ten_ingredients_", db_name))
+    
 } else if(length(ing_all) == 0){
   cli::cli_abort("No ingredients or descendents found!")
   

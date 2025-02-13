@@ -1,21 +1,22 @@
 if (run_drug_exposure_diagnostics == TRUE) {
   
-  top_ingredients <- read.csv(here("Results", db_name, paste0("top_ten_ingredients_", db_name, ".csv")))[,-1] %>%
-    select(-cohort_definition_id)
+  ded_ingredients <- all_concepts_counts %>%
+    select(ingredient_name, concept_id)
   
-  if(isTRUE(run_watch_list)) {
-  top_watch_list <- read.csv(here("Results", db_name, paste0("top_ten_watch_list_", db_name, ".csv")))[,-1] %>%
-    select(-cohort_definition_id)
-  
-  ded_names <- rbind(top_ingredients, top_watch_list) %>%
+  if(exists("top_ten_antibiotics")){
+    
+    ded_antibiotics <- top_ten_antibiotics %>%
+      select(ingredient_name, concept_id)
+    
+  ded_names <- rbind(ded_ingredients, ded_antibiotics) %>%
     select(ingredient_name,concept_id) %>%
     distinct()
   } else {
-    ded_names <- top_ingredients %>%
-      select(ingredient_name,concept_id) %>%
+    ded_names <- ded_ingredients %>%
       distinct()
   }
-  cli::cli_alert_info("- Running drug exposure diagnostics")
+  
+  cli::cli_alert_info("- Running drug exposure diagnostics") 
   
   drug_diagnostics <- executeChecks(
     cdm = cdm,
