@@ -1,32 +1,6 @@
 if(isTRUE(run_watch_list)) {
   cli::cli_text("- GETTING TOP TEN WATCH LIST ANTIBIOTICS ({Sys.time()})")
-# Load csv file with ingredient information.  
-ingredients <- read.csv(here("Cohorts", "ingredients.csv")) %>%
-  select(-X)
-
-# Get a table of ingredient names and concept id.
-# ingredient name changed to all lower case for consistency
-ingredient_codes <- ingredients %>%
-  mutate(ingredient_name = tolower(ingredient_name)) %>%
-  select(c(ingredient_name, concept_id)) %>%
-  distinct()
-
-# Create codelist with just ingredient codes.
-ing_list <- setNames(as.list(ingredient_codes$concept_id), ingredient_codes$ingredient_name)
-
-# Ingredient names might have different capiltalisations in different databases so I've made two columns.
-# name is the ingredient name as written in the database
-# ingredient_name is the name in all lower case. This column is used to merge with the ingredients.csv file.
-
-ing_av <- tibble(
-  name = availableIngredients(cdm)) %>%
-  mutate(ingredient_name = tolower(name))
-
-# Only include antibiotic ingredients that are present in the cdm.
-ing_av <- merge(ingredient_codes, ing_av, by = "ingredient_name")
-
-cli::cli_alert(paste0("Ingredient level code for ", nrow(ing_av), " ingredients found"))
-
+  
 # Create codelists for fosfomycin and/or minocycline for oral only (as specified in Watch List)
 # Only if these drugs are present in database.
 if("fosfomycin" %in%  ing_av$ingredient_name | "minocycline" %in%  ing_av$ingredient_name){
