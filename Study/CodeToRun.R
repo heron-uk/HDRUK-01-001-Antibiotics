@@ -75,8 +75,11 @@ min_cell_count <- 5
 # For now please leave only run_cdm_snapshot and run_drug_exposure_diagnostics as TRUE, and keep 
 # run_main_study as FALSE. 
 run_cdm_snapshot <- TRUE
+run_instantiate_cohorts <- TRUE
 run_drug_exposure_diagnostics <- TRUE
-run_main_study <- FALSE
+run_drug_utilisation <- FALSE
+run_characterisation <- FALSE
+run_incidence <- FALSE
 
 
 # Run the study

@@ -40,6 +40,10 @@ info(logger, "GETTING TOP TEN WATCH LIST ANTIBIOTICS")
 source(here("Cohorts", "TopTenWatchList.R"))
 info(logger, "GOT TOP TEN WATCH LIST ANTIBIOTICS")
 
+info(logger, "INSTANTIATING STUDY COHORTS")
+source(here("Cohorts", "InstantiateCohorts.R"))
+info(logger, "STUDY COHORTS INSTANTIATED")
+
 if(run_drug_exposure_diagnostics == TRUE) {
 info(logger, "RUNNING DRUG EXPOSURE DIAGNOSTICS")
 source(here("Analyses", "drug_exposure_diagnostics.R"))
@@ -47,25 +51,30 @@ info(logger, "GOT DRUG EXPOSURE DIAGNOSTICS")
 }
 
 # instantiate necessary cohorts ----
-
-if(run_main_study == TRUE){
+if(run_instantiate_cohorts == TRUE){
 info(logger, "INSTANTIATING STUDY COHORTS")
 source(here("Cohorts", "InstantiateCohorts.R"))
 info(logger, "STUDY COHORTS INSTANTIATED")
+}
 
 # run analyses ----
-info(logger, "RUN ANALYSES")
 source(here("Analyses", "functions.R"))
+if(run_drug_utilisation == TRUE){
 info(logger, "RUN DRUG UTILISATION")
 source(here("Analyses", "drug_utilisation.R"))
 info(logger, "DRUG UTILISATION FINISHED")
+}
+if(run_characterisation == TRUE){
 info(logger, "RUN CHARACTERISTICS")
 source(here("Analyses", "characteristics.R"))
 info(logger, "CHARACTERISTICS FINISHED")
+}
+if(run_incidence == TRUE){
 info(logger, "RUN INCIDENCE")
 source(here("Analyses", "incidence.R"))
-source(here("Analyses", "age_standardised_incidence.R"))
+#source(here("Analyses", "age_standardised_incidence.R"))
 info(logger, "INCIDENCE FINISHED")
+}
 info(logger, "ANALYSES FINISHED")
 
 # export results ----
@@ -84,7 +93,7 @@ files_to_zip <- files_to_zip[stringr::str_detect(
 
 zip::zip(
   zipfile = file.path(paste0(
-    here("Results"), "/Results_CSV_", db_name, ".zip"
+    here("Results", db_name), "/Results_CSV_", db_name, ".zip"
   )),
   files = files_to_zip,
   root = here("Results")
@@ -92,7 +101,6 @@ zip::zip(
 
 result <- omopgenerics::bind(results)
 omopgenerics::exportSummarisedResult(result, minCellCount = min_cell_count, path = resultsFolder, fileName = paste0(
-  "STUDY_RESULTS_", db_name, ".csv"))
+  "Summarised_Results_", db_name, ".csv"))
 
 info(logger, "RESULTS EXPORTED")
-}
