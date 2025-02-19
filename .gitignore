@@ -31,3 +31,6 @@ CodeToRunLocal.R
 
 Report/DED_shiny/data/*csv
 Report/DED_shiny/data/*zip
+
+Report/shiny/data/*csv
+Report/shiny/data/*RData
