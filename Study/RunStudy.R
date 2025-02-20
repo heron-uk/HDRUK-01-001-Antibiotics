@@ -22,12 +22,6 @@ if (run_cdm_snapshot == TRUE) {
   info(logger, "RETRIEVING SNAPSHOT")
   cli::cli_text("- GETTING CDM SNAPSHOT ({Sys.time()})")
   results[["snap"]] <- OmopSketch::summariseOmopSnapshot(cdm)
-  omopgenerics::exportSummarisedResult(OmopSketch::summariseOmopSnapshot(cdm),
-                         minCellCount = min_cell_count,
-                         fileName = here(resultsFolder, paste0(
-                           "cdm_snapshot_", cdmName(cdm), ".csv"
-                         ))
-                         )
   info(logger, "SNAPSHOT COMPLETED")
 }
 
@@ -50,13 +44,6 @@ source(here("Analyses", "drug_exposure_diagnostics.R"))
 info(logger, "GOT DRUG EXPOSURE DIAGNOSTICS")
 }
 
-# instantiate necessary cohorts ----
-if(run_instantiate_cohorts == TRUE){
-info(logger, "INSTANTIATING STUDY COHORTS")
-source(here("Cohorts", "InstantiateCohorts.R"))
-info(logger, "STUDY COHORTS INSTANTIATED")
-}
-
 # run analyses ----
 source(here("Analyses", "functions.R"))
 if(run_drug_utilisation == TRUE){
@@ -72,7 +59,6 @@ info(logger, "CHARACTERISTICS FINISHED")
 if(run_incidence == TRUE){
 info(logger, "RUN INCIDENCE")
 source(here("Analyses", "incidence.R"))
-#source(here("Analyses", "age_standardised_incidence.R"))
 info(logger, "INCIDENCE FINISHED")
 }
 info(logger, "ANALYSES FINISHED")
@@ -81,26 +67,7 @@ info(logger, "ANALYSES FINISHED")
 
 info(logger, "EXPORTING RESULTS")
 
-files_to_zip <- list.files(here("Results"))
-files_to_zip <- files_to_zip[stringr::str_detect(
-  files_to_zip,
-  db_name
-)]
-files_to_zip <- files_to_zip[stringr::str_detect(
-  files_to_zip,
-  ".csv"
-)]
-
-zip::zip(
-  zipfile = file.path(paste0(
-    here("Results", db_name), "/Results_CSV_", db_name, ".zip"
-  )),
-  files = files_to_zip,
-  root = here("Results")
-)
-
 result <- omopgenerics::bind(results)
-omopgenerics::exportSummarisedResult(result, minCellCount = min_cell_count, path = resultsFolder, fileName = paste0(
-  "Summarised_Results_", db_name, ".csv"))
+omopgenerics::exportSummarisedResult(result, minCellCount = min_cell_count, path = resultsFolder, fileName = "results.csv")
 
 info(logger, "RESULTS EXPORTED")

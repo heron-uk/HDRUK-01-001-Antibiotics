@@ -3,10 +3,10 @@ if(isTRUE(run_watch_list)) {
   
 # Create codelists for fosfomycin and/or minocycline for oral only (as specified in Watch List)
 # Only if these drugs are present in database.
-if("fosfomycin" %in%  ing_av$concept_name | "minocycline" %in%  ing_av$concept_name){
+if("956653" %in%  ing_av | "1708880" %in%  ing_av){
   desc_code_lists_1 <- getDrugIngredientCodes(
     cdm = cdm,
-    name = ing_av$concept_name[ing_av$concept_name %in% c("fosfomycin", "minocycline")],
+    name = ing_av[ing_av %in% c("956653", "1708880")],
     ingredientRange = c(1,1),
     routeCategory = c("oral"),
     nameStyle = "{concept_code}_{concept_name}"
@@ -18,10 +18,10 @@ if("fosfomycin" %in%  ing_av$concept_name | "minocycline" %in%  ing_av$concept_n
 
 # Create codelists for drugs with oral and injectable routes only (as specified in Watch List)
 # Only if these drugs are present in database.
-if("kanamycin" %in% ing_av$concept_name | "rifamycin SV" %in% ing_av$concept_name | "streptomycin" %in% ing_av$concept_name | "vancomycin" %in% ing_av$concept_name){
+if("1784749" %in% ing_av | "19035924" %in% ing_av | "1836191" %in% ing_av | "1707687" %in% ing_av){
   desc_code_lists_2 <- getDrugIngredientCodes(
   cdm = cdm,
-  name = ing_av$concept_name[ing_av$concept_name %in% c("kanamycin", "rifamycin SV", "streptomycin", "vancomycin")],
+  name = ing_av[ing_av %in% c("1784749", "19035924", "1836191", "1707687")],
   ingredientRange = c(1,1),
   routeCategory = c("oral", "injectable"),
   nameStyle = "{concept_code}_{concept_name}"
@@ -33,13 +33,13 @@ if("kanamycin" %in% ing_av$concept_name | "rifamycin SV" %in% ing_av$concept_nam
 # Create codelists for combination drugs only (as specified in Watch List)
 # Only if these drugs are present in database.
 # Create a codelist for the antibiotics that are a combiantion of two ingredients.    
-if("piperacillin" %in% ing_av$concept_name | "imipenem" %in% ing_av$concept_name){
+if("1746114" %in% ing_av | "1778262" %in% ing_av){
   desc_code_lists_3 <- getDrugIngredientCodes(
   cdm = cdm,
-  name =  ing_av$concept_name[ing_av$concept_name %in% c("piperacillin", "imipenem")],
+  name =  ing_av[ing_av %in% c("1746114", "1778262")],
   ingredientRange = c(2, 2),
   type = "codelist_with_details",
-  nameStyle = "{concept_code}_{concept_name}"
+  nameStyle = "{concept_code}"
   )}else{
     # Create empty list if no drugs in database to avoid errors later on.
   desc_code_lists_3 <- NULL
@@ -48,13 +48,13 @@ if("piperacillin" %in% ing_av$concept_name | "imipenem" %in% ing_av$concept_name
 # Filter to only include the combinations that are mentioned on the Watch List.
 # Filter code lists to only include combinations in Watch List.
 # i.e. piperacillin and tazobactam, imipenem and cilistatin.
-if(is.null(desc_code_lists_3[["8339_piperacillin"]]) == FALSE){
-pip_tazo <- desc_code_lists_3[["8339_piperacillin"]] %>%
+if(is.null(desc_code_lists_3[["8339"]]) == FALSE){
+pip_tazo <- desc_code_lists_3[["8339"]] %>%
   filter(grepl("tazobactam", concept_name, ignore.case = TRUE))
 }
 
-if(is.null(desc_code_lists_3[["5690_imipenem"]]) == FALSE){
-imip_cila <- desc_code_lists_3[["5690_imipenem"]] %>%
+if(is.null(desc_code_lists_3[["5690"]]) == FALSE){
+imip_cila <- desc_code_lists_3[["5690"]] %>%
   filter(grepl("cilastatin", concept_name, ignore.case = TRUE))
 }
 
@@ -66,14 +66,14 @@ routes <- getRouteCategories(cdm)
 if(length(routes) > 0){
 desc_code_lists_4 <- getDrugIngredientCodes(
   cdm = cdm,
-  name = ing_av$concept_name[!ing_av$concept_name %in% c("kanamycin", "rifamycin SV", "streptomycin", "vancomycin", "cilastatin", "imipenem", "fosfomycin", "minocycline")],
+  name = ing_av[!ing_av %in% c("1784749", "19035924", "1836191", "1707687", "1797258", "1778262", "956653", "1708880")],
   ingredientRange = c(1, 1),
   routeCategory = routes[routes != "topical"],
   nameStyle = "{concept_code}_{concept_name}"
 )} else if(length(routes == 0)){
 desc_code_lists_4 <- getDrugIngredientCodes(
   cdm = cdm,
-  name = ing_av$concept_name[!ing_av$concept_name %in% c("kanamycin", "rifamycin SV", "streptomycin", "vancomycin", "cilastatin", "imipenem", "fosfomycin", "minocycline")],
+  name = ing_av[!ing_av %in% c("1784749", "19035924", "1836191", "1707687", "1797258", "1778262", "956653", "1708880")],
   nameStyle = "{concept_code}_{concept_name}"
 )} else {
   # Create empty list if no drugs in database to avoid errors later on.
@@ -85,30 +85,20 @@ desc_code_lists_4 <- getDrugIngredientCodes(
 desc_code_lists <- c(desc_code_lists_1, desc_code_lists_2, desc_code_lists_4)
 
 # Add the concept codes for the combined antibiotics to the relevant codelists (if present).
-if("pipercillin" %in% ing_av$concept_name){
-desc_code_lists[["8339_piperacillin"]] <- c(desc_code_lists[["8339_piperacillin"]], pip_tazo$concept_id)
+if(exists("pip_tazo") & nrow(pip_tazo) > 0){
+desc_code_lists[["piperacillin_tazobactam"]] <- c(pip_tazo$concept_id)
 }
-if("tazobactam" %in% ing_av$concept_name){
-desc_code_lists[["37617_tazobactam"]] <- c(desc_code_lists[["37617_tazobactam"]], pip_tazo$concept_id)
+
+if(exists("imip_cila") & nrow(imip_cila) > 0){
+desc_code_lists[["imipenem_cilastatin"]] <- c(imip_cila$concept_id)
 }
 
 cli::cli_alert(paste0("Descendent codes found for ", length(desc_code_lists), " ingredients"))
 
-ing_desc <- list()
-
-for(i in names(ing_list)){
-  ing_desc[[i]] <- c(desc_code_lists[[i]],ing_list[[i]])
-  ing_desc[[i]] <- unique(ing_desc[[i]])
-}
-
-if("imipenem" %in% ing_av$concept_name & "cilastatin" %in% ing_av$concept_name){
-ing_desc[["imipenem_cilastatin"]] <- unique(c(imip_cila$concept_id, ing_list[["5690_imipenem"]], ing_list[["2540_cilastatin"]]))
-}
-
-names(ing_desc) <- snakecase::to_snake_case(names(ing_desc))
+names(desc_code_lists) <- snakecase::to_snake_case(names(desc_code_lists))
 
 # Create a cohort for each antibiotic using the ingredient codelists.
-cdm$watch_list <- conceptCohort(cdm = cdm, conceptSet = ing_desc, name = "watch_list") |>
+cdm$watch_list <- conceptCohort(cdm = cdm, conceptSet = desc_code_lists, name = "watch_list") |>
   requireInDateRange(
     indexDate = "cohort_start_date",
     dateRange = c(as.Date(study_start), as.Date(maxObsEnd))
@@ -116,17 +106,7 @@ cdm$watch_list <- conceptCohort(cdm = cdm, conceptSet = ing_desc, name = "watch_
 
 # Get record counts for each antibiotic and filter the list to only include the 10
 # most prescribed.
-top_ten_antibiotics <- merge(cohortCount(cdm$watch_list), settings(cdm$watch_list), by = "cohort_definition_id") %>%
-  # Need to add rows for imipenem_2540_cilastatin since this was not included in the ingredients csv file.
-  bind_rows(
-    # Add a row for "imipenem"
-    merge(cohortCount(cdm$watch_list), settings(cdm$watch_list), by = "cohort_definition_id") %>%
-      filter(cohort_name == "imipenem_cilastatin") %>%
-      mutate(cohort_name = "5690_imipenem"),
-    # Add a row for "cilastatin"
-    merge(cohortCount(cdm$watch_list), settings(cdm$watch_list), by = "cohort_definition_id") %>%
-      filter(cohort_name == "imipenem_cilastatin") %>%
-      mutate(cohort_name = "2540_cilastatin")) %>%
+watch_list_antibiotics <- merge(cohortCount(cdm$watch_list), settings(cdm$watch_list), by = "cohort_definition_id") %>%
   # Arrange the table in descending order based on the number of records and then filter to only include
   # the 10 most prescribed antibiotics.
   filter(number_records > 0) %>%
@@ -134,13 +114,10 @@ top_ten_antibiotics <- merge(cohortCount(cdm$watch_list), settings(cdm$watch_lis
   slice_head(n = 10)
 
 # Filter the codelists to only include the top ten.
-top_ten_watch_list <- ing_desc[names(ing_desc) %in% top_ten_antibiotics$cohort_name]
+top_ten_watch_list <- desc_code_lists[names(desc_code_lists) %in% watch_list_antibiotics$cohort_name]
 
 sum_watch_list <- summariseCohortCount(cohort = cdm$watch_list) %>%
-  filter(group_level %in% top_ten_antibiotics$cohort_name)
+  filter(group_level %in% watch_list_antibiotics$cohort_name)
 
 results[["sum_watch_list"]] <- sum_watch_list
-
-omopgenerics::exportSummarisedResult(sum_watch_list, minCellCount = min_cell_count, path =  here("Results", db_name),
-                                     fileName = paste0("top_ten_watch_list_", db_name))
 }
