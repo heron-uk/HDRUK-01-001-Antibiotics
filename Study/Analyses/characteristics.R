@@ -12,7 +12,18 @@ if (run_characterisation == TRUE) {
     summariseCharacteristics(
       strata = list("sex", "age_group"))
   
+  characteristics_broad <- cdm$top_ten |>
+    addSex() |>
+    addAge(
+      ageGroup = list( c(0, 19),
+                       c(20, 64),
+                       c(65, 150))
+    ) |>
+    summariseCharacteristics(
+      strata = list("sex", "age_group"))
+  
   results[["characteristics"]] <- characteristics
+  results[["characteristics_broad"]] <- characteristics_broad
 
   attrition <- summariseCohortAttrition(cdm$top_ten)
   
@@ -22,39 +33,17 @@ if (run_characterisation == TRUE) {
   
   results[["cohort_overlap"]] <- overlap
   
-  omopgenerics::exportSummarisedResult(characteristics,
-                         minCellCount = min_cell_count,
-                         fileName = here(resultsFolder, paste0(
-    "characteristics_", cdmName(cdm), ".csv"
-  )))
-  
-  omopgenerics::exportSummarisedResult(attrition,
-                         minCellCount = min_cell_count,
-                         fileName = here(resultsFolder, paste0(
-    "attrition_", cdmName(cdm), ".csv"
-  )))
-  
-  omopgenerics::exportSummarisedResult(overlap,
-                         minCellCount = min_cell_count,
-                         fileName = here(resultsFolder, paste0(
-    "overlap_", cdmName(cdm), ".csv"
-  )))
-
 
   cli::cli_alert_info("- Getting large scale characteristics")
 
   top_ten_lsc <- CohortCharacteristics::summariseLargeScaleCharacteristics(cdm$top_ten,
-    eventInWindow = c("condition_occurrence"),
+    eventInWindow = c("condition_occurrence"
+                      #add procedure and observation
+                      ),
     window = list(c(-7, 0), c(0, 0))
   )
   
   results[["lsc"]] <- top_ten_lsc
-  
-  omopgenerics::exportSummarisedResult(top_ten_lsc,
-                         minCellCount = min_cell_count,
-                         fileName = here(resultsFolder, paste0(
-      "lsc_summary_", cdmName(cdm), ".csv"
-    )))
 
   cli::cli_alert_success("- Got large scale characteristics")
 }

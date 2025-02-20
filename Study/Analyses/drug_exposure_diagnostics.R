@@ -1,11 +1,11 @@
 if (run_drug_exposure_diagnostics == TRUE) {
   
-  ded_ingredients <- all_concepts_counts %>%
+  ded_ingredients <- all_routes_counts %>%
     select(cohort_name)
   
-  if(exists("top_ten_antibiotics")){
+  if(exists("watch_list_antibiotics")){
     
-    ded_antibiotics <- top_ten_antibiotics %>%
+    ded_antibiotics <- watch_list_antibiotics %>%
       select(cohort_name)
     
   ded_names <- rbind(ded_ingredients, ded_antibiotics) %>%
@@ -18,13 +18,19 @@ if (run_drug_exposure_diagnostics == TRUE) {
   ded_names <- ded_names %>%
     separate(cohort_name, into = c("concept_code", "concept_name"), sep = "_")
   
-  ded_names <- merge(ded_names, ing_av, by = c("concept_name", "concept_code"))
+  ded_codes <- cdm$concept %>%
+    filter(domain_id == "Drug") %>%
+    filter(concept_class_id == "Ingredient") %>%
+    filter(standard_concept == "S") %>%
+    select(c("concept_id", "concept_name", "concept_code")) %>%
+    filter(concept_name %in% ded_names$concept_name) %>%
+    pull(concept_id)
     
   cli::cli_alert_info("- Running drug exposure diagnostics") 
   
   drug_diagnostics <- executeChecks(
     cdm = cdm,
-    ingredients = ded_names$concept_id,
+    ingredients = ded_codes,
     checks = c(
       "missing",
       "exposureDuration",

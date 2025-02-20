@@ -102,15 +102,6 @@ ingredient_counts <- ingredients %>%
   group_by(cohort_name) %>%
   summarise(n = n())
 
-add <- tibble(
-  concept_id = "1254403",
-  ingredient_name = "Nadifloxacin",
-  cohort_name = "J01MA24_levonadifloxacin_systemic",
-  atc = "J01MA24"
-)
-
-ingredients <- rbind(ingredients, add)
-
-write.csv(ingredients, here("Cohorts", "ingredients.csv"))
+    write.csv(ingredients, here("Cohorts", "ingredients.csv"))
 
          

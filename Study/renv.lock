@@ -81,7 +81,7 @@
     },
     "CodelistGenerator": {
       "Package": "CodelistGenerator",
-      "Version": "3.3.2",
+      "Version": "3.4.0",
       "Source": "Repository",
       "Title": "Identify Relevant Clinical Codes and Evaluate Their Use",
       "Authors@R": "c( person(\"Edward\", \"Burn\", email = \"edward.burn@ndorms.ox.ac.uk\",  role = c(\"aut\", \"cre\"), comment = c(ORCID = \"0000-0002-9286-1128\")), person(\"Marti\", \"Catala\", email = \"marti.catalasabate@ndorms.ox.ac.uk\",  role = c(\"ctb\"),  comment = c(ORCID = \"0000-0003-3308-9905\")), person(\"Xihang\", \"Chen\", email = \"xihang.chen@ndorms.ox.ac.uk\",  role = c(\"aut\"),  comment = c(ORCID = \"0009-0001-8112-8959\")), person(\"Nuria\", \"Mercade-Besora\", email = \"nuria.mercadebesora@ndorms.ox.ac.uk\",  role = c(\"aut\"), comment = c(ORCID = \"0009-0006-7948-3747\")), person(\"Mike\", \"Du\", email = \"mike.du@ndorms.ox.ac.uk\",  role = c(\"ctb\"),  comment = c(ORCID = \"0000-0002-9517-8834\")), person(\"Danielle\", \"Newby\", email = \"danielle.newby@ndorms.ox.ac.uk\",  role = c(\"ctb\"),  comment = c(ORCID = \"0000-0002-3001-1478\")))",
@@ -96,12 +96,11 @@
         "checkmate (>= 2.0.0)",
         "DBI (>= 1.1.0)",
         "dplyr (>= 1.1.0)",
-        "omopgenerics (>= 0.4.1)",
+        "omopgenerics (>= 1.0.0)",
         "rlang (>= 1.0.0)",
         "glue (>= 1.5.0)",
         "stringr (>= 1.4.0)",
         "stringi (>= 1.8.1)",
-        "tidyselect (>= 1.2.0)",
         "tidyr (>= 1.2.0)",
         "cli (>= 3.1.0)",
         "purrr",
@@ -3291,33 +3290,6 @@
       "Repository": "CRAN",
       "NeedsCompilation": "no",
       "Author": "David B. Dahl [aut], David Scott [aut, cre], Charles Roosen [aut], Arni Magnusson [aut], Jonathan Swinton [aut], Ajay Shah [ctb], Arne Henningsen [ctb], Benno Puetz [ctb], Bernhard Pfaff [ctb], Claudio Agostinelli [ctb], Claudius Loehnert [ctb], David Mitchell [ctb], David Whiting [ctb], Fernando da Rosa [ctb], Guido Gay [ctb], Guido Schulz [ctb], Ian Fellows [ctb], Jeff Laake [ctb], John Walker [ctb], Jun Yan [ctb], Liviu Andronic [ctb], Markus Loecher [ctb], Martin Gubri [ctb], Matthieu Stigler [ctb], Robert Castelo [ctb], Seth Falcon [ctb], Stefan Edwards [ctb], Sven Garbade [ctb], Uwe Ligges [ctb]"
-    },
-    "zip": {
-      "Package": "zip",
-      "Version": "2.3.2",
-      "Source": "Repository",
-      "Title": "Cross-Platform 'zip' Compression",
-      "Authors@R": "c( person(\"Gábor\", \"Csárdi\", , \"csardi.gabor@gmail.com\", role = c(\"aut\", \"cre\")), person(\"Kuba\", \"Podgórski\", role = \"ctb\"), person(\"Rich\", \"Geldreich\", role = \"ctb\"), person(\"Posit Software, PBC\", role = c(\"cph\", \"fnd\")) )",
-      "Description": "Cross-Platform 'zip' Compression Library. A replacement for the 'zip' function, that does not require any additional external tools on any platform.",
-      "License": "MIT + file LICENSE",
-      "URL": "https://github.com/r-lib/zip, https://r-lib.github.io/zip/",
-      "BugReports": "https://github.com/r-lib/zip/issues",
-      "Suggests": [
-        "covr",
-        "pillar",
-        "processx",
-        "R6",
-        "testthat",
-        "withr"
-      ],
-      "Config/Needs/website": "tidyverse/tidytemplate",
-      "Config/testthat/edition": "3",
-      "Encoding": "UTF-8",
-      "RoxygenNote": "7.2.3",
-      "NeedsCompilation": "yes",
-      "Author": "Gábor Csárdi [aut, cre], Kuba Podgórski [ctb], Rich Geldreich [ctb], Posit Software, PBC [cph, fnd]",
-      "Maintainer": "Gábor Csárdi <csardi.gabor@gmail.com>",
-      "Repository": "CRAN"
     }
   }
 }
