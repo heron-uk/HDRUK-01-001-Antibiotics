@@ -32,7 +32,7 @@
 
     -   Open the `CodeToRun.R` file. This is the main script you’ll use.
     -   Follow the instructions within the file to add your database-specific information.
-    -   Run the code as directed. This will generate a `Results` folder containing the outputs, including a log file, ZIP file with the DED results, and a csv with the study results. The name of the zip file will be of the format `DED_Results_database_name.zip`, and the name of the csv will be `results.csv`.
+    -   Run the code as directed. This will generate a `Results` folder containing the outputs, including a log file, zip file with the DED results, and a csv with the study results. The name of the zip file will be of the format `DED_Results_database_name.zip`, and the name of the csv will be `results.csv`.
 
 4.  **OPTIONAL: Visualize Results in Shiny**
 
