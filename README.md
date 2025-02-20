@@ -32,15 +32,12 @@
 
     -   Open the `CodeToRun.R` file. This is the main script you’ll use.
     -   Follow the instructions within the file to add your database-specific information.
-    -   Run the code as directed. This will generate a `Results` folder containing the outputs, including a ZIP file with the results for sharing. The name of the zip file will be of the format `DED_Results_database_name.zip`. 
+    -   Run the code as directed. This will generate a `Results` folder containing the outputs, including a log file, ZIP file with the DED results, and a csv with the study results. The name of the zip file will be of the format `DED_Results_database_name.zip`, and the name of the csv will be `results.csv`.
 
 4.  **OPTIONAL: Visualize Results in Shiny**
 
-    -   Navigate to the `Report` folder, then the `DED_shiny` folder, and open the project file `DrugExposureDiagnosticsShiny.Rproj` in RStudio.
-    -   You should see the project name in the top-right corner of your RStudio session.
-    -   Copy the generated result file (in .zip format) into the `data` folder located within the `DED_shiny` folder.
-    -   Open the `global.R` script in the `DED_shiny` folder.
-    -   Click the *Run App* button in RStudio to launch the local Shiny app for interactive exploration of the results.
+    -   To visualise the DED results, navigate to the `Report` folder, then the `DED_shiny` folder, and open the project file `DrugExposureDiagnosticsShiny.Rproj` in RStudio. Copy the generated .zip file into the `data` folder. Open the `global.R` script and click the *Run App* button in RStudio to launch the local Shiny app.
+    -   To visualise the study results, navigate to the `Report` folder, then the `shiny` folder, and open the project file `shiny.Rproj` in RStudio. Copy the generated `results.csv` file into the `data` folder. Open the `global.R` script and click the *Run App* button in RStudio to launch the local Shiny app.
 ---
 This repo is organized as follows:
 - [Study](https://github.com/oxford-pharmacoepi/HDRUK-01-001-Antibiotics/blob/main/Study/): please find there the relevant code to obtain the study results.
