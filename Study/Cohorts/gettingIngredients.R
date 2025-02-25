@@ -1,13 +1,16 @@
 atc_codes <- readxl::read_excel("Cohorts/WHO-MHP-HPS-EML-2023.04-eng.xlsx",
-                                sheet = "Watch", skip = 3) %>%
+  sheet = "Watch", skip = 3
+) %>%
   pull(`ATC code`) %>%
   paste(collapse = "|")
 
 # Create codelists based on ATC codes.
 
-atc_code_list <- getATCCodes(cdm = cdm,
-                             level = c("ATC 5th"),
-                             type = "codelist")
+atc_code_list <- getATCCodes(
+  cdm = cdm,
+  level = c("ATC 5th"),
+  type = "codelist"
+)
 
 # Filter the list to only include antibiotics on watch list.
 watch_list_atc <- atc_code_list[grepl(atc_codes, names(atc_code_list))]
@@ -27,12 +30,13 @@ drug_ingredient_codes <- cdm$concept %>%
   filter(standard_concept == "S") %>%
   select(c("concept_id", "concept_name")) %>%
   rename(
-    drug_name = concept_name) %>%
+    drug_name = concept_name
+  ) %>%
   collect()
 
-ingredients <- merge(drug_ingredient_codes, watch_list_codes, by = "concept_id") 
+ingredients <- merge(drug_ingredient_codes, watch_list_codes, by = "concept_id")
 
-missing_ingredient <- names(watch_list_atc)[!names(watch_list_atc) %in% ingredients$name] 
+missing_ingredient <- names(watch_list_atc)[!names(watch_list_atc) %in% ingredients$name]
 
 missing_ingredient_names <- names(watch_list_atc)[!names(watch_list_atc) %in% ingredients$name] %>%
   str_extract("(?<=_)[a-zA-Z]+(?=_)") %>%
@@ -40,7 +44,7 @@ missing_ingredient_names <- names(watch_list_atc)[!names(watch_list_atc) %in% in
 
 # Extract the ingredient names from `missing_ingredient` to match with `missing_ingredient_names`
 extracted_ingredient_names <- str_extract(missing_ingredient, "(?<=_)[a-zA-Z]+(?=_)") %>%
-  toupper()  # Convert to uppercase to match `missing_ingredient_names`
+  toupper() # Convert to uppercase to match `missing_ingredient_names`
 
 # Create a data frame that associates each ingredient name with its drug code (from `missing_ingredient`)
 ingredient_code_mapping <- data.frame(
@@ -60,7 +64,7 @@ missing_ingredient_codes <- drug_ingredient_codes %>%
 no_atc <- drug_ingredient_codes %>%
   filter(drug_name %in% c("micronomicin", "CEFOSELIS")) %>%
   mutate(name = drug_name)
-           
+
 ####
 ingredients <- rbind(ingredients, missing_ingredient_codes)
 ingredients <- rbind(ingredients, no_atc)
@@ -78,19 +82,18 @@ ingredients <- ingredients %>%
   filter(!ingredient_name %in% "rifamycins") %>%
   filter(
     cohort_name != "J01CR05_piperacillin_and_beta_lactamase_inhibitor_parenteral" |
-      (cohort_name == "J01CR05_piperacillin_and_beta_lactamase_inhibitor_parenteral" & 
-         ingredient_name %in% c("piperacillin", "tazobactam"))
+      (cohort_name == "J01CR05_piperacillin_and_beta_lactamase_inhibitor_parenteral" &
+        ingredient_name %in% c("piperacillin", "tazobactam"))
   ) %>%
   filter(
     cohort_name != "J01DH51_imipenem_and_cilastatin_parenteral" |
-      (cohort_name == "J01DH51_imipenem_and_cilastatin_parenteral" & 
-         ingredient_name %in% c("imipenem", "cilastatin"))
+      (cohort_name == "J01DH51_imipenem_and_cilastatin_parenteral" &
+        ingredient_name %in% c("imipenem", "cilastatin"))
   ) %>%
-  
   filter(
     cohort_name != "J01DH55_panipenem_and_betamipron_parenteral" |
-      (cohort_name == "J01DH55_panipenem_and_betamipron_parenteral" & 
-         ingredient_name %in% c("panipenem"))
+      (cohort_name == "J01DH55_panipenem_and_betamipron_parenteral" &
+        ingredient_name %in% c("panipenem"))
   ) %>%
   # Change ingredient for tosufloxacin to match ingredient used in DARWIN study.
   mutate(ingredient_name = ifelse(cohort_name == "J01MA22_tosufloxacin_systemic", "TOSUFLOXACIN", ingredient_name)) %>%
@@ -102,6 +105,4 @@ ingredient_counts <- ingredients %>%
   group_by(cohort_name) %>%
   summarise(n = n())
 
-    write.csv(ingredients, here("Cohorts", "ingredients.csv"))
-
-         
+write.csv(ingredients, here("Cohorts", "ingredients.csv"))

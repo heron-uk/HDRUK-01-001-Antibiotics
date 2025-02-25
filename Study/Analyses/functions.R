@@ -58,7 +58,7 @@ dsr <- function(data, event, fu, subgroup, ..., refdata, mp, method = "normal", 
         s_lower = mp * exp((log(st_rate) + qnorm((1 - sig) / 2) * sqrt(st_var) / (st_rate))),
         s_upper = mp * exp((log(st_rate) - qnorm((1 - sig) / 2) * sqrt(st_var) / (st_rate)))
       ) %>%
-       select(!!subgroup, n, d, c_rate, c_lower, c_upper, s_rate, s_lower, s_upper)
+      select(!!subgroup, n, d, c_rate, c_lower, c_upper, s_rate, s_lower, s_upper)
   }
 
 
