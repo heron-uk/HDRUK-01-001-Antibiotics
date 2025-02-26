@@ -24,7 +24,7 @@ library(stringr)
 library(RPostgres)
 library(odbc)
 
-# database metadata and connection details
+# database metadata and connection details -----
 # The name/ acronym for the database
 
 db_name <- "..."
@@ -68,13 +68,14 @@ cdm <- CDMConnector::cdmFromCon(
 )
 
 # Study start date -----
+
 # The earliest start date for this study "2012-01-01".
 # Please put the study start date as "2012-01-01 if you have usable data from 2012 onwards.
 # If you do not have data from 2012 onwards please put the earliest date possible for your data.
 # For example if you only have usable data from 2015 you would put 2015-01-01.
 study_start <- "2012-01-01"
 
-# Minimum cell count
+# Minimum cell count -----
 # This is the minimum counts that can be displayed according to data governance.
 min_cell_count <- 5
 
@@ -83,14 +84,18 @@ min_cell_count <- 5
 # if run_watch_list is FALSE, we only run analyses at concept level
 run_watch_list <- TRUE 
 
-# analyses to run
+# analyses to run -----
 # setting to FALSE will skip analysis
 run_drug_exposure_diagnostics <- TRUE
 run_drug_utilisation <- TRUE
 run_characterisation <- TRUE
 run_incidence <- TRUE
 
-# Run the study
+# Run the study -----
 source(here("RunStudy.R"))
 
-# after the study is run you should have a zip folder in your output folder to share
+# Study Results to share ---
+# After the study is run you should have the following files to share in your results folder:
+# 1) drug exposure diagnosis (DED) zip file
+# 2) log file of study
+# 3) results.csv containing the main results of the study
