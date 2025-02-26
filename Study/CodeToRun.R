@@ -94,4 +94,3 @@ run_incidence <- TRUE
 source(here("RunStudy.R"))
 
 # after the study is run you should have a zip folder in your output folder to share
-cli::cli_alert_success("Study finished")

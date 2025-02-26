@@ -89,3 +89,7 @@ omopgenerics::exportSummarisedResult(result,
   fileName = "results.csv"
 )
 info(logger, "RESULTS EXPORTED")
+
+info(logger, "STUDY CODE FINISHED")
+
+cli::cli_alert_success("Study finished - Thank you for running the study")
