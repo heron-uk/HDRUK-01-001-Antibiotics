@@ -86,7 +86,7 @@ result <- omopgenerics::bind(results)
 omopgenerics::exportSummarisedResult(result,
   minCellCount = min_cell_count,
   path = results_folder,
-  fileName = "results.csv"
+  fileName = "results_{cdm_name}_{date}.csv"
 )
 info(logger, "RESULTS EXPORTED")
 
