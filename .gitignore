@@ -28,9 +28,9 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 CodeToRunLocal.R
-
 Report/DED_shiny/data/*csv
 Report/DED_shiny/data/*zip
-
 Report/shiny/data/*csv
 Report/shiny/data/*RData
+Reporting/study_shiny/data/shinyData.RData
+Reporting/study_shiny/data/*.csv

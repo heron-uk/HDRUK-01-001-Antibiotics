@@ -74,6 +74,100 @@ server <- function(input, output, session) {
   )
 
 
+  # summarise_observation_period -----
+  ## tidy summarise_observation_period -----
+  getTidyDataSummariseObservationPeriod <- shiny::reactive({
+    res <- data |>
+      filterData("summarise_observation_period", input) |>
+      omopgenerics::addSettings() |>
+      omopgenerics::splitAll() |>
+      dplyr::select(!"result_id")
+
+    # columns to eliminate
+    colsEliminate <- colnames(res)
+    colsEliminate <- colsEliminate[!colsEliminate %in% c(
+      input$summarise_observation_period_tidy_columns, "variable_name", "variable_level",
+      "estimate_name", "estimate_type", "estimate_value"
+    )]
+
+    # pivot
+    pivot <- input$summarise_observation_period_tidy_pivot
+    if (pivot != "none") {
+      vars <- switch(pivot,
+        "estimates" = "estimate_name",
+        "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
+      )
+      res <- res |>
+        visOmopResults::pivotEstimates(pivotEstimatesBy = vars)
+    }
+
+    res |>
+      dplyr::select(!dplyr::all_of(colsEliminate))
+  })
+  output$summarise_observation_period_tidy <- DT::renderDT({
+    DT::datatable(
+      getTidyDataSummariseObservationPeriod(),
+      options = list(scrollX = TRUE),
+      rownames = FALSE
+    )
+  })
+  output$summarise_observation_period_tidy_download <- shiny::downloadHandler(
+    filename = "tidy_summarise_observation_period.csv",
+    content = function(file) {
+      getTidyDataSummariseObservationPeriod() |>
+        readr::write_csv(file = file)
+    }
+  )
+  ## output summarise_observation_period -----
+  ## output 15 -----
+  createOutput15 <- shiny::reactive({
+    result <- data |>
+      filterData("summarise_observation_period", input)
+    OmopSketch::tableObservationPeriod(
+      result
+    )
+  })
+  output$summarise_observation_period_gt_15 <- gt::render_gt({
+    createOutput15()
+  })
+  output$summarise_observation_period_gt_15_download <- shiny::downloadHandler(
+    filename = paste0("output_gt_summarise_observation_period.", input$summarise_observation_period_gt_15_download_type),
+    content = function(file) {
+      obj <- createOutput15()
+      gt::gtsave(data = obj, filename = file)
+    }
+  )
+
+  ## output 16 -----
+  createOutput16 <- shiny::reactive({
+    result <- data |>
+      filterData("summarise_observation_period", input)
+    OmopSketch::plotObservationPeriod(
+      result,
+      variableName = input$summarise_observation_period_ggplot2_16_variableName,
+      plotType = input$summarise_observation_period_ggplot2_16_plotType,
+      facet = input$summarise_observation_period_ggplot2_16_facet
+    )
+  })
+  output$summarise_observation_period_ggplot2_16 <- shiny::renderPlot({
+    createOutput16()
+  })
+  output$summarise_observation_period_ggplot2_16_download <- shiny::downloadHandler(
+    filename = paste0("output_ggplot2_summarise_observation_period.", "png"),
+    content = function(file) {
+      obj <- createOutput16()
+      ggplot2::ggsave(
+        filename = file,
+        plot = obj,
+        width = as.numeric(input$summarise_observation_period_ggplot2_16_download_width),
+        height = as.numeric(input$summarise_observation_period_ggplot2_16_download_height),
+        units = input$summarise_observation_period_ggplot2_16_download_units,
+        dpi = as.numeric(input$summarise_observation_period_ggplot2_16_download_dpi)
+      )
+    }
+  )
+
+
   # summarise_cohort_count -----
   ## tidy summarise_cohort_count -----
   getTidyDataSummariseCohortCount <- shiny::reactive({
@@ -170,6 +264,75 @@ server <- function(input, output, session) {
   )
 
 
+  # cohort_code_use -----
+  ## tidy cohort_code_use -----
+  getTidyDataCohortCodeUse <- shiny::reactive({
+    res <- data |>
+      filterData("cohort_code_use", input) |>
+      omopgenerics::addSettings() |>
+      omopgenerics::splitAll() |>
+      dplyr::select(!"result_id")
+
+    # columns to eliminate
+    colsEliminate <- colnames(res)
+    colsEliminate <- colsEliminate[!colsEliminate %in% c(
+      input$cohort_code_use_tidy_columns, "variable_name", "variable_level",
+      "estimate_name", "estimate_type", "estimate_value"
+    )]
+
+    # pivot
+    pivot <- input$cohort_code_use_tidy_pivot
+    if (pivot != "none") {
+      vars <- switch(pivot,
+        "estimates" = "estimate_name",
+        "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
+      )
+      res <- res |>
+        visOmopResults::pivotEstimates(pivotEstimatesBy = vars)
+    }
+
+    res |>
+      dplyr::select(!dplyr::all_of(colsEliminate))
+  })
+  output$cohort_code_use_tidy <- DT::renderDT({
+    DT::datatable(
+      getTidyDataCohortCodeUse(),
+      options = list(scrollX = TRUE),
+      rownames = FALSE
+    )
+  })
+  output$cohort_code_use_tidy_download <- shiny::downloadHandler(
+    filename = "tidy_cohort_code_use.csv",
+    content = function(file) {
+      getTidyDataCohortCodeUse() |>
+        readr::write_csv(file = file)
+    }
+  )
+  ## output cohort_code_use -----
+  ## output 12 -----
+  createOutput12 <- shiny::reactive({
+    result <- data |>
+      filterData("cohort_code_use", input)
+    CodelistGenerator::tableCohortCodeUse(
+      result,
+      timing = input$cohort_code_use_gt_12_timing,
+      header = input$cohort_code_use_gt_12_header,
+      groupColumn = input$cohort_code_use_gt_12_groupColumn,
+      hide = input$cohort_code_use_gt_12_hide
+    )
+  })
+  output$cohort_code_use_gt_12 <- gt::render_gt({
+    createOutput12()
+  })
+  output$cohort_code_use_gt_12_download <- shiny::downloadHandler(
+    filename = paste0("output_gt_cohort_code_use.", input$cohort_code_use_gt_12_download_type),
+    content = function(file) {
+      obj <- createOutput12()
+      gt::gtsave(data = obj, filename = file)
+    }
+  )
+
+
   # summarise_drug_utilisation -----
   ## tidy summarise_drug_utilisation -----
   getTidyDataSummariseDrugUtilisation <- shiny::reactive({
@@ -231,103 +394,6 @@ server <- function(input, output, session) {
     content = function(file) {
       obj <- createOutput27()
       gt::gtsave(data = obj, filename = file)
-    }
-  )
-
-
-  # summarise_characteristics -----
-  ## tidy summarise_characteristics -----
-  getTidyDataSummariseCharacteristics <- shiny::reactive({
-    res <- data |>
-      filterData("summarise_characteristics", input) |>
-      omopgenerics::addSettings() |>
-      omopgenerics::splitAll() |>
-      dplyr::select(!"result_id")
-
-    # columns to eliminate
-    colsEliminate <- colnames(res)
-    colsEliminate <- colsEliminate[!colsEliminate %in% c(
-      input$summarise_characteristics_tidy_columns, "variable_name", "variable_level",
-      "estimate_name", "estimate_type", "estimate_value"
-    )]
-
-    # pivot
-    pivot <- input$summarise_characteristics_tidy_pivot
-    if (pivot != "none") {
-      vars <- switch(pivot,
-        "estimates" = "estimate_name",
-        "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
-      )
-      res <- res |>
-        visOmopResults::pivotEstimates(pivotEstimatesBy = vars)
-    }
-
-    res |>
-      dplyr::select(!dplyr::all_of(colsEliminate))
-  })
-  output$summarise_characteristics_tidy <- DT::renderDT({
-    DT::datatable(
-      getTidyDataSummariseCharacteristics(),
-      options = list(scrollX = TRUE),
-      rownames = FALSE
-    )
-  })
-  output$summarise_characteristics_tidy_download <- shiny::downloadHandler(
-    filename = "tidy_summarise_characteristics.csv",
-    content = function(file) {
-      getTidyDataSummariseCharacteristics() |>
-        readr::write_csv(file = file)
-    }
-  )
-  ## output summarise_characteristics -----
-  ## output 7 -----
-  createOutput7 <- shiny::reactive({
-    result <- data |>
-      filterData("summarise_characteristics", input)
-    CohortCharacteristics::tableCharacteristics(
-      result,
-      header = input$summarise_characteristics_gt_7_header,
-      groupColumn = input$summarise_characteristics_gt_7_groupColumn,
-      hide = input$summarise_characteristics_gt_7_hide
-    )
-  })
-  output$summarise_characteristics_gt_7 <- gt::render_gt({
-    createOutput7()
-  })
-  output$summarise_characteristics_gt_7_download <- shiny::downloadHandler(
-    filename = paste0("output_gt_summarise_characteristics.", input$summarise_characteristics_gt_7_download_type),
-    content = function(file) {
-      obj <- createOutput7()
-      gt::gtsave(data = obj, filename = file)
-    }
-  )
-
-  ## output 8 -----
-  createOutput8 <- shiny::reactive({
-    result <- data |>
-      filterData("summarise_characteristics", input)
-    CohortCharacteristics::plotCharacteristics(
-      result,
-      plotStyle = input$summarise_characteristics_ggplot2_8_plotStyle,
-      facet = input$summarise_characteristics_ggplot2_8_facet,
-      colour = input$summarise_characteristics_ggplot2_8_colour
-    )
-  })
-  output$summarise_characteristics_ggplot2_8 <- shiny::renderPlot({
-    createOutput8()
-  })
-  output$summarise_characteristics_ggplot2_8_download <- shiny::downloadHandler(
-    filename = paste0("output_ggplot2_summarise_characteristics.", "png"),
-    content = function(file) {
-      obj <- createOutput8()
-      ggplot2::ggsave(
-        filename = file,
-        plot = obj,
-        width = as.numeric(input$summarise_characteristics_ggplot2_8_download_width),
-        height = as.numeric(input$summarise_characteristics_ggplot2_8_download_height),
-        units = input$summarise_characteristics_ggplot2_8_download_units,
-        dpi = as.numeric(input$summarise_characteristics_ggplot2_8_download_dpi)
-      )
     }
   )
 
@@ -425,11 +491,11 @@ server <- function(input, output, session) {
   )
 
 
-  # summarise_cohort_overlap -----
-  ## tidy summarise_cohort_overlap -----
-  getTidyDataSummariseCohortOverlap <- shiny::reactive({
+  # summarise_characteristics -----
+  ## tidy summarise_characteristics -----
+  getTidyDataSummariseCharacteristics <- shiny::reactive({
     res <- data |>
-      filterData("summarise_cohort_overlap", input) |>
+      filterData("summarise_characteristics", input) |>
       omopgenerics::addSettings() |>
       omopgenerics::splitAll() |>
       dplyr::select(!"result_id")
@@ -437,12 +503,12 @@ server <- function(input, output, session) {
     # columns to eliminate
     colsEliminate <- colnames(res)
     colsEliminate <- colsEliminate[!colsEliminate %in% c(
-      input$summarise_cohort_overlap_tidy_columns, "variable_name", "variable_level",
+      input$summarise_characteristics_tidy_columns, "variable_name", "variable_level",
       "estimate_name", "estimate_type", "estimate_value"
     )]
 
     # pivot
-    pivot <- input$summarise_cohort_overlap_tidy_pivot
+    pivot <- input$summarise_characteristics_tidy_pivot
     if (pivot != "none") {
       vars <- switch(pivot,
         "estimates" = "estimate_name",
@@ -455,68 +521,68 @@ server <- function(input, output, session) {
     res |>
       dplyr::select(!dplyr::all_of(colsEliminate))
   })
-  output$summarise_cohort_overlap_tidy <- DT::renderDT({
+  output$summarise_characteristics_tidy <- DT::renderDT({
     DT::datatable(
-      getTidyDataSummariseCohortOverlap(),
+      getTidyDataSummariseCharacteristics(),
       options = list(scrollX = TRUE),
       rownames = FALSE
     )
   })
-  output$summarise_cohort_overlap_tidy_download <- shiny::downloadHandler(
-    filename = "tidy_summarise_cohort_overlap.csv",
+  output$summarise_characteristics_tidy_download <- shiny::downloadHandler(
+    filename = "tidy_summarise_characteristics.csv",
     content = function(file) {
-      getTidyDataSummariseCohortOverlap() |>
+      getTidyDataSummariseCharacteristics() |>
         readr::write_csv(file = file)
     }
   )
-  ## output summarise_cohort_overlap -----
-  ## output 1 -----
-  createOutput1 <- shiny::reactive({
+  ## output summarise_characteristics -----
+  ## output 7 -----
+  createOutput7 <- shiny::reactive({
     result <- data |>
-      filterData("summarise_cohort_overlap", input)
-    CohortCharacteristics::tableCohortOverlap(
+      filterData("summarise_characteristics", input)
+    CohortCharacteristics::tableCharacteristics(
       result,
-      uniqueCombinations = input$summarise_cohort_overlap_gt_1_uniqueCombinations,
-      header = input$summarise_cohort_overlap_gt_1_header,
-      groupColumn = input$summarise_cohort_overlap_gt_1_groupColumn,
-      hide = input$summarise_cohort_overlap_gt_1_hide
+      header = input$summarise_characteristics_gt_7_header,
+      groupColumn = input$summarise_characteristics_gt_7_groupColumn,
+      hide = input$summarise_characteristics_gt_7_hide
     )
   })
-  output$summarise_cohort_overlap_gt_1 <- gt::render_gt({
-    createOutput1()
+  output$summarise_characteristics_gt_7 <- gt::render_gt({
+    createOutput7()
   })
-  output$summarise_cohort_overlap_gt_1_download <- shiny::downloadHandler(
-    filename = paste0("output_gt_summarise_cohort_overlap.", input$summarise_cohort_overlap_gt_1_download_type),
+  output$summarise_characteristics_gt_7_download <- shiny::downloadHandler(
+    filename = paste0("output_gt_summarise_characteristics.", input$summarise_characteristics_gt_7_download_type),
     content = function(file) {
-      obj <- createOutput1()
+      obj <- createOutput7()
       gt::gtsave(data = obj, filename = file)
     }
   )
 
-  ## output 2 -----
-  createOutput2 <- shiny::reactive({
+  ## output 8 -----
+  createOutput8 <- shiny::reactive({
     result <- data |>
-      filterData("summarise_cohort_overlap", input)
-    CohortCharacteristics::plotCohortOverlap(
+      filterData("summarise_characteristics", input)
+    CohortCharacteristics::plotCharacteristics(
       result,
-      facet = input$summarise_cohort_overlap_ggplot2_2_facet,
-      uniqueCombinations = input$summarise_cohort_overlap_ggplot2_2_uniqueCombinations
+      plotStyle = input$summarise_characteristics_ggplot2_8_plotStyle,
+      facet = input$summarise_characteristics_ggplot2_8_facet,
+      colour = input$summarise_characteristics_ggplot2_8_colour
     )
   })
-  output$summarise_cohort_overlap_ggplot2_2 <- shiny::renderPlot({
-    createOutput2()
+  output$summarise_characteristics_ggplot2_8 <- shiny::renderPlot({
+    createOutput8()
   })
-  output$summarise_cohort_overlap_ggplot2_2_download <- shiny::downloadHandler(
-    filename = paste0("output_ggplot2_summarise_cohort_overlap.", "png"),
+  output$summarise_characteristics_ggplot2_8_download <- shiny::downloadHandler(
+    filename = paste0("output_ggplot2_summarise_characteristics.", "png"),
     content = function(file) {
-      obj <- createOutput2()
+      obj <- createOutput8()
       ggplot2::ggsave(
         filename = file,
         plot = obj,
-        width = as.numeric(input$summarise_cohort_overlap_ggplot2_2_download_width),
-        height = as.numeric(input$summarise_cohort_overlap_ggplot2_2_download_height),
-        units = input$summarise_cohort_overlap_ggplot2_2_download_units,
-        dpi = as.numeric(input$summarise_cohort_overlap_ggplot2_2_download_dpi)
+        width = as.numeric(input$summarise_characteristics_ggplot2_8_download_width),
+        height = as.numeric(input$summarise_characteristics_ggplot2_8_download_height),
+        units = input$summarise_characteristics_ggplot2_8_download_units,
+        dpi = as.numeric(input$summarise_characteristics_ggplot2_8_download_dpi)
       )
     }
   )

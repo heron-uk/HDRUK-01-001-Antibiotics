@@ -2,6 +2,7 @@
 # Be careful editing this file
 
 library(bslib)
+library(CodelistGenerator)
 library(CohortCharacteristics)
 library(DiagrammeR)
 library(dplyr)
