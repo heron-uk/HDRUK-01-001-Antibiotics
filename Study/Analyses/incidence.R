@@ -5,7 +5,7 @@ if (run_incidence == TRUE) {
     cdm = cdm,
     denominatorTable = "denominator",
     outcomeTable = "top_ten_outcomes",
-    interval = c("quarters"),
+    interval = c("quarters", "overall"),
     repeatedEvents = TRUE,
     outcomeWashout = 30,
     completeDatabaseIntervals = FALSE
