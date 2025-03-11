@@ -28,6 +28,7 @@ if (run_incidence == TRUE) {
 # ingredient cohorts ------
 cli::cli_alert_info("- Creating ingredient cohorts")
 # will always get top 10 ingredients
+if(length(validateConceptSetArgument(top_ten_ingredients)) > 0){
 cdm <- generateDrugUtilisationCohortSet(
   cdm = cdm,
   name = "top_ten_outcomes",
@@ -50,11 +51,14 @@ results[[paste0("code_use_top_ten_ingredients_", i)]] <- summariseCohortCodeUse(
                          cohortId = working_cohort_id,
                          cohortTable = "top_ten")
 }
-  
+} else {
+  cli::cli_alert_info("Empty concept set (top_ten_ingredients) - skip")
+}
 
 # watch list cohorts ------
 if (isTRUE(run_watch_list)) {
   cli::cli_alert_info("- Creating watch list cohort")
+  if(length(validateConceptSetArgument(top_ten_watch_list)) > 0){
   cdm <- generateDrugUtilisationCohortSet(
     cdm = cdm,
     name = "top_ten_wl_outcomes",
@@ -87,8 +91,12 @@ if (isTRUE(run_watch_list)) {
     cdm$top_ten_wl,
     name = "top_ten"
   )
+  }
+} else {
+  cli::cli_alert_info("Empty concept set (top_ten_watch_list) - skip")
 }
 # watch list cohorts stratified by route ------
+if(length(validateConceptSetArgument(top_ten_watch_list)) > 0){
 if (isTRUE(run_watch_list) && length(routes) > 0) {
   top_ten_by_route <- stratifyByRouteCategory(top_ten_watch_list,
     cdm,
@@ -134,6 +142,10 @@ if (isTRUE(run_watch_list) && length(routes) > 0) {
     cdm$top_ten_rwl,
     name = "top_ten"
   )
+}
+} else {
+  cli::cli_alert_info("Empty concept set (top_ten_watch_list) - skip")
+  run_watch_list <- FALSE
 }
 
 cli::cli_alert_success("- Created cohort set")
