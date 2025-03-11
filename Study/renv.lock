@@ -462,14 +462,9 @@
     },
     "dbplyr": {
       "Package": "dbplyr",
-      "Version": "2.5.0.9000",
-      "Source": "GitHub",
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteRepo": "dbplyr",
-      "RemoteUsername": "tidyverse",
-      "RemotePkgRef": "tidyverse/dbplyr",
-      "RemoteSha": "572693098d0098018b6bb2d1e88b650d2e1e1580",
+      "Version": "2.5.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
       "Requirements": [
         "DBI",
         "R",
@@ -491,7 +486,7 @@
         "vctrs",
         "withr"
       ],
-      "Hash": "ff3e8f91ee09935d85b96e94f9340a59"
+      "Hash": "39b2e002522bfd258039ee4e889e0fd1"
     },
     "digest": {
       "Package": "digest",
