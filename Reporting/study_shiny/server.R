@@ -17,25 +17,25 @@ server <- function(input, output, session) {
       omopgenerics::addSettings() |>
       omopgenerics::splitAll() |>
       dplyr::select(!"result_id")
-
+    
     # columns to eliminate
     colsEliminate <- colnames(res)
     colsEliminate <- colsEliminate[!colsEliminate %in% c(
       input$summarise_omop_snapshot_tidy_columns, "variable_name", "variable_level",
       "estimate_name", "estimate_type", "estimate_value"
     )]
-
+    
     # pivot
     pivot <- input$summarise_omop_snapshot_tidy_pivot
     if (pivot != "none") {
       vars <- switch(pivot,
-        "estimates" = "estimate_name",
-        "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
+                     "estimates" = "estimate_name",
+                     "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
       )
       res <- res |>
         visOmopResults::pivotEstimates(pivotEstimatesBy = vars)
     }
-
+    
     res |>
       dplyr::select(!dplyr::all_of(colsEliminate))
   })
@@ -72,8 +72,8 @@ server <- function(input, output, session) {
       gt::gtsave(data = obj, filename = file)
     }
   )
-
-
+  
+  
   # summarise_observation_period -----
   ## tidy summarise_observation_period -----
   getTidyDataSummariseObservationPeriod <- shiny::reactive({
@@ -82,25 +82,25 @@ server <- function(input, output, session) {
       omopgenerics::addSettings() |>
       omopgenerics::splitAll() |>
       dplyr::select(!"result_id")
-
+    
     # columns to eliminate
     colsEliminate <- colnames(res)
     colsEliminate <- colsEliminate[!colsEliminate %in% c(
       input$summarise_observation_period_tidy_columns, "variable_name", "variable_level",
       "estimate_name", "estimate_type", "estimate_value"
     )]
-
+    
     # pivot
     pivot <- input$summarise_observation_period_tidy_pivot
     if (pivot != "none") {
       vars <- switch(pivot,
-        "estimates" = "estimate_name",
-        "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
+                     "estimates" = "estimate_name",
+                     "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
       )
       res <- res |>
         visOmopResults::pivotEstimates(pivotEstimatesBy = vars)
     }
-
+    
     res |>
       dplyr::select(!dplyr::all_of(colsEliminate))
   })
@@ -137,7 +137,7 @@ server <- function(input, output, session) {
       gt::gtsave(data = obj, filename = file)
     }
   )
-
+  
   ## output 16 -----
   createOutput16 <- shiny::reactive({
     result <- data |>
@@ -166,8 +166,8 @@ server <- function(input, output, session) {
       )
     }
   )
-
-
+  
+  
   # summarise_cohort_count -----
   ## tidy summarise_cohort_count -----
   getTidyDataSummariseCohortCount <- shiny::reactive({
@@ -176,25 +176,25 @@ server <- function(input, output, session) {
       omopgenerics::addSettings() |>
       omopgenerics::splitAll() |>
       dplyr::select(!"result_id")
-
+    
     # columns to eliminate
     colsEliminate <- colnames(res)
     colsEliminate <- colsEliminate[!colsEliminate %in% c(
       input$summarise_cohort_count_tidy_columns, "variable_name", "variable_level",
       "estimate_name", "estimate_type", "estimate_value"
     )]
-
+    
     # pivot
     pivot <- input$summarise_cohort_count_tidy_pivot
     if (pivot != "none") {
       vars <- switch(pivot,
-        "estimates" = "estimate_name",
-        "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
+                     "estimates" = "estimate_name",
+                     "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
       )
       res <- res |>
         visOmopResults::pivotEstimates(pivotEstimatesBy = vars)
     }
-
+    
     res |>
       dplyr::select(!dplyr::all_of(colsEliminate))
   })
@@ -234,7 +234,7 @@ server <- function(input, output, session) {
       gt::gtsave(data = obj, filename = file)
     }
   )
-
+  
   ## output 10 -----
   createOutput10 <- shiny::reactive({
     result <- data |>
@@ -262,8 +262,8 @@ server <- function(input, output, session) {
       )
     }
   )
-
-
+  
+  
   # cohort_code_use -----
   ## tidy cohort_code_use -----
   getTidyDataCohortCodeUse <- shiny::reactive({
@@ -272,25 +272,25 @@ server <- function(input, output, session) {
       omopgenerics::addSettings() |>
       omopgenerics::splitAll() |>
       dplyr::select(!"result_id")
-
+    
     # columns to eliminate
     colsEliminate <- colnames(res)
     colsEliminate <- colsEliminate[!colsEliminate %in% c(
       input$cohort_code_use_tidy_columns, "variable_name", "variable_level",
       "estimate_name", "estimate_type", "estimate_value"
     )]
-
+    
     # pivot
     pivot <- input$cohort_code_use_tidy_pivot
     if (pivot != "none") {
       vars <- switch(pivot,
-        "estimates" = "estimate_name",
-        "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
+                     "estimates" = "estimate_name",
+                     "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
       )
       res <- res |>
         visOmopResults::pivotEstimates(pivotEstimatesBy = vars)
     }
-
+    
     res |>
       dplyr::select(!dplyr::all_of(colsEliminate))
   })
@@ -331,8 +331,8 @@ server <- function(input, output, session) {
       gt::gtsave(data = obj, filename = file)
     }
   )
-
-
+  
+  
   # summarise_drug_utilisation -----
   ## tidy summarise_drug_utilisation -----
   getTidyDataSummariseDrugUtilisation <- shiny::reactive({
@@ -341,25 +341,25 @@ server <- function(input, output, session) {
       omopgenerics::addSettings() |>
       omopgenerics::splitAll() |>
       dplyr::select(!"result_id")
-
+    
     # columns to eliminate
     colsEliminate <- colnames(res)
     colsEliminate <- colsEliminate[!colsEliminate %in% c(
       input$summarise_drug_utilisation_tidy_columns, "variable_name", "variable_level",
       "estimate_name", "estimate_type", "estimate_value"
     )]
-
+    
     # pivot
     pivot <- input$summarise_drug_utilisation_tidy_pivot
     if (pivot != "none") {
       vars <- switch(pivot,
-        "estimates" = "estimate_name",
-        "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
+                     "estimates" = "estimate_name",
+                     "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
       )
       res <- res |>
         visOmopResults::pivotEstimates(pivotEstimatesBy = vars)
     }
-
+    
     res |>
       dplyr::select(!dplyr::all_of(colsEliminate))
   })
@@ -396,8 +396,8 @@ server <- function(input, output, session) {
       gt::gtsave(data = obj, filename = file)
     }
   )
-
-
+  
+  
   # summarise_cohort_attrition -----
   ## tidy summarise_cohort_attrition -----
   getTidyDataSummariseCohortAttrition <- shiny::reactive({
@@ -406,25 +406,25 @@ server <- function(input, output, session) {
       omopgenerics::addSettings() |>
       omopgenerics::splitAll() |>
       dplyr::select(!"result_id")
-
+    
     # columns to eliminate
     colsEliminate <- colnames(res)
     colsEliminate <- colsEliminate[!colsEliminate %in% c(
       input$summarise_cohort_attrition_tidy_columns, "variable_name", "variable_level",
       "estimate_name", "estimate_type", "estimate_value"
     )]
-
+    
     # pivot
     pivot <- input$summarise_cohort_attrition_tidy_pivot
     if (pivot != "none") {
       vars <- switch(pivot,
-        "estimates" = "estimate_name",
-        "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
+                     "estimates" = "estimate_name",
+                     "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
       )
       res <- res |>
         visOmopResults::pivotEstimates(pivotEstimatesBy = vars)
     }
-
+    
     res |>
       dplyr::select(!dplyr::all_of(colsEliminate))
   })
@@ -464,7 +464,7 @@ server <- function(input, output, session) {
       gt::gtsave(data = obj, filename = file)
     }
   )
-
+  
   ## output 4 -----
   createOutput4 <- shiny::reactive({
     result <- data |>
@@ -489,8 +489,8 @@ server <- function(input, output, session) {
       )
     }
   )
-
-
+  
+  
   # summarise_characteristics -----
   ## tidy summarise_characteristics -----
   getTidyDataSummariseCharacteristics <- shiny::reactive({
@@ -499,25 +499,25 @@ server <- function(input, output, session) {
       omopgenerics::addSettings() |>
       omopgenerics::splitAll() |>
       dplyr::select(!"result_id")
-
+    
     # columns to eliminate
     colsEliminate <- colnames(res)
     colsEliminate <- colsEliminate[!colsEliminate %in% c(
       input$summarise_characteristics_tidy_columns, "variable_name", "variable_level",
       "estimate_name", "estimate_type", "estimate_value"
     )]
-
+    
     # pivot
     pivot <- input$summarise_characteristics_tidy_pivot
     if (pivot != "none") {
       vars <- switch(pivot,
-        "estimates" = "estimate_name",
-        "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
+                     "estimates" = "estimate_name",
+                     "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
       )
       res <- res |>
         visOmopResults::pivotEstimates(pivotEstimatesBy = vars)
     }
-
+    
     res |>
       dplyr::select(!dplyr::all_of(colsEliminate))
   })
@@ -557,7 +557,7 @@ server <- function(input, output, session) {
       gt::gtsave(data = obj, filename = file)
     }
   )
-
+  
   ## output 8 -----
   createOutput8 <- shiny::reactive({
     result <- data |>
@@ -586,8 +586,8 @@ server <- function(input, output, session) {
       )
     }
   )
-
-
+  
+  
   # summarise_large_scale_characteristics -----
   ## tidy summarise_large_scale_characteristics -----
   getTidyDataSummariseLargeScaleCharacteristics <- shiny::reactive({
@@ -596,25 +596,25 @@ server <- function(input, output, session) {
       omopgenerics::addSettings() |>
       omopgenerics::splitAll() |>
       dplyr::select(!"result_id")
-
+    
     # columns to eliminate
     colsEliminate <- colnames(res)
     colsEliminate <- colsEliminate[!colsEliminate %in% c(
       input$summarise_large_scale_characteristics_tidy_columns, "variable_name", "variable_level",
       "estimate_name", "estimate_type", "estimate_value"
     )]
-
+    
     # pivot
     pivot <- input$summarise_large_scale_characteristics_tidy_pivot
     if (pivot != "none") {
       vars <- switch(pivot,
-        "estimates" = "estimate_name",
-        "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
+                     "estimates" = "estimate_name",
+                     "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
       )
       res <- res |>
         visOmopResults::pivotEstimates(pivotEstimatesBy = vars)
     }
-
+    
     res |>
       dplyr::select(!dplyr::all_of(colsEliminate))
   })
@@ -654,8 +654,8 @@ server <- function(input, output, session) {
       gt::gtsave(data = obj, filename = file)
     }
   )
-
-
+  
+  
   # incidence -----
   ## tidy incidence -----
   getTidyDataIncidence <- shiny::reactive({
@@ -664,25 +664,25 @@ server <- function(input, output, session) {
       omopgenerics::addSettings() |>
       omopgenerics::splitAll() |>
       dplyr::select(!"result_id")
-
+    
     # columns to eliminate
     colsEliminate <- colnames(res)
     colsEliminate <- colsEliminate[!colsEliminate %in% c(
       input$incidence_tidy_columns, "variable_name", "variable_level",
       "estimate_name", "estimate_type", "estimate_value"
     )]
-
+    
     # pivot
     pivot <- input$incidence_tidy_pivot
     if (pivot != "none") {
       vars <- switch(pivot,
-        "estimates" = "estimate_name",
-        "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
+                     "estimates" = "estimate_name",
+                     "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
       )
       res <- res |>
         visOmopResults::pivotEstimates(pivotEstimatesBy = vars)
     }
-
+    
     res |>
       dplyr::select(!dplyr::all_of(colsEliminate))
   })
@@ -722,7 +722,7 @@ server <- function(input, output, session) {
       gt::gtsave(data = obj, filename = file)
     }
   )
-
+  
   ## output 19 -----
   createOutput19 <- shiny::reactive({
     result <- data |>
@@ -752,8 +752,36 @@ server <- function(input, output, session) {
       )
     }
   )
-
-
+  
+  ## output 19 -----
+  createOutput20 <- shiny::reactive({
+    result <- data |>
+      filterData("incidence", input)
+    IncidencePrevalence::plotIncidencePopulation(
+      result,
+      x = input$incidence_ggplot2_20_x,
+      y = input$incidence_ggplot2_20_y,
+      facet = input$incidence_ggplot2_20_facet,
+      colour = input$incidence_ggplot2_20_colour
+    )
+  })
+  output$incidence_ggplot2_20 <- shiny::renderPlot({
+    createOutput20()
+  })
+  output$incidence_ggplot2_20_download <- shiny::downloadHandler(
+    filename = paste0("output_ggplot2_incidence_population.", "png"),
+    content = function(file) {
+      obj <- createOutput20()
+      ggplot2::ggsave(
+        filename = file,
+        plot = obj,
+        width = as.numeric(input$incidence_ggplot2_20_download_width),
+        height = as.numeric(input$incidence_ggplot2_20_download_height),
+        units = input$incidence_ggplot2_20_download_units,
+        dpi = as.numeric(input$incidence_ggplot2_20_download_dpi)
+      )
+    }
+  )
   # incidence_attrition -----
   ## tidy incidence_attrition -----
   getTidyDataIncidenceAttrition <- shiny::reactive({
@@ -762,25 +790,25 @@ server <- function(input, output, session) {
       omopgenerics::addSettings() |>
       omopgenerics::splitAll() |>
       dplyr::select(!"result_id")
-
+    
     # columns to eliminate
     colsEliminate <- colnames(res)
     colsEliminate <- colsEliminate[!colsEliminate %in% c(
       input$incidence_attrition_tidy_columns, "variable_name", "variable_level",
       "estimate_name", "estimate_type", "estimate_value"
     )]
-
+    
     # pivot
     pivot <- input$incidence_attrition_tidy_pivot
     if (pivot != "none") {
       vars <- switch(pivot,
-        "estimates" = "estimate_name",
-        "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
+                     "estimates" = "estimate_name",
+                     "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
       )
       res <- res |>
         visOmopResults::pivotEstimates(pivotEstimatesBy = vars)
     }
-
+    
     res |>
       dplyr::select(!dplyr::all_of(colsEliminate))
   })

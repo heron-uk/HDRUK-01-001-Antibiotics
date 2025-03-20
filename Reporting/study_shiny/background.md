@@ -2,7 +2,9 @@
 
 This Shiny app presents the results of analyses conducted on the following databases:
 
-- GOLD_100k
+- IDRIL_1
+- UCLH-2years
+- LTHT
 
 The analyses include:
 
@@ -21,7 +23,5 @@ The analyses include:
 - Large scale characteristics of antibiotics users.
 
 - Incidence rates of antibiotic use.
-
-
 
 ![](hdruk_logo.svg)100px
