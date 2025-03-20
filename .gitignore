@@ -34,3 +34,4 @@ Report/shiny/data/*csv
 Report/shiny/data/*RData
 Reporting/study_shiny/data/shinyData.RData
 Reporting/study_shiny/data/*.csv
+.DS_Store
