@@ -1,17 +1,17 @@
 if (run_characterisation == TRUE) {
   cli::cli_alert_info("- Getting cohort attrition")
-  results[["cohort_attrition"]] <- summariseCohortAttrition(cdm$top_ten)
+  results[["cohort_attrition"]] <- summariseCohortAttrition(cdm$antibiotics)
 
   cli::cli_alert_info("- Getting characteristics")
-  cdm$top_ten_chars <- cdm$top_ten |>
-    addDemographics(
+  cdm$antibiotics_chars <- cdm$antibiotics |>
+    PatientProfiles::addDemographics(
       sex = TRUE,
       age = TRUE,
       priorObservation = FALSE,
       futureObservation = FALSE,
-      name = "top_ten_chars"
+      name = "antibiotics_chars"
     )
-  cdm$top_ten_chars <- cdm$top_ten_chars |>
+  cdm$antibiotics_chars <- cdm$antibiotics_chars |>
     mutate(
       age_group_narrow = case_when(
         age >= 0 & age <= 4 ~ '0 to 4',
@@ -35,7 +35,7 @@ if (run_characterisation == TRUE) {
       )
     )
 
-  results[["characteristics"]] <- cdm$top_ten_chars |>
+  results[["characteristics"]] <- cdm$antibiotics_chars |>
     summariseCharacteristics(
       strata = list(
         "sex",
@@ -45,13 +45,14 @@ if (run_characterisation == TRUE) {
     )
 
   cli::cli_alert_info("- Getting large scale characteristics")
-  results[["lsc"]] <- summariseLargeScaleCharacteristics(cdm$top_ten,
+  results[["lsc"]] <- summariseLargeScaleCharacteristics(cdm$antibiotics_chars,
     eventInWindow = c(
       "condition_occurrence",
       "observation",
-      "procedure_occurrence"
+      "procedure_occurrence",
+      "drug_exposure"
     ),
-    window = list(c(-7, 0), c(0, 0))
+    window = list(c(-7, 0), c(0, 0), c(0,7))
   )
 
   cli::cli_alert_success("- Got large scale characteristics")
