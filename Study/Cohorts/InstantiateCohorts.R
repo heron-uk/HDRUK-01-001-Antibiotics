@@ -28,143 +28,99 @@ if (run_incidence == TRUE) {
 # ingredient cohorts ------
 cli::cli_alert_info("- Creating ingredient cohorts")
 # will always get top 10 ingredients
-if(length(validateConceptSetArgument(top_ten_ingredients)) > 0){
-cdm <- generateDrugUtilisationCohortSet(
-  cdm = cdm,
-  name = "top_ten_outcomes",
-  conceptSet = top_ten_ingredients,
-  gapEra = 7
-)
-cdm$top_ten <- cdm$top_ten_outcomes |>
-  requirePriorObservation(
-    indexDate = "cohort_start_date",
-    minPriorObservation = 30,
-    name = "top_ten"
-  ) |>
-  requireInDateRange(study_period) |>
-  requireAge(c(0, 150))
-
-for(i in seq_along(top_ten_ingredients)){
-working_cohort_id <- getCohortId(cohort = cdm$top_ten, cohortName = names(top_ten_ingredients)[i])
-results[[paste0("code_use_top_ten_ingredients_", i)]] <- summariseCohortCodeUse(top_ten_ingredients[i], 
-                         cdm = cdm, 
-                         cohortId = working_cohort_id,
-                         cohortTable = "top_ten")
-}
-} else {
-  cli::cli_alert_info("Empty concept set (top_ten_ingredients) - skip")
-}
-
-# watch list cohorts ------
-if (isTRUE(run_watch_list)) {
-  cli::cli_alert_info("- Creating watch list cohort")
-  if(length(validateConceptSetArgument(top_ten_watch_list)) > 0){
+if(isTRUE(primary_care)){
+# outpatient cohorts ------
+cli::cli_alert_info("- Creating outpatient cohorts")
   cdm <- generateDrugUtilisationCohortSet(
     cdm = cdm,
-    name = "top_ten_wl_outcomes",
-    conceptSet = top_ten_watch_list,
+    name = "antibiotics_outcomes",
+    conceptSet = ingredient_desc,
     gapEra = 7
   )
-  cdm <- bind(cdm$top_ten_outcomes,
-    cdm$top_ten_wl_outcomes,
-    name = "top_ten_outcomes"
-  )
 
-  cdm$top_ten_wl <- cdm$top_ten_wl_outcomes |>
+  cdm$antibiotics <- cdm$antibiotics_outcomes |>
     requirePriorObservation(
       indexDate = "cohort_start_date",
       minPriorObservation = 30,
-      name = "top_ten_wl"
+      name = "antibiotics"
     ) |>
-    requireInDateRange(study_period) |>
-    requireAge(c(0, 150))
+    requireTableIntersect(
+      tableName = "patient_visit",
+      window = c(0, 0)
+    ) |>
+    requireInDateRange(study_period)
   
-  for(i in seq_along(top_ten_watch_list)){
-    working_cohort_id <- getCohortId(cohort = cdm$top_ten_wl, cohortName = names(top_ten_watch_list)[i])
-    results[[paste0("code_use_top_ten_watch_list_", i)]] <- summariseCohortCodeUse(top_ten_watch_list[i], 
+  for(i in seq_along(ingredient_desc)){
+    working_cohort_id <- getCohortId(cohort = cdm$antibiotics, cohortName = names(ingredient_desc)[i])
+    results[[paste0("code_use_", i)]] <- summariseCohortCodeUse(ingredient_desc[i], 
                                                                                     cdm = cdm, 
                                                                                     cohortId = working_cohort_id,
-                                                                                    cohortTable = "top_ten_wl")
+                                                                                    cohortTable = "antibiotics")
+    
+    antibiotics_counts <- cohortCount(cdm$antibiotics) |>
+      filter(number_records > 500) %>%
+      left_join(settings(cdm$antibiotics),
+                by = "cohort_definition_id"
+      )
+    
+    sum_antibiotics <- summariseCohortCount(cohort = cdm$antibiotics) %>%
+      filter(group_level %in% antibiotics_counts$cohort_name)
+    
+    results[["sum_antibiotics"]] <- sum_antibiotics
   }
-  
-  cdm <- bind(cdm$top_ten,
-    cdm$top_ten_wl,
-    name = "top_ten"
-  )
   }
-} else {
-  cli::cli_alert_info("Empty concept set (top_ten_watch_list) - skip")
-}
-# watch list cohorts stratified by route ------
-if(length(validateConceptSetArgument(top_ten_watch_list)) > 0){
-if (isTRUE(run_watch_list) && length(routes) > 0) {
-  top_ten_by_route <- stratifyByRouteCategory(top_ten_watch_list,
-    cdm,
-    keepOriginal = FALSE
-  )
-  # route watch list: names start with rwl
-  names(top_ten_by_route) <- paste0("r", names(top_ten_by_route))
+
+# inpatient cohorts ------
+cli::cli_alert_info("- Creating inpatient cohorts")
+if(isTRUE(secondary_care)){
   cdm <- generateDrugUtilisationCohortSet(
     cdm = cdm,
-    name = "top_ten_rwl_outcomes",
-    conceptSet = top_ten_by_route,
+    name = "antibiotics_outcomes",
+    conceptSet = ingredient_desc,
     gapEra = 7
   )
-
-  cdm <- bind(cdm$top_ten_outcomes,
-    cdm$top_ten_rwl_outcomes,
-    name = "top_ten_outcomes"
-  )
-
-  cdm$top_ten_rwl <- cdm$top_ten_rwl_outcomes |>
+  
+  cdm$antibiotics <- cdm$antibiotics_outcomes |>
     requirePriorObservation(
       indexDate = "cohort_start_date",
       minPriorObservation = 30,
-      name = "top_ten_rwl"
+      name = "ing_inpat"
     ) |>
-    requireInDateRange(study_period) |>
-    requireAge(c(0, 150))
-
-  for(i in seq_along(top_ten_by_route)){
-    working_cohort_id <- getCohortId(cohort = cdm$top_ten_rwl, cohortName = names(top_ten_by_route)[i])
-    # only get code counts for those with subjects
-    if(nrow(cohortCount(cdm$top_ten_rwl) |> 
-      dplyr::filter(cohort_definition_id == working_cohort_id) |> 
-      filter(number_records > 0))){
-    results[[paste0("code_use_top_ten_by_route_", i)]] <- summariseCohortCodeUse(top_ten_by_route[i], 
-                                                                                   cdm = cdm, 
-                                                                                   cohortId = working_cohort_id,
-                                                                                   cohortTable = "top_ten_rwl")
-    }
-  }
+    requireTableIntersect(
+      tableName = "patient_visit",
+      window = c(-7, 7)
+    ) |>
+    requireInDateRange(study_period)
   
-  cdm <- bind(cdm$top_ten,
-    cdm$top_ten_rwl,
-    name = "top_ten"
-  )
-}
-} else {
-  cli::cli_alert_info("Empty concept set (top_ten_watch_list) - skip")
-  run_watch_list <- FALSE
-}
+  for(i in seq_along(ingredient_desc)){
+    working_cohort_id <- getCohortId(cohort = cdm$antibiotics, cohortName = names(ingredient_desc)[i])
+    results[[paste0("code_use_", i)]] <- summariseCohortCodeUse(ingredient_desc[i], 
+                                                                cdm = cdm, 
+                                                                cohortId = working_cohort_id,
+                                                                cohortTable = "antibiotics")
+    
+    antibiotics_counts <- cohortCount(cdm$antibiotics) |>
+      filter(number_records > 500) %>%
+      left_join(settings(cdm$antibiotics),
+                by = "cohort_definition_id"
+      )
+    
+    sum_antibiotics <- summariseCohortCount(cohort = cdm$antibiotics) %>%
+      filter(group_level %in% antibiotics_counts$cohort_name)
+    
+    results[["sum_antibiotics"]] <- sum_antibiotics
+  }
+} 
 
 cli::cli_alert_success("- Created cohort set")
 
 # keep only cohorts with minimum count ------
-top_ten_to_keep <- cohortCount(cdm$top_ten) |>
-  filter(number_subjects > 0) |>
+antibiotics_to_keep <- cohortCount(cdm$antibiotics) |>
+  filter(number_subjects > min_cell_count) |>
   pull("cohort_definition_id")
-cdm$top_ten <- subsetCohorts(
-  cohort = cdm$top_ten,
-  cohortId = top_ten_to_keep,
-  name = "top_ten"
-)
 
-top_ten_outcomes_to_keep <- cohortCount(cdm$top_ten_outcomes) |>
-  filter(number_subjects > 0) |>
-  pull("cohort_definition_id")
-cdm$top_ten_outcomes <- subsetCohorts(
-  cohort = cdm$top_ten_outcomes,
-  cohortId = top_ten_outcomes_to_keep,
-  name = "top_ten_outcomes"
+cdm$antibiotics <- subsetCohorts(
+  cohort = cdm$antibiotics,
+  cohortId = antibiotics_to_keep,
+  name = "antibiotics"
 )
