@@ -4,8 +4,8 @@ if (run_incidence == TRUE) {
   results[["incidence"]] <- estimateIncidence(
     cdm = cdm,
     denominatorTable = "denominator",
-    outcomeTable = "top_ten_outcomes",
-    interval = c("quarters", "overall"),
+    outcomeTable = "antibiotics",
+    interval = c("quarters"),
     repeatedEvents = TRUE,
     outcomeWashout = 30,
     completeDatabaseIntervals = FALSE
@@ -13,3 +13,5 @@ if (run_incidence == TRUE) {
 
   cli::cli_alert_success("- Got crude incidence")
 }
+
+tableIncidence(results[["incidence"]])
