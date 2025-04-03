@@ -33,16 +33,9 @@ results[["obs_period"]] <- summariseObservationPeriod(cdm$observation_period)
 info(logger, "OBSERVATION PERIOD SUMMARY COMPLETED")
 
 # Get top ten antibiotics: ingredient level -----
-info(logger, "GETTING TOP TEN INGREDIENTS")
-source(here("Cohorts", "TopTenIngredients.R"))
+info(logger, "GETTING CODELISTS")
+source(here("Cohorts", "GenerateCodelists.R"))
 info(logger, "GOT TOP TEN INGREDIENTS")
-
-# Get top ten antibiotics: watch list -----
-if (run_watch_list) {
-  info(logger, "GETTING TOP TEN WATCH LIST ANTIBIOTICS")
-  source(here("Cohorts", "TopTenWatchList.R"))
-  info(logger, "GOT TOP TEN WATCH LIST ANTIBIOTICS")
-}
 
 # Create cohorts -----
 info(logger, "INSTANTIATING STUDY COHORTS")
@@ -55,19 +48,19 @@ info(logger, "STUDY COHORTS INSTANTIATED")
 
 
 # Drug exposure diagnostics -----
-if (run_drug_exposure_diagnostics == TRUE) {
-  info(logger, "RUNNING DRUG EXPOSURE DIAGNOSTICS")
-  source(here("Analyses", "drug_exposure_diagnostics.R"))
-  info(logger, "GOT DRUG EXPOSURE DIAGNOSTICS")
-}
+#if (run_drug_exposure_diagnostics == TRUE) {
+#  info(logger, "RUNNING DRUG EXPOSURE DIAGNOSTICS")
+#  source(here("Analyses", "drug_exposure_diagnostics.R"))
+#  info(logger, "GOT DRUG EXPOSURE DIAGNOSTICS")
+#}
 
 # Study analyses ----
-source(here("Analyses", "functions.R"))
-if (run_drug_utilisation == TRUE) {
-  info(logger, "RUN DRUG UTILISATION")
-  source(here("Analyses", "drug_utilisation.R"))
-  info(logger, "DRUG UTILISATION FINISHED")
-}
+#source(here("Analyses", "functions.R"))
+#if (run_drug_utilisation == TRUE) {
+#  info(logger, "RUN DRUG UTILISATION")
+#  source(here("Analyses", "drug_utilisation.R"))
+#  info(logger, "DRUG UTILISATION FINISHED")
+#}
 if (run_characterisation == TRUE) {
   info(logger, "RUN CHARACTERISTICS")
   source(here("Analyses", "characteristics.R"))
@@ -77,6 +70,12 @@ if (run_incidence == TRUE) {
   info(logger, "RUN INCIDENCE")
   source(here("Analyses", "incidence.R"))
   info(logger, "INCIDENCE FINISHED")
+}
+
+if (run_indications == TRUE) {
+  info(logger, "RUN INDICATIONS")
+  source(here("Analyses", "indications.R"))
+  info(logger, "INDICATIONS FINISHED")
 }
 info(logger, "ANALYSES FINISHED")
 
