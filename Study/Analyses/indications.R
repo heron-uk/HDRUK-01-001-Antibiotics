@@ -1,4 +1,4 @@
-if (run_indications == TRUE) {
+#if (run_indications == TRUE) {
   cli::cli_alert_info("- Getting indications")
 
   indications <- c(
@@ -9,19 +9,20 @@ if (run_indications == TRUE) {
     "ear infection",
     "eye infection",
     "gastrointestinal infection",
-    "dental infection",
-    "sexually transmitted infection",
+    "oral infection",
+    "sexually transmitted infectious disease",
     "bone infection",
-    "joint infection",
+    "infectious disorder of joint",
     "sepsis",
-    "meningitis"
+    "meningitis",
+    "postprocedural infection"
   )
 
-  codelists <- list()
+  indication_codelists <- list()
 
   for (i in seq_along(indications)) {
     # Dynamically create the name and store the result in the list
-    codelists[[paste0("codelist_", indications[i])]] <- getCandidateCodes(
+    indication_codelists[[paste0("codelist_", indications[i])]] <- getCandidateCodes(
       cdm,
       keywords = indications[i],
       exclude = NULL,
@@ -36,7 +37,7 @@ if (run_indications == TRUE) {
   }
 
   # Combine the list of data frames into one large data frame
-  all_codes <- do.call(rbind, codelists)
+  all_codes <- do.call(rbind, indication_codelists)
 
   rownames(all_codes) <- NULL
 
@@ -58,16 +59,17 @@ if (run_indications == TRUE) {
     name = "indications"
   )
 
-  indications <- cdm$top_ten_by_route |>
-    summariseIndication(
+  indications_table <- cdm$antibiotics |>
+    DrugUtilisation::summariseIndication(
       indicationCohortName = "indications",
       unknownIndicationTable = "condition_occurrence",
-      indicationWindow = list(c(-7, -1), c(0, 0)),
+      indicationWindow = list(c(-7, 0), c(0, 0), c(0, 7)),
       mutuallyExclusive = FALSE
     ) %>%
-    filter(estimate_value > 0)
+    filter(estimate_name == "percentage",
+           estimate_value >= 0.5)
 
-  results[["indications"]] <- indications
+  results[["indications"]] <- indications_table
 
   cli::cli_alert_success("- Got indications")
-}
+#}
