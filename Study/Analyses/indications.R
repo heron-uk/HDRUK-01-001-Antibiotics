@@ -9,10 +9,8 @@
     "genital infection",
     "gastrointestinal infection",
     "respiratory infection",
-    "skin infection",
     "urinary tract infectious disease",
-    "postprocedural infection",
-    "infectious disease"
+    "postprocedural infection"
   )
 
 indication_codelists <- list()
@@ -133,7 +131,9 @@ procedures_table <- cdm$antibiotics |>
 
 symptoms <- c("fever",
                 "cough",
-                "nausea")
+                "nausea",
+              "vomiting",
+              "diarrhea")
 
 symptom_codelists <- list()
 
