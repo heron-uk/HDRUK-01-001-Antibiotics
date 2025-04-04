@@ -28,9 +28,10 @@ if (run_incidence == TRUE) {
 # ingredient cohorts ------
 cli::cli_alert_info("- Creating ingredient cohorts")
 # will always get top 10 ingredients
-if(isTRUE(primary_care)){
+if(isTRUE(restrict_to_inpatient)){
 # outpatient cohorts ------
 cli::cli_alert_info("- Creating outpatient cohorts")
+  
   cdm <- generateDrugUtilisationCohortSet(
     cdm = cdm,
     name = "antibiotics_outcomes",
@@ -44,35 +45,20 @@ cli::cli_alert_info("- Creating outpatient cohorts")
       minPriorObservation = 30,
       name = "antibiotics"
     ) |>
+    requirePriorDrugWashout(days = 30,
+                            name = "antibiotics") |>
     requireTableIntersect(
-      tableName = "patient_visit",
-      window = c(0, 0)
+      tableName = "inpatient_visit",
+      window = c(0, Inf),
+      indexDate = "cohort_start_date"
+    ) |>
+    requireTableIntersect(
+      tableName = "inpatient_visit",
+      window = c(-Inf, 0),
+      indexDate = "cohort_end_date"
     ) |>
     requireInDateRange(study_period)
-  
-  for(i in seq_along(ingredient_desc)){
-    working_cohort_id <- getCohortId(cohort = cdm$antibiotics, cohortName = names(ingredient_desc)[i])
-    results[[paste0("code_use_", i)]] <- summariseCohortCodeUse(ingredient_desc[i], 
-                                                                                    cdm = cdm, 
-                                                                                    cohortId = working_cohort_id,
-                                                                                    cohortTable = "antibiotics")
-    
-    antibiotics_counts <- cohortCount(cdm$antibiotics) |>
-      filter(number_records > 500) %>%
-      left_join(settings(cdm$antibiotics),
-                by = "cohort_definition_id"
-      )
-    
-    sum_antibiotics <- summariseCohortCount(cohort = cdm$antibiotics) %>%
-      filter(group_level %in% antibiotics_counts$cohort_name)
-    
-    results[["sum_antibiotics"]] <- sum_antibiotics
-  }
-  }
-
-# inpatient cohorts ------
-cli::cli_alert_info("- Creating inpatient cohorts")
-if(isTRUE(secondary_care)){
+} else {
   cdm <- generateDrugUtilisationCohortSet(
     cdm = cdm,
     name = "antibiotics_outcomes",
@@ -84,43 +70,29 @@ if(isTRUE(secondary_care)){
     requirePriorObservation(
       indexDate = "cohort_start_date",
       minPriorObservation = 30,
-      name = "ing_inpat"
+      name = "antibiotics"
     ) |>
-    requireTableIntersect(
-      tableName = "patient_visit",
-      window = c(-7, 7)
-    ) |>
+    requirePriorDrugWashout(days = 30,
+                            name = "antibiotics") |>
     requireInDateRange(study_period)
+}
   
-  for(i in seq_along(ingredient_desc)){
-    working_cohort_id <- getCohortId(cohort = cdm$antibiotics, cohortName = names(ingredient_desc)[i])
-    results[[paste0("code_use_", i)]] <- summariseCohortCodeUse(ingredient_desc[i], 
-                                                                cdm = cdm, 
-                                                                cohortId = working_cohort_id,
-                                                                cohortTable = "antibiotics")
+for(i in seq_along(ingredient_desc)){
+  working_cohort_id <- getCohortId(cohort = cdm$antibiotics, cohortName = names(ingredient_desc)[i])
+  results[[paste0("code_use_", i)]] <- summariseCohortCodeUse(ingredient_desc[i], 
+                                                                                    cdm = cdm, 
+                                                                                    cohortId = working_cohort_id,
+                                                                                    cohortTable = "antibiotics")
     
-    antibiotics_counts <- cohortCount(cdm$antibiotics) |>
-      filter(number_records > 500) %>%
-      left_join(settings(cdm$antibiotics),
-                by = "cohort_definition_id"
-      )
+antibiotics_counts <- cohortCount(cdm$antibiotics) |>
+  left_join(settings(cdm$antibiotics),
+  by = "cohort_definition_id"
+  )
     
-    sum_antibiotics <- summariseCohortCount(cohort = cdm$antibiotics) %>%
-      filter(group_level %in% antibiotics_counts$cohort_name)
+sum_antibiotics <- summariseCohortCount(cohort = cdm$antibiotics) %>%
+  filter(group_level %in% antibiotics_counts$cohort_name)
     
-    results[["sum_antibiotics"]] <- sum_antibiotics
+results[["sum_antibiotics"]] <- sum_antibiotics
   }
-} 
 
 cli::cli_alert_success("- Created cohort set")
-
-# keep only cohorts with minimum count ------
-antibiotics_to_keep <- cohortCount(cdm$antibiotics) |>
-  filter(number_subjects > min_cell_count) |>
-  pull("cohort_definition_id")
-
-cdm$antibiotics <- subsetCohorts(
-  cohort = cdm$antibiotics,
-  cohortId = antibiotics_to_keep,
-  name = "antibiotics"
-)
