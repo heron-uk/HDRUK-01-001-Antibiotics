@@ -18,6 +18,28 @@ cdm$person <- cdm$person |>
     !is.na(year_of_birth)
   )
 
+if(isTRUE(restrict_to_inpatient) & isFALSE(restrict_to_paediatric)){
+generateObservationPeriod(
+  cdm,
+  collapseEra = 545,
+  persistenceWindow = 0,
+  censorDate = Sys.time(),
+  censorAge = 150L,
+  recordsFrom = c("drug_exposure", "condition_occurrence", "procedure_occurrence",
+                  "visit_occurrence", "device_exposure", "measurement", "observation", "death")
+)
+} else if(isTRUE(restrict_to_inpatient) & isTRUE(restrict_to_paediatric)){
+  generateObservationPeriod(
+    cdm,
+    collapseEra = 545,
+    persistenceWindow = 0,
+    censorDate = Sys.time(),
+    censorAge = 18L,
+    recordsFrom = c("drug_exposure", "condition_occurrence", "procedure_occurrence",
+                    "visit_occurrence", "device_exposure", "measurement", "observation", "death")
+  )
+}
+
 # Shared study parameters  ----
 study_period <- c(as.Date(study_start), as.Date(NA))
 
