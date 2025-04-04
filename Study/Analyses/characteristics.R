@@ -52,7 +52,7 @@ if (run_characterisation == TRUE) {
       "procedure_occurrence",
       "drug_exposure"
     ),
-    window = list(c(-7, 0), c(0, 0), c(0,7))
+    window = list(c(-7,7))
   )
 
   cli::cli_alert_success("- Got large scale characteristics")
