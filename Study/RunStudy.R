@@ -12,33 +12,32 @@ info(logger, "LOG CREATED")
 
 # CDM manipulations -----
 # drop anyone missing sex or year of birth
+
+if(isTRUE(restrict_to_inpatient) & isFALSE(restrict_to_paediatric)){
+cdm <- generateObservationPeriod(
+  cdm,
+  collapseEra = 545,
+  persistenceWindow = 545,
+  censorDate = Sys.time(),
+  censorAge = 150L,
+  recordsFrom = c("visit_occurrence")
+)
+} else if(isTRUE(restrict_to_inpatient) & isTRUE(restrict_to_paediatric)){
+  cdm <- generateObservationPeriod(
+    cdm,
+    collapseEra = 545,
+    persistenceWindow = 545,
+    censorDate = Sys.time(),
+    censorAge = 18L,
+    recordsFrom = c("visit_occurrence")
+  )
+}
+
 cdm$person <- cdm$person |>
   filter(
     !is.na(gender_concept_id),
     !is.na(year_of_birth)
   )
-
-if(isTRUE(restrict_to_inpatient) & isFALSE(restrict_to_paediatric)){
-generateObservationPeriod(
-  cdm,
-  collapseEra = 545,
-  persistenceWindow = 0,
-  censorDate = Sys.time(),
-  censorAge = 150L,
-  recordsFrom = c("drug_exposure", "condition_occurrence", "procedure_occurrence",
-                  "visit_occurrence", "device_exposure", "measurement", "observation", "death")
-)
-} else if(isTRUE(restrict_to_inpatient) & isTRUE(restrict_to_paediatric)){
-  generateObservationPeriod(
-    cdm,
-    collapseEra = 545,
-    persistenceWindow = 0,
-    censorDate = Sys.time(),
-    censorAge = 18L,
-    recordsFrom = c("drug_exposure", "condition_occurrence", "procedure_occurrence",
-                    "visit_occurrence", "device_exposure", "measurement", "observation", "death")
-  )
-}
 
 # Shared study parameters  ----
 study_period <- c(as.Date(study_start), as.Date(NA))
@@ -65,29 +64,14 @@ source(here("Cohorts", "InstantiateCohorts.R"))
 info(logger, "STUDY COHORTS INSTANTIATED")
 # cohorts created:
 # denominator for incidence analysis
-# top_ten_outcomes - to be used for incidence
-# top_ten - to be used for characteristation and drug utilisation
+# antibiotics from watch list with at least 500 users
 
-
-# Drug exposure diagnostics -----
-#if (run_drug_exposure_diagnostics == TRUE) {
-#  info(logger, "RUNNING DRUG EXPOSURE DIAGNOSTICS")
-#  source(here("Analyses", "drug_exposure_diagnostics.R"))
-#  info(logger, "GOT DRUG EXPOSURE DIAGNOSTICS")
-#}
-
-# Study analyses ----
-#source(here("Analyses", "functions.R"))
-#if (run_drug_utilisation == TRUE) {
-#  info(logger, "RUN DRUG UTILISATION")
-#  source(here("Analyses", "drug_utilisation.R"))
-#  info(logger, "DRUG UTILISATION FINISHED")
-#}
 if (run_characterisation == TRUE) {
   info(logger, "RUN CHARACTERISTICS")
   source(here("Analyses", "characteristics.R"))
   info(logger, "CHARACTERISTICS FINISHED")
 }
+
 if (run_incidence == TRUE) {
   info(logger, "RUN INCIDENCE")
   source(here("Analyses", "incidence.R"))
@@ -99,6 +83,7 @@ if (run_indications == TRUE) {
   source(here("Analyses", "indications.R"))
   info(logger, "INDICATIONS FINISHED")
 }
+
 info(logger, "ANALYSES FINISHED")
 
 # Export results ----
