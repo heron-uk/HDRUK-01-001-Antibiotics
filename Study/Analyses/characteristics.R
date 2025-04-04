@@ -56,4 +56,19 @@ if (run_characterisation == TRUE) {
   )
 
   cli::cli_alert_success("- Got large scale characteristics")
+  
+  cli::cli_alert(" - Getting summary of multiple uses")
+  
+  char_antibiotic_overlap <- cdm$antibiotics_chars |>
+    summariseCharacteristics(cohortIntersectFlag = list(
+      "Antibiotics Flag" = list(
+        targetCohortTable = "antibiotics", window = c(-7,7)
+      )),
+      strata = list(
+        "sex",
+        "age_group_broad"
+      )
+    )
+  
+  results[["antibiotics_overlap"]] <- char_antibiotic_overlap
 }
