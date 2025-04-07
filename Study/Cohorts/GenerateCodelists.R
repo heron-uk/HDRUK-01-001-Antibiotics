@@ -25,3 +25,10 @@ ingredient_desc <- getDrugIngredientCodes(
     name = ing_av,
     type = "codelist")
 
+ingredient_desc <- subsetToCodesInUse(ingredient_desc,
+  cdm,
+  minimumCount = 0L,
+  table = c("drug_exposure")
+)
+
+
