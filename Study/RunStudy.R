@@ -56,7 +56,7 @@ info(logger, "OBSERVATION PERIOD SUMMARY COMPLETED")
 # Get top ten antibiotics: ingredient level -----
 info(logger, "GETTING CODELISTS")
 source(here("Cohorts", "GenerateCodelists.R"))
-info(logger, "GOT TOP TEN INGREDIENTS")
+info(logger, "GOT CODELISTS")
 
 # Create cohorts -----
 info(logger, "INSTANTIATING STUDY COHORTS")
