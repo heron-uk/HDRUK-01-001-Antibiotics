@@ -94,7 +94,7 @@ run_incidence <- TRUE
 run_drug_exposure_diagnostics <- FALSE
 
 # Keep run_indications as FALSE for now.
-run_indications <- FALSE
+run_indications <- TRUE
 
 # Run the study
 source(here("RunStudy.R"))
