@@ -93,7 +93,6 @@ run_incidence <- TRUE
 #Only set run_drug_exposure_diagnostics as TRUE if you are running the code for the first time.
 run_drug_exposure_diagnostics <- FALSE
 
-# Keep run_indications as FALSE for now.
 run_indications <- TRUE
 
 # Run the study
