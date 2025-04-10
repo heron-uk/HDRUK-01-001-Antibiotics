@@ -13,5 +13,3 @@ if (run_incidence == TRUE) {
 
   cli::cli_alert_success("- Got crude incidence")
 }
-
-tableIncidence(results[["incidence"]])
