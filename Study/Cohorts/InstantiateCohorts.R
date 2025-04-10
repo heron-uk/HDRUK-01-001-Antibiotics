@@ -89,9 +89,6 @@ cli::cli_alert_info("- Creating outpatient cohorts")
                             name = "antibiotics") |>
     requireInDateRange(study_period) 
 }
-# This doesn't do anything so using alternative code until fixed:
-#cdm$antibiotics <- cdm$antibiotics |>
-#  requireMinCohortCount(500)
 
 antibiotics_count <- merge(cohortCount(cdm$antibiotics), settings(cdm$antibiotics), by = "cohort_definition_id") %>%
   filter(number_subjects > 100)
