@@ -15,7 +15,7 @@ if (run_indications == TRUE) {
                                    conceptSet = indications_list,
                                    name = "indications")
   
-  indications_table <- cdm$antibiotics |>
+  indications_table <- cdm$antibiotics_chars |>
     summariseCharacteristics(
       cohortIntersectFlag = list(
         "Indication Flag" = list(
