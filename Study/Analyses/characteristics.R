@@ -3,6 +3,7 @@ if (run_characterisation == TRUE) {
   results[["cohort_attrition"]] <- summariseCohortAttrition(cdm$antibiotics)
 
   cli::cli_alert_info("- Getting characteristics")
+  
   cdm$antibiotics_chars <- cdm$antibiotics |>
     PatientProfiles::addDemographics(
       sex = TRUE,
@@ -11,6 +12,7 @@ if (run_characterisation == TRUE) {
       futureObservation = FALSE,
       name = "antibiotics_chars"
     )
+  
   cdm$antibiotics_chars <- cdm$antibiotics_chars |>
     mutate(
       age_group_narrow = case_when(
@@ -36,13 +38,19 @@ if (run_characterisation == TRUE) {
     )
 
   results[["characteristics"]] <- cdm$antibiotics_chars |>
-    summariseCharacteristics(
-      strata = list(
+    summariseCharacteristics(cohortIntersectFlag = list(
+      "Antibiotics Flag" = list(
+        targetCohortTable = "antibiotics_chars", window = c(-7,7)
+      ), "Indication Flag" = list(
+        targetCohortTable = "indications", window = c(-7, 7)
+      )), strata = list(
         "sex",
         "age_group_narrow",
         "age_group_broad"
       )
     )
+  
+  cli::cli_alert_info("- Got characteristics")
 
   cli::cli_alert_info("- Getting large scale characteristics")
   results[["lsc"]] <- summariseLargeScaleCharacteristics(cdm$antibiotics_chars,
@@ -56,19 +64,4 @@ if (run_characterisation == TRUE) {
   )
 
   cli::cli_alert_success("- Got large scale characteristics")
-  
-  cli::cli_alert(" - Getting summary of multiple uses")
-  
-  char_antibiotic_overlap <- cdm$antibiotics_chars |>
-    summariseCharacteristics(cohortIntersectFlag = list(
-      "Antibiotics Flag" = list(
-        targetCohortTable = "antibiotics", window = c(-7,7)
-      )),
-      strata = list(
-        "sex",
-        "age_group_broad"
-      )
-    )
-  
-  results[["antibiotics_overlap"]] <- char_antibiotic_overlap
 }
