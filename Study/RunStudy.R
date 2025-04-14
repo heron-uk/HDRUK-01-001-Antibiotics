@@ -64,7 +64,7 @@ source(here("Cohorts", "InstantiateCohorts.R"))
 info(logger, "STUDY COHORTS INSTANTIATED")
 # cohorts created:
 # denominator for incidence analysis
-# antibiotics from watch list with at least 500 users
+# antibiotics from watch list with at least 100 users
 
 if(run_drug_exposure_diagnostics == TRUE)
 info(logger, "RUNNING DRUG EXPSURE DIAGNOSTICS")
@@ -81,12 +81,6 @@ if (run_incidence == TRUE) {
   info(logger, "RUN INCIDENCE")
   source(here("Analyses", "incidence.R"))
   info(logger, "INCIDENCE FINISHED")
-}
-
-if (run_indications == TRUE) {
-  info(logger, "RUN INDICATIONS")
-  source(here("Analyses", "indications.R"))
-  info(logger, "INDICATIONS FINISHED")
 }
 
 info(logger, "ANALYSES FINISHED")
