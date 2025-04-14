@@ -108,6 +108,19 @@ for(i in seq_along(ingredient_desc)){
 sum_antibiotics <- summariseCohortCount(cohort = cdm$antibiotics)
 
 results[["sum_antibiotics"]] <- sum_antibiotics
-  }
+}
+
+##### Indications
+indications <- read_csv("Cohorts/indications_concepts.csv")[,-1]
+
+indications_grouped <- indications %>%
+  group_by(indication_category) %>%
+  summarise(concept_id_vector = list(concept_id), .groups = "drop")
+
+indications_list <- setNames(indications_grouped$concept_id_vector, toSnakeCase(indications_grouped$indication_category))
+
+cdm$indications <- conceptCohort(cdm = cdm,
+                                 conceptSet = indications_list,
+                                 name = "indications")
 
 cli::cli_alert_success("- Created cohort set")
