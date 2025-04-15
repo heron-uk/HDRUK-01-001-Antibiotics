@@ -1,16 +1,12 @@
 if (run_drug_exposure_diagnostics == TRUE) {
-  ded_ingredients <- all_routes_counts %>%
-    select(cohort_name) %>%
-    separate(cohort_name, into = c("prefix", "concept_code", "concept_name"), 
-             sep = "_") |> 
-    select("concept_code", "concept_name") |> 
-    dplyr::distinct()
+  
+  ded_ingredients <- sub("_.*", "", names(ingredient_desc))
 
   ded_codes <- cdm$concept %>%
     filter(domain_id == "Drug",
            concept_class_id == "Ingredient",
            standard_concept == "S",
-           concept_code %in% ded_ingredients$concept_code) %>%
+           concept_code %in% ded_ingredients) %>%
     pull("concept_id")
 
   cli::cli_alert_info("- Running drug exposure diagnostics")
