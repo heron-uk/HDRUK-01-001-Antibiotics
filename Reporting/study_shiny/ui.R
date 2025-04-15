@@ -504,7 +504,7 @@ ui <- bslib::page_navbar(
                 inputId = "summarise_cohort_count_settings_table_name",
                 label = "Table name",
                 choices = filterValues$summarise_cohort_count_settings_table_name,
-                selected = "ing_all",
+                selected = filterValues$summarise_cohort_count_settings_table_name,
                 multiple = TRUE,
                 options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3")
               )
@@ -523,7 +523,7 @@ ui <- bslib::page_navbar(
                 inputId = "summarise_cohort_count_grouping_cohort_name",
                 label = "Cohort name",
                 choices = filterValues$summarise_cohort_count_grouping_cohort_name,
-                selected = filterValues$summarise_cohort_count_grouping_cohort_name[stringr::str_starts(filterValues$summarise_cohort_count_grouping_cohort_name, "ing_")],
+                selected = filterValues$summarise_cohort_count_grouping_cohort_name,
                 multiple = TRUE,
                 options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3")
               )
@@ -534,7 +534,7 @@ ui <- bslib::page_navbar(
                 inputId = "summarise_cohort_count_variable_name",
                 label = "Variable name",
                 choices = filterValues$summarise_cohort_count_variable_name,
-                selected = "Number records",
+                selected = filterValues$summarise_cohort_count_variable_name,
                 multiple = TRUE,
                 options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3")
               )
@@ -944,7 +944,7 @@ ui <- bslib::page_navbar(
                 inputId = "summarise_characteristics_grouping_cohort_name",
                 label = "Cohort name",
                 choices = filterValues$summarise_characteristics_grouping_cohort_name,
-                selected = filterValues$summarise_characteristics_grouping_cohort_name[stringr::str_starts(filterValues$summarise_characteristics_grouping_cohort_name, "ing_")],
+                selected = filterValues$summarise_characteristics_grouping_cohort_name,
                 multiple = TRUE,
                 options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3")
               ),
@@ -1195,7 +1195,7 @@ ui <- bslib::page_navbar(
                 inputId = "summarise_large_scale_characteristics_grouping_cohort_name",
                 label = "Cohort name",
                 choices = filterValues$summarise_large_scale_characteristics_grouping_cohort_name,
-                selected = filterValues$summarise_large_scale_characteristics_grouping_cohort_name[stringr::str_starts(filterValues$summarise_large_scale_characteristics_grouping_cohort_name, "ing_")],
+                selected = filterValues$summarise_large_scale_characteristics_grouping_cohort_name,
                 multiple = TRUE,
                 options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3")
               ),
@@ -1449,7 +1449,7 @@ ui <- bslib::page_navbar(
                 inputId = "incidence_grouping_outcome_cohort_name",
                 label = "Outcome cohort name",
                 choices = filterValues$incidence_grouping_outcome_cohort_name,
-                selected = filterValues$incidence_grouping_outcome_cohort_name[stringr::str_starts(filterValues$incidence_grouping_outcome_cohort_name, "ing_")],
+                selected = filterValues$incidence_grouping_outcome_cohort_name,
                 multiple = TRUE,
                 options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3")
               ),
