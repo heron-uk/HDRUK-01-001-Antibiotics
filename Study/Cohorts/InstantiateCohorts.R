@@ -30,7 +30,7 @@ if (run_incidence == TRUE) {
 if(isTRUE(restrict_to_inpatient) & numberRecords(cdm$visit_occurrence) > 0){
   cdm$inpatient_visit <- conceptCohort(
     cdm = cdm,
-    conceptSet = list(inpatient = c(9201, 262)),
+    conceptSet = list(inpatient = c(9201, 262, 9203)),
     name = "inpatient_visit"
   ) 
 } else if (isTRUE(restrict_to_inpatient) & numberRecords(cdm$visit_occurrence) == 0) {
@@ -122,5 +122,11 @@ indications_list <- setNames(indications_grouped$concept_id_vector, toSnakeCase(
 cdm$indications <- conceptCohort(cdm = cdm,
                                  conceptSet = indications_list,
                                  name = "indications")
+
+##### Access Antibiotics
+
+cdm$access_antibiotics <- conceptCohort(cdm = cdm,
+                                        conceptSet = acc_ingredient_desc,
+                                        name = "access_antibiotics")
 
 cli::cli_alert_success("- Created cohort set")
