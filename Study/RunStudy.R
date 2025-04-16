@@ -10,6 +10,10 @@ logfile(logger) <- here(results_folder, logger_name)
 level(logger) <- "INFO"
 info(logger, "LOG CREATED")
 
+maxObsEnd <- cdm$observation_period |>
+  summarise(maxObsEnd = max(observation_period_end_date, na.rm = TRUE)) |>
+  dplyr::pull()
+
 # CDM manipulations -----
 # drop anyone missing sex or year of birth
 
@@ -18,18 +22,18 @@ cdm <- generateObservationPeriod(
   cdm,
   collapseEra = 545,
   persistenceWindow = 545,
-  censorDate = Sys.time(),
+  censorDate = as.Date(maxObsEnd),
   censorAge = 150L,
-  recordsFrom = c("visit_occurrence")
+  recordsFrom = c("visit_occurrence", "condition_occurrence", "drug_exposure")
 )
 } else if(isTRUE(restrict_to_inpatient) & isTRUE(restrict_to_paediatric)){
   cdm <- generateObservationPeriod(
     cdm,
     collapseEra = 545,
     persistenceWindow = 545,
-    censorDate = Sys.time(),
+    censorDate = as.Date(maxObsEnd),
     censorAge = 18L,
-    recordsFrom = c("visit_occurrence")
+    recordsFrom = c("visit_occurrence", "condition_occurrence", "drug_exposure")
   )
 }
 
