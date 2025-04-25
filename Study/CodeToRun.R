@@ -72,7 +72,7 @@ cdm <- CDMConnector::cdmFromCon(
 # The earliest start date for this study "2012-01-01".
 # Please put the study start date as "2012-01-01 if you have usable data from 2012 onwards.
 # Hospital databases should set the start date as "2022-01-01". 
-study_start <- "2012-01-01"
+study_start <- "2022-01-01"
 
 # Minimum cell count -----
 # This is the minimum counts that can be displayed according to data governance.
