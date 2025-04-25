@@ -920,6 +920,11 @@
       ],
       "Hash": "c03fa420630029418f7e6da3667aac4a"
     },
+    "visOmopResults": {
+      "Package": "visOmopResults",
+      "Version": "1.0.2",
+      "Source": "Repository"
+    },
     "vroom": {
       "Package": "vroom",
       "Version": "1.6.5",
