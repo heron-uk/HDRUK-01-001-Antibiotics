@@ -47,12 +47,12 @@
         "DBI",
         "PatientProfiles",
         "R",
-        "checkmate",
         "cli",
+        "clock",
         "dplyr",
         "glue",
         "jsonlite",
-        "lubridate",
+        "lifecycle",
         "omopgenerics",
         "purrr",
         "rlang",
@@ -61,7 +61,7 @@
         "tidyr",
         "vctrs"
       ],
-      "Hash": "a62d8504b33471fabae19058dd6fca6f"
+      "Hash": "026aa435cbfc1ba7155caa4c6e43854a"
     },
     "CohortCharacteristics": {
       "Package": "CohortCharacteristics",
@@ -193,7 +193,20 @@
       "RemoteUsername": "OHDSI",
       "RemoteRepo": "OmopConstructor",
       "RemoteRef": "main",
-      "RemoteSha": "9e95bb342f2ccc4119fa8563e1aa53fbe6780795"
+      "RemoteSha": "9e95bb342f2ccc4119fa8563e1aa53fbe6780795",
+      "Requirements": [
+        "PatientProfiles",
+        "R",
+        "cli",
+        "clock",
+        "dplyr",
+        "glue",
+        "omopgenerics",
+        "purrr",
+        "rlang",
+        "tidyr"
+      ],
+      "Hash": "58293db2a68bb87a1d1d9ef69a369213"
     },
     "OmopSketch": {
       "Package": "OmopSketch",
