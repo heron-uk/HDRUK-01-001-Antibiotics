@@ -49,6 +49,20 @@ if (run_characterisation == TRUE) {
       )
     )
   
+  for(i in seq_along(indications_list)){
+    results[[paste0("indication_code_use_", i)]] <- summariseCohortCodeUse(x = indications_list[i],
+                                                                           cdm = cdm,
+                                                                           cohortTable = "indications",
+                                                                           cohortId = i)
+  }
+  
+  for(i in seq_along(acc_ingredient_desc)){
+    results[[paste0("access_antibiotic_code_use_", i)]] <- summariseCohortCodeUse(x = acc_ingredient_desc[i],
+                                                                           cdm = cdm,
+                                                                           cohortTable = "access_antibiotics",
+                                                                           cohortId = i)
+  }
+  
   cli::cli_alert_info("- Got characteristics")
 
   cli::cli_alert_info("- Getting large scale characteristics")
