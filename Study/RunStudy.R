@@ -18,7 +18,7 @@ maxObsEnd <- cdm$observation_period |>
 # drop anyone missing sex or year of birth
 
 if(isTRUE(restrict_to_inpatient) & isFALSE(restrict_to_paediatric)){
-cdm <- generateObservationPeriod(
+cdm <- OmopConstructor::generateObservationPeriod(
   cdm,
   collapseEra = 545,
   persistenceWindow = 545,
@@ -27,7 +27,7 @@ cdm <- generateObservationPeriod(
   recordsFrom = c("visit_occurrence", "condition_occurrence", "drug_exposure")
 )
 } else if(isTRUE(restrict_to_inpatient) & isTRUE(restrict_to_paediatric)){
-  cdm <- generateObservationPeriod(
+  cdm <- OmopConstructor::generateObservationPeriod(
     cdm,
     collapseEra = 545,
     persistenceWindow = 545,
