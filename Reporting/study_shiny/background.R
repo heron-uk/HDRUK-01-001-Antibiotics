@@ -13,15 +13,9 @@ The analyses include:
 
 - A snapshot of the CDM.
 
-- Count of most prescribed antibiotics.
-
-- Counts of missing data points.
-
-- Results from drug utilisation.
+- Count of most watch list antibiotics.
 
 - Characteristics of antibiotics users.
-
-- Overlap between cohorts.
 
 - Large scale characteristics of antibiotics users.
 
