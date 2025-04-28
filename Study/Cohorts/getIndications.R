@@ -22,7 +22,7 @@ care_inf <- getDescendants(cdm, conceptId = c(4193161, 318445, 4123283,
 # COPD exacerbation
 
 copd <- getDescendants(cdm, conceptId = 255573)%>%
-  mutate(name = "COPD") %>%
+  mutate(name = "Chronic obstructive pulmonary disease") %>%
   select(c(name, concept_id, concept_code, concept_name, domain_id, vocabulary_id)) %>%
   unique()
 
@@ -117,8 +117,7 @@ indications <- bind_rows(upp_res, bac_inf, care_inf, copd, cyst_fib,
 ### signs and symptoms
 normal <- getDescendants(cdm, conceptId = c(4297303,603104,4058999,
                                             4252103,4234554, 4065875,
-                                            37311170, 44809158, 4155882,
-                                            4224259)) %>%
+                                            37311170, 44809158, 4155882)) %>%
   unique()
 
 signs_sympts <- getDescendants(cdm, conceptId = c(201965, 437663, 254761,
