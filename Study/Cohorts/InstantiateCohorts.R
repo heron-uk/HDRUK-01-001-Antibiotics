@@ -21,9 +21,9 @@ if (run_incidence == TRUE) {
       c(65, 150)
     ),
     cohortDateRange = study_period,
-    sex = c("Male", "Female", "Both"),
-    daysPriorObservation = c(0, 30),
-    requirementInteractions = TRUE
+    sex = c("Both", "Male", "Female"),
+    daysPriorObservation = 0,
+    requirementInteractions = FALSE
   )
 }
 
