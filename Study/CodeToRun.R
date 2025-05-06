@@ -43,7 +43,7 @@ db <- dbConnect("...",
   host = "...",
   user = "...",
   password = "...",
-  bigint = c("numeric")
+  bigint = c("integer")
 )
 
 # Set database details -----
