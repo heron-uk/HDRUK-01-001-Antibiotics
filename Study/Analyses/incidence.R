@@ -6,7 +6,7 @@ if (run_incidence == TRUE) {
     cdm = cdm,
     denominatorTable = "denominator",
     outcomeTable = "antibiotics",
-    interval = c("quarters"),
+    interval = c("quarters", "overall"),
     repeatedEvents = TRUE,
     outcomeWashout = 30,
     completeDatabaseIntervals = FALSE
