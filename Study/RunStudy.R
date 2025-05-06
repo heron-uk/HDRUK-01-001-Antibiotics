@@ -70,10 +70,11 @@ info(logger, "STUDY COHORTS INSTANTIATED")
 # denominator for incidence analysis
 # antibiotics from watch list with at least 100 users
 
-if(run_drug_exposure_diagnostics == TRUE)
+if(run_drug_exposure_diagnostics == TRUE){
 info(logger, "RUNNING DRUG EXPSURE DIAGNOSTICS")
 source(here("Cohorts", "InstantiateCohorts.R"))
 info(logger, "FINISHED DRUG EXPSURE DIAGNOSTICS")
+}
 
 if (run_characterisation == TRUE) {
   info(logger, "RUN CHARACTERISTICS")
