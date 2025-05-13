@@ -205,7 +205,7 @@ ggplot2::ggplot(inc, ggplot2::aes(x = incidence_start_date, y = estimate_value, 
 
 ## Figure 5 - Incidence of Vancomycin Use (Age + Sex)
 
-```{r incidence, echo=FALSE, message = FALSE, warning = FALSE}
+```{r incidence 1, echo=FALSE, message = FALSE, warning = FALSE}
 inc <- data[["incidence"]] |>
   dplyr::filter(estimate_name == "incidence_100000_pys") |>
   omopgenerics::splitAdditional() |>
@@ -232,8 +232,8 @@ ggplot2::ggplot(inc, ggplot2::aes(x = incidence_start_date, y = estimate_value, 
   ggplot2::theme(axis.text.x = ggplot2::element_blank()) 
 ```
 
-```{r incidence, echo=FALSE, message = FALSE, warning = FALSE}
-inc <- data[["incidence"]] |>
+```{r incidence 2, echo=FALSE, message = FALSE, warning = FALSE}
+inc2 <- data[["incidence"]] |>
   dplyr::filter(estimate_name == "incidence_100000_pys") |>
   omopgenerics::splitAdditional() |>
   omopgenerics::splitGroup() |>
@@ -253,7 +253,7 @@ inc <- data[["incidence"]] |>
   ) |>
   dplyr::filter(outcome_cohort_name == "Vancomycin")
 
-ggplot2::ggplot(inc, ggplot2::aes(x = incidence_start_date, y = estimate_value, colour = denominator_age_group, group = denominator_age_group)) +
+ggplot2::ggplot(inc2, ggplot2::aes(x = incidence_start_date, y = estimate_value, colour = denominator_age_group, group = denominator_age_group)) +
   ggplot2::geom_point() +
   ggplot2::geom_line() +
   ggplot2::facet_wrap(~ cdm_name, scales = "free") +
