@@ -121,18 +121,19 @@ ggplot2::ggplot(outcome_counts, ggplot2::aes(x = outcome_cohort_name, y = estima
   ggplot2::theme(axis.text.x = ggplot2::element_blank()) 
 ```
 
-## Figure 2 - Prior antibiotic use (-14 to -1)
+## Figure 2 - Prior antibiotic use (-14 to -1) - Ciprofloxacin
 
 ```{r prior use, echo=FALSE, message = FALSE, warning = FALSE}
 char_3 <- data[["summarise_characteristics"]] |>
-  dplyr::filter(variable_name == "Antibiotics (-14 to -1)",
+  dplyr::filter(group_level == "2551_ciprofloxacin",
+                variable_name == "Antibiotics (-14 to -1)",
                 strata_level == "overall") |>
   dplyr::mutate(cdm_name = dplyr::case_when(
     cdm_name == "IDRIL_1" ~ "Lancashire",
     cdm_name == "LTHT" ~ "Leeds",
     .default = cdm_name
   ),
-    group_level = stringr::str_replace(group_level, "^\\d+_", ""),         # remove leading digits and underscore
+    group_level = stringr::str_replace(group_level, "^\\d+_", ""),
     group_level = stringr::str_to_sentence(group_level), # capitalize first letter
     variable_level = stringr::str_replace(variable_level, "^\\d+ ", ""),         # remove leading digits and underscore
     variable_level = stringr::str_to_sentence(variable_level), # capitalize first letter
@@ -147,11 +148,12 @@ ggplot2::ggplot(char_3, ggplot2::aes(x = variable_level, y = estimate_value, fil
   ggplot2::theme(axis.text.x = ggplot2::element_blank())
 ```
 
-## Figure 3 - Indications
+## Figure 3 - Indications - Ciprofloxacin
 
 ```{r indications, echo=FALSE, message = FALSE, warning = FALSE}
 char_4 <- data[["summarise_characteristics"]] |>
   dplyr::filter(variable_name == "Indication flag",
+                group_level == "2551_ciprofloxacin",
                 strata_level == "overall") |>
   dplyr::mutate(cdm_name = dplyr::case_when(
     cdm_name == "IDRIL_1" ~ "Lancashire",
@@ -193,11 +195,12 @@ inc <- data[["incidence"]] |>
     outcome_cohort_name = stringr::str_replace(outcome_cohort_name, "^\\d+_", ""),         # remove leading digits and underscore
     outcome_cohort_name = stringr::str_to_sentence(outcome_cohort_name), # capitalize first letter
     estimate_value = as.numeric(estimate_value)
-  )
+  ) |>
+  dplyr::filter(outcome_cohort_name == "Ciprofloxacin")
 
 ggplot2::ggplot(inc, ggplot2::aes(x = incidence_start_date, y = estimate_value, colour = outcome_cohort_name, group = outcome_cohort_name)) +
   ggplot2::geom_point() +
   ggplot2::geom_line() +
-  ggplot2::facet_wrap(~ cdm_name + outcome_cohort_name, scales = "free") +
+  ggplot2::facet_wrap(~ cdm_name, scales = "free") +
   ggplot2::theme(axis.text.x = ggplot2::element_blank()) 
 ```
