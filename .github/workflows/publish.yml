@@ -22,11 +22,11 @@ jobs:
 
       - name: Install R libraries in renv
         uses: r-lib/actions/setup-renv@v2
-        directory: Reporting/Report
+        dir: Reporting/Report
         
       - name: Render quarto website
         run: quarto render
-        directory: Reporting/Report
+        dir: Reporting/Report
         
       - name: Publish
         if: github.event_name != 'pull_request'
