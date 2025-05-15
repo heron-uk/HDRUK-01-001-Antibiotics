@@ -41,7 +41,7 @@ cdm$person <- cdm$person |>
   filter(
     !is.na(gender_concept_id),
     !is.na(year_of_birth),
-    gender_concept_id != 0
+    gender_concept_id %in% c(8507,8532)
   )
 
 # Shared study parameters  ----
