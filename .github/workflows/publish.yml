@@ -22,9 +22,11 @@ jobs:
 
       - name: Install R libraries in renv
         uses: r-lib/actions/setup-renv@v2
+        directory: Reporting/Report
         
       - name: Render quarto website
         run: quarto render
+        directory: Reporting/Report
         
       - name: Publish
         if: github.event_name != 'pull_request'
@@ -32,6 +34,6 @@ jobs:
         with:
           target: gh-pages
           render: false
-          publish_dir: ./_site
+          publish_dir: Reporting/Report/_site
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
