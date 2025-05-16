@@ -1,0 +1,13 @@
+name: HERON_Antibiotics_Study_2
+title: HERON_Antibiotics_Study_2
+username: dpa-pde-oxford
+account: dpa-pde-oxford
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 14631236
+bundleId: 10257182
+url: https://dpa-pde-oxford.shinyapps.io/HERON_Antibiotics_Study_2/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .Rprofile

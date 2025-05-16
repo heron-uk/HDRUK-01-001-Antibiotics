@@ -40,8 +40,7 @@ cdm <- OmopConstructor::generateObservationPeriod(
 cdm$person <- cdm$person |>
   filter(
     !is.na(gender_concept_id),
-    !is.na(year_of_birth),
-    gender_concept_id %in% c(8507,8532)
+    !is.na(year_of_birth)
   )
 
 # Shared study parameters  ----
