@@ -24,6 +24,8 @@ result <- purrr::map(csv_files, \(x){
   omopgenerics::bind() |>
   omopgenerics::newSummarisedResult()
 
+result$additional_level <- gsub("&&&\\s*&&&", "&&& NULL &&&", result$additional_level)
+
 resultList <- resultList |>
   purrr::map(\(x) {
     omopgenerics::settings(result) |>
