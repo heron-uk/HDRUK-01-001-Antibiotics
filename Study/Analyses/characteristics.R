@@ -35,7 +35,7 @@ if (run_characterisation == TRUE) {
     )
   
   cdm$antibiotics_chars <- cdm$antibiotics_chars |>
-    requireInDateRange(dateRange = c(as.Date("2022-01-01"), as.Date(NA)))
+    requireInDateRange(dateRange = c(as.Date(study_start), as.Date(NA))) 
 
   results[["characteristics"]] <- cdm$antibiotics_chars |>
     summariseCharacteristics(cohortIntersectFlag = list(
