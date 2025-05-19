@@ -22,7 +22,13 @@ result <- purrr::map(csv_files, \(x){
   d
 }) |> 
   omopgenerics::bind() |>
-  omopgenerics::newSummarisedResult()
+  omopgenerics::newSummarisedResult() |>
+  dplyr::mutate(cdm_name = dplyr::case_when(
+    cdm_name == "IDRIL_1" ~ "Lancashire",
+    cdm_name == "LTHT" ~ "Leeds",
+    cdm_name == "Barts Health" ~ "Barts",
+    .default = cdm_name
+  ))
 
 result$additional_level <- gsub("&&&\\s*&&&", "&&& NULL &&&", result$additional_level)
 
