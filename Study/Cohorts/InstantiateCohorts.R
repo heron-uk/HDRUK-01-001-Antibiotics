@@ -123,12 +123,19 @@ indications_list <- setNames(indications_grouped$concept_id_vector, toSnakeCase(
 
 cdm$indications <- conceptCohort(cdm = cdm,
                                  conceptSet = indications_list,
-                                 name = "indications")
-
+                                 name = "indications") |>
+  requireTableIntersect(tableName = "antibiotics",
+                        indexDate = "cohort_start_date", 
+                        window = c(-Inf, Inf), 
+                        name = "indications")
 ##### Access Antibiotics
 
 cdm$access_antibiotics <- conceptCohort(cdm = cdm,
                                         conceptSet = acc_ingredient_desc,
-                                        name = "access_antibiotics")
+                                        name = "access_antibiotics") |>
+  requireTableIntersect(tableName = "antibiotics",
+                        indexDate = "cohort_start_date", 
+                        window = c(-Inf, Inf), 
+                        name = "access_antibiotics")
 
 cli::cli_alert_success("- Created cohort set")
