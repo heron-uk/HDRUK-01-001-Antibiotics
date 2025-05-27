@@ -49,6 +49,7 @@ if (run_characterisation == TRUE) {
       )
     )
   
+  if(isTRUE(run_code_use)){
   for(i in seq_along(indications_list)){
     results[[paste0("indication_code_use_", i)]] <- summariseCohortCodeUse(x = indications_list[i],
                                                                            cdm = cdm,
@@ -61,6 +62,7 @@ if (run_characterisation == TRUE) {
                                                                            cdm = cdm,
                                                                            cohortTable = "access_antibiotics",
                                                                            cohortId = i)
+  }
   }
   
   cli::cli_alert_info("- Got characteristics")

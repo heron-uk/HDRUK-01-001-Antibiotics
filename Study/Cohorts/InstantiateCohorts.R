@@ -100,6 +100,7 @@ ingredient_desc <- ingredient_desc[names(ingredient_desc) %in% antibiotics_count
 cdm$antibiotics <- cdm$antibiotics |>
   subsetCohorts(cohortId = antibiotics_count$cohort_definition_id)
 
+if(isTRUE(run_code_use)){
 for(i in seq_along(ingredient_desc)){
   working_cohort_id <- getCohortId(cohort = cdm$antibiotics, cohortName = names(ingredient_desc)[i])
   results[[paste0("code_use_", i)]] <- summariseCohortCodeUse(ingredient_desc[i], 
@@ -111,6 +112,14 @@ sum_antibiotics <- summariseCohortCount(cohort = cdm$antibiotics)
 
 results[["sum_antibiotics"]] <- sum_antibiotics
 }
+} else {
+  for(i in seq_along(ingredient_desc)){
+    
+    sum_antibiotics <- summariseCohortCount(cohort = cdm$antibiotics)
+    
+    results[["sum_antibiotics"]] <- sum_antibiotics
+  } 
+  }
 
 ##### Indications
 indications <- read_csv("Cohorts/indications_concepts.csv")[,-1]
