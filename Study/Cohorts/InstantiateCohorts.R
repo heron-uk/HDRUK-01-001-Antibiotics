@@ -9,16 +9,16 @@ if (run_incidence == TRUE) {
       c(0, 4),
       c(5, 9),
       c(10, 14),
-      c(15, 18),
-      c(19, 29),
+      c(15, 17),
+      c(18, 29),
       c(30, 39),
       c(40, 49),
       c(50, 59),
       c(60, 69),
       c(70, 79),
       c(80, 150),
-      c(0, 18),
-      c(19, 64),
+      c(0, 17),
+      c(18, 64),
       c(65, 150)
     ),
     cohortDateRange = study_period,
@@ -57,7 +57,7 @@ cli::cli_alert_info("- Creating outpatient cohorts")
   cdm$antibiotics <- cdm$antibiotics_outcomes |>
     requirePriorObservation(
       indexDate = "cohort_start_date",
-      minPriorObservation = 30,
+      minPriorObservation = 0,
       name = "antibiotics"
     ) |>
     requirePriorDrugWashout(days = 30,
@@ -84,7 +84,7 @@ cli::cli_alert_info("- Creating outpatient cohorts")
   cdm$antibiotics <- cdm$antibiotics_outcomes |>
     requirePriorObservation(
       indexDate = "cohort_start_date",
-      minPriorObservation = 30,
+      minPriorObservation = 0,
       name = "antibiotics"
     ) |>
     requirePriorDrugWashout(days = 30,
@@ -136,6 +136,8 @@ cdm$access_antibiotics <- conceptCohort(cdm = cdm,
   requireTableIntersect(tableName = "antibiotics",
                         indexDate = "cohort_start_date", 
                         window = c(-Inf, Inf), 
-                        name = "access_antibiotics")
+                        name = "access_antibiotics") |>
+  requireMinCohortCount(0)
+  
 
 cli::cli_alert_success("- Created cohort set")

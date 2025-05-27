@@ -16,8 +16,8 @@ if (run_characterisation == TRUE) {
         age >= 0 & age <= 4 ~ '0 to 4',
         age >= 5 & age <= 9 ~ '5 to 9',
         age >= 10 & age <= 14 ~ '10 to 14',
-        age >= 15 & age <= 18 ~ '15 to 18',
-        age >= 19 & age <= 29 ~ '19 to 29',
+        age >= 15 & age <= 18 ~ '15 to 17',
+        age >= 19 & age <= 29 ~ '18 to 29',
         age >= 30 & age <= 39 ~ '30 to 39',
         age >= 40 & age <= 49 ~ '40 to 49',
         age >= 50 & age <= 59 ~ '50 to 59',
@@ -27,8 +27,8 @@ if (run_characterisation == TRUE) {
         TRUE ~ 'None'  
       ),
       age_group_broad = case_when(
-        age >= 0 & age <= 18 ~ '0 to 18',
-        age >= 19 & age <= 64 ~ '19 to 64',
+        age >= 0 & age <= 18 ~ '0 to 17',
+        age >= 19 & age <= 64 ~ '18 to 64',
         age >= 65 & age <= 150 ~ '65 to 150',
         TRUE ~ 'None'  
       )
@@ -39,15 +39,21 @@ if (run_characterisation == TRUE) {
 
   results[["characteristics"]] <- cdm$antibiotics_chars |>
     summariseCharacteristics(cohortIntersectFlag = list(
-      "Antibiotics (-90 to -15)" = list(
-        targetCohortTable = "access_antibiotics", window = c(-90,-15)
-      ), "Antibiotics (-14 to -1)" = list(
-        targetCohortTable = "access_antibiotics", window = c(-14,-1)
-      ),"Indication Flag" = list(
-        targetCohortTable = "indications", window = c(-14,14)
+      "Access Antibiotics (-14 to -1)" = list(
+        targetCohortTable = "access_antibiotics", window = c(-14, -1)
+      ), "Access Antibiotics (0 to 14)" = list(
+        targetCohortTable = "access_antibiotics", window = c(0, 14)
+      ),"Indication Flag (-14 to -1)" = list(
+        targetCohortTable = "indications", window = c(-14,-1)
+      ),"Indication Flag (0 to 14)" = list(
+        targetCohortTable = "indications", window = c(0, 14)
+      ),"Watch Antibiotics (-14 to -1)" = list(
+        targetCohortTable = "antibiotics", window = c(-14, -1)
+      ), "Watch Antibiotics (0 to 14)" = list(
+        targetCohortTable = "antibiotics", window = c(0, 14)
       )), strata = list(c("age_group_broad")
       )
-    )
+      )
   
   for(i in seq_along(indications_list)){
     results[[paste0("indication_code_use_", i)]] <- summariseCohortCodeUse(x = indications_list[i],
@@ -73,7 +79,7 @@ if (run_characterisation == TRUE) {
       "procedure_occurrence",
       "drug_exposure"
     ),
-    window = list(c(-14,14))
+    window = list(c(-14,-1), c(0, 14))
   )
 
   cli::cli_alert_success("- Got large scale characteristics")
