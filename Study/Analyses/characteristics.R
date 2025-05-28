@@ -43,10 +43,8 @@ if (run_characterisation == TRUE) {
         targetCohortTable = "access_antibiotics", window = c(-14, -1)
       ), "Access Antibiotics (0 to 14)" = list(
         targetCohortTable = "access_antibiotics", window = c(0, 14)
-      ),"Indication Flag (-14 to -1)" = list(
-        targetCohortTable = "indications", window = c(-14,-1)
-      ),"Indication Flag (0 to 14)" = list(
-        targetCohortTable = "indications", window = c(0, 14)
+      ),"Indication Flag (-14 to 14)" = list(
+        targetCohortTable = "indications", window = c(-14, 14)
       ),"Watch Antibiotics (-14 to -1)" = list(
         targetCohortTable = "antibiotics", window = c(-14, -1)
       ), "Watch Antibiotics (0 to 14)" = list(
