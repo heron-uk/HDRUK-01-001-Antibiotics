@@ -29,7 +29,15 @@ result <- purrr::map(csv_files, \(x){
   d
 }) |> 
   omopgenerics::bind() |>
-  omopgenerics::newSummarisedResult()
+  omopgenerics::newSummarisedResult() |>
+  dplyr::mutate(cdm_name = dplyr::case_when(
+    cdm_name == "IDRIL_1" ~ "Lancashire",
+    cdm_name == "LTHT" ~ "Leeds",
+    cdm_name == "Barts Health" ~ "Barts",
+    cdm_name == "AurumCDM_202409" ~ "CPRD Aurum",
+    cdm_name == "GOSH DRE" ~ "GOSH",
+    .default = cdm_name
+  ))
 
 result$additional_level <- gsub("&&&\\s+&&&", "&&& NULL &&&", result$additional_level)
 
@@ -46,186 +54,116 @@ data <- prepareResult(result, resultList)
 ## Table 1 - Database descriptions
 
 ```{r db desc, echo=FALSE, message = FALSE, warning = FALSE}
-snap <- data[["summarise_omop_snapshot"]] |>
-  dplyr::mutate(cdm_name = dplyr::case_when(
-    cdm_name == "IDRIL_1" ~ "Lancashire",
-    cdm_name == "LTHT" ~ "Leeds",
-    .default = cdm_name
-  ))
+snap <- data[["summarise_omop_snapshot"]] 
 
 OmopSketch::tableOmopSnapshot(snap, type = "flextable")
 ```
 
-## Table 2 - Ciprofloxacin patient characteristics + indications
+## Table 2 - Patient characteristics 
 
-```{r char cipro, echo=FALSE, message = FALSE, warning = FALSE}
+```{r table 2, echo=FALSE, message = FALSE, warning = FALSE}
 char <- data[["summarise_characteristics"]] |>
-  dplyr::filter(group_level == "2551_ciprofloxacin",
-                !variable_name %in% c("Antibiotics (-90 to -15)", "Antibiotics (-14 to -1)"),
+  dplyr::filter(!variable_name %in% c("Antibiotics (-90 to -15)", "Antibiotics (-14 to -1)", "Indication flag"),
                 strata_level == "overall") |>
-  dplyr::mutate(group_level = dplyr::case_when(
-    group_level == "2551_ciprofloxacin" ~ "Ciprofloxacin",
-    .default = group_level
-  ),
-  cdm_name = dplyr::case_when(
-    cdm_name == "IDRIL_1" ~ "Lancashire",
-    cdm_name == "LTHT" ~ "Leeds",
-    .default = cdm_name
-  ))
+  dplyr::mutate(group_level = stringr::str_replace(group_level, "^\\d+_", ""),        
+   group_level = stringr::str_to_sentence(group_level),
+  ) |>
+  dplyr::filter(group_level %in% c("Ciprofloxacin", "Clarithromycin", "Erythromycin", "Fusidate")) |>
+  dplyr::filter(variable_name %in% c("Number records", "Number subjects", "Cohort start date", "Age", "Sex"),
+                !estimate_name %in% c("mean", "sd")) |>
+  dplyr::filter(variable_name != "Sex" | variable_level %in% c("Male", "Female"),
+                variable_name != "Cohort start date" | estimate_name %in% c("min", "max"),
+                cdm_name == "CPRD Aurum"
+)
 
-CohortCharacteristics::tableCharacteristics(char, type = "flextable", header = c("cohort_name", "cdm_name"), hide = c("age_group_broad", "table_name", "value"))
+CohortCharacteristics::tableCharacteristics(char, type = "flextable", header = c("cohort_name"), groupColumn = c("cdm_name"), hide = c("age_group_broad", "table_name", "value", "table", "window"))
 ```
 
-## Table 3 - Vancomycin patient characteristics + indications
+## Table 3 
 
-```{r char vanco, echo=FALSE, message = FALSE, warning = FALSE}
+```{r table 2, echo=FALSE, message = FALSE, warning = FALSE}
+char <- data[["summarise_characteristics"]] |>
+  dplyr::filter(!variable_name %in% c("Antibiotics (-90 to -15)", "Antibiotics (-14 to -1)", "Indication flag"),
+                strata_level == "overall") |>
+  dplyr::mutate(group_level = stringr::str_replace(group_level, "^\\d+_", ""),        
+   group_level = stringr::str_to_sentence(group_level),
+  ) |>
+  dplyr::filter(group_level %in% c("Ciprofloxacin", "Clarithromycin", "Piperacillin", "Ceftriaxone",
+                                   "Teicoplanin", "Vancomycin", "Cefuroxime")) |>
+  dplyr::filter(variable_name %in% c("Number records", "Number subjects", "Cohort start date", "Age", "Sex"),
+                !estimate_name %in% c("mean", "sd")) |>
+  dplyr::filter(variable_name != "Sex" | variable_level %in% c("Male", "Female"),
+                variable_name != "Cohort start date" | estimate_name %in% c("min", "max"),
+                cdm_name != "CPRD Aurum"
+)
+
+CohortCharacteristics::tableCharacteristics(char, type = "flextable", header = c("cdm_name"), groupColumn = c("cohort_name"), hide = c("age_group_broad", "table_name", "value", "table", "window"))
+```
+
+## Figure 1 - Prior antibiotic use (-14 to -1)
+
+```{r prior use, echo=FALSE, message = FALSE, warning = FALSE}
 char_2 <- data[["summarise_characteristics"]] |>
-  dplyr::filter(group_level == "11124_vancomycin",
-                !variable_name %in% c("Antibiotics (-90 to -15)", "Antibiotics (-14 to -1)"),
+  dplyr::filter(variable_name == "Antibiotics (-14 to -1)",
                 strata_level == "overall") |>
-  dplyr::mutate(group_level = dplyr::case_when(
-    group_level == "11124_vancomycin" ~ "Vancomycin",
-    .default = group_level
-  ),
-  cdm_name = dplyr::case_when(
-    cdm_name == "IDRIL_1" ~ "Lancashire",
-    cdm_name == "LTHT" ~ "Leeds",
-    .default = cdm_name
-  ))
-
-CohortCharacteristics::tableCharacteristics(char_2, type = "flextable", header = c("cohort_name", "cdm_name"), hide = c("age_group_broad", "table_name", "value"))
-```
-
-## Figure 1 - Watch list outcome counts
-
-```{r outcome counts, echo=FALSE, message = FALSE, warning = FALSE}
-outcome_counts <- data[["incidence"]] |>
-  dplyr::filter(estimate_name == "outcome_count") |>
-  omopgenerics::splitAdditional() |>
-  omopgenerics::splitGroup() |>
-  omopgenerics::addSettings() |>
-  dplyr::filter(denominator_age_group == "0 to 150",
-                denominator_sex == "Both",
-                analysis_interval == "overall") |>
-  dplyr::mutate(cdm_name = dplyr::case_when(
-    cdm_name == "IDRIL_1" ~ "Lancashire",
-    cdm_name == "LTHT" ~ "Leeds",
-    .default = cdm_name
-  ),
-    outcome_cohort_name = stringr::str_replace(outcome_cohort_name, "^\\d+_", ""),         # remove leading digits and underscore
-    outcome_cohort_name = stringr::str_to_sentence(outcome_cohort_name), # capitalize first letter
+  dplyr::mutate(
+    group_level = stringr::str_replace(group_level, "^\\d+_", ""),
+    group_level = stringr::str_to_sentence(group_level), # capitalize first letter
+    variable_level = stringr::str_replace(variable_level, "^\\d+ ", ""),         # remove leading digits and underscore
+    variable_level = stringr::str_to_sentence(variable_level), # capitalize first letter
     estimate_value = as.numeric(estimate_value)
   )
 
-ggplot2::ggplot(outcome_counts, ggplot2::aes(x = cdm_name, y = estimate_value, fill = cdm_name)) +
-  ggplot2::geom_bar(stat = "identity", colour = "black") +
-  paletteer::scale_fill_paletteer_d("vapoRwave::vapoRwave") +
-  ggplot2::facet_wrap(~ outcome_cohort_name, scales = "free") +
-  ggplot2::theme(axis.text.x = ggplot2::element_blank()) 
-```
+char_2_hosp <- char_2 |>
+  dplyr::filter(cdm_name != "CPRD Aurum",
+                estimate_name == "percentage",
+                estimate_value >= 5, 
+                group_level %in% c("Ciprofloxacin", "Clarithromycin", "Piperacillin", "Ceftriaxone",
+                                   "Teicoplanin", "Vancomycin", "Cefuroxime"))
 
-## Figure 2 - Prior antibiotic use (-14 to -1) - Ciprofloxacin
+char_2_gp <- char_2 |>
+  dplyr::filter(cdm_name == "CPRD Aurum",
+                estimate_name == "percentage",
+                estimate_value >= 5, 
+                group_level %in% c("Ciprofloxacin", "Clarithromycin", "Erythromycin", "Fusidate"))
 
-```{r prior use, echo=FALSE, message = FALSE, warning = FALSE}
-char_3 <- data[["summarise_characteristics"]] |>
-  dplyr::filter(variable_name == "Antibiotics (-14 to -1)",
-                strata_level == "overall") |>
-  dplyr::mutate(cdm_name = dplyr::case_when(
-    cdm_name == "IDRIL_1" ~ "Lancashire",
-    cdm_name == "LTHT" ~ "Leeds",
-    .default = cdm_name
-  ),
-    group_level = stringr::str_replace(group_level, "^\\d+_", ""),
-    group_level = stringr::str_to_sentence(group_level), # capitalize first letter
-    variable_level = stringr::str_replace(variable_level, "^\\d+ ", ""),         # remove leading digits and underscore
-    variable_level = stringr::str_to_sentence(variable_level), # capitalize first letter
-    estimate_value = as.numeric(estimate_value)
-  ) |>
-  dplyr::filter(estimate_name == "percentage",
-                estimate_value >= 5)
-
-ggplot2::ggplot(char_3, ggplot2::aes(x = variable_level, y = estimate_value, fill = variable_level)) +
-  ggplot2::geom_bar(stat = "identity", colour = "black") +
-  paletteer::scale_fill_paletteer_d("vapoRwave::vapoRwave") +
-  ggplot2::facet_wrap(~ cdm_name + group_level, scales = "free") +
-  ggplot2::theme(axis.text.x = ggplot2::element_blank())
-```
-
-
-```{r prior use 2, echo=FALSE, message = FALSE, warning = FALSE}
-char_3 <- data[["summarise_characteristics"]] |>
-  dplyr::filter(variable_name == "Antibiotics (-14 to -1)",
-                strata_level == "overall") |>
-  dplyr::mutate(cdm_name = dplyr::case_when(
-    cdm_name == "IDRIL_1" ~ "Lancs",
-    cdm_name == "LTHT" ~ "Leeds",
-    cdm_name == "Barts Health" ~ "Barts",
-    .default = cdm_name
-  ),
-    group_level = stringr::str_replace(group_level, "^\\d+_", ""),
-    group_level = stringr::str_to_sentence(group_level), # capitalize first letter
-    variable_level = stringr::str_replace(variable_level, "^\\d+ ", ""),         # remove leading digits and underscore
-    variable_level = stringr::str_to_sentence(variable_level), # capitalize first letter
-    estimate_value = as.numeric(estimate_value) 
-  ) |>
-  dplyr::filter(estimate_name == "percentage",
-                !is.na(estimate_value),
-                estimate_value >= 5)
-
-ggplot2::ggplot(char_3, ggplot2::aes(x = cdm_name, y = estimate_value, fill = variable_level)) +
-  ggplot2::geom_bar(stat = "identity", colour = "black") +
-  ggplot2::facet_wrap(~ group_level, scales = "free") +
-  ggplot2::theme(
-    axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1)
-  ) +
-  ggplot2::ggtitle("Prior use of access antibiotics (-14 to -1)") +
-  ggplot2::xlab("Database") +
-  ggplot2::ylab("Percentage of Records") +
-  ggplot2::labs(fill = "Access antibiotics") +
-  paletteer::scale_fill_paletteer_d("vapoRwave::vapoRwave")
-```
-```{r prior use 3, echo=FALSE, message = FALSE, warning = FALSE}
-char_3 <- data[["summarise_characteristics"]] |>
-  dplyr::filter(variable_name == "Antibiotics (-14 to -1)",
-                strata_level == "overall") |>
-  dplyr::mutate(cdm_name = dplyr::case_when(
-    cdm_name == "IDRIL_1" ~ "Lancs",
-    cdm_name == "LTHT" ~ "Leeds",
-    cdm_name == "Barts Health" ~ "Barts",
-    .default = cdm_name
-  ),
-    group_level = stringr::str_replace(group_level, "^\\d+_", ""),
-    group_level = stringr::str_to_sentence(group_level), # capitalize first letter
-    variable_level = stringr::str_replace(variable_level, "^\\d+ ", ""),         # remove leading digits and underscore
-    variable_level = stringr::str_to_sentence(variable_level), # capitalize first letter
-    estimate_value = as.numeric(estimate_value) 
-  ) |>
-  dplyr::filter(estimate_name == "percentage",
-                !is.na(estimate_value),
-                estimate_value >= 5)
-
-ggplot2::ggplot(char_3, ggplot2::aes(x = cdm_name, y = estimate_value, fill = variable_level)) +
+ggplot2::ggplot(char_2_hosp, ggplot2::aes(x = group_level, y = estimate_value, fill = variable_level)) +
   ggplot2::geom_bar(stat = "identity", colour = "black", position = "dodge") +
-  ggplot2::facet_wrap(~ group_level, scales = "free") +
+  ggplot2::facet_wrap(~ cdm_name, scales = "free", nrow = 2) +
+  ggplot2::theme_minimal() +
   ggplot2::theme(
-    axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1)
+    axis.text.x = ggplot2::element_text(angle = 60, vjust = 1, hjust = 1)
   ) +
-  ggplot2::ggtitle("Prior use of access antibiotics (-14 to -1)") +
   ggplot2::xlab("Database") +
-  ggplot2::ylab("Percentage of Records") +
+  ggplot2::ylab("Proportion of individuals (%)") +
   ggplot2::labs(fill = "Access antibiotics") +
-  paletteer::scale_fill_paletteer_d("vapoRwave::vapoRwave")
+  paletteer::scale_fill_paletteer_d("MoMAColors::Lupi")
+  
+  ggplot2::ggplot(char_2_gp, ggplot2::aes(x = group_level, y = estimate_value, fill = variable_level)) +
+  ggplot2::geom_bar(stat = "identity", colour = "black", position = "dodge") +
+  ggplot2::facet_wrap(~ cdm_name, scales = "free", nrow = 2) +
+  ggplot2::theme_minimal() +
+  ggplot2::theme(
+    axis.text.x = ggplot2::element_text(angle = 60, vjust = 1, hjust = 1)
+  ) +
+  ggplot2::xlab("Database") +
+  ggplot2::ylab("Proportion of individuals (%)") +
+  ggplot2::labs(fill = "Access antibiotics") +
+  paletteer::scale_fill_paletteer_d("MoMAColors::Lupi")
 ```
+
 ## Figure 3 - Indications
 
 ```{r indications, echo=FALSE, message = FALSE, warning = FALSE}
-char_4 <- data[["summarise_characteristics"]] |>
+char_3 <- data[["summarise_characteristics"]] |>
   dplyr::filter(variable_name == "Indication flag",
                 strata_level == "overall") |>
   dplyr::mutate(cdm_name = dplyr::case_when(
     cdm_name == "IDRIL_1" ~ "Lancs",
     cdm_name == "LTHT" ~ "Leeds",
     cdm_name == "Barts Health" ~ "Barts",
+    cdm_name == "AurumCDM_202409" ~ "CPRD Aurum",
+    cdm_name == "GOSH DRE" ~ "GOSH",
     .default = cdm_name
   ),
     group_level = stringr::str_replace(group_level, "^\\d+_", ""),         # remove leading digits and underscore
@@ -233,53 +171,54 @@ char_4 <- data[["summarise_characteristics"]] |>
     variable_level = stringr::str_replace(variable_level, "^\\d+ ", ""),         # remove leading digits and underscore
     variable_level = stringr::str_to_sentence(variable_level), # capitalize first letter
     estimate_value = as.numeric(estimate_value)
-  ) |>
-  dplyr::filter(estimate_name == "percentage",
-                estimate_value >= 5)
+  )
 
-ggplot2::ggplot(char_4, ggplot2::aes(x = cdm_name, y = estimate_value, fill = variable_level)) +
+char_3_hosp <- char_3 |>
+  dplyr::filter(estimate_name == "percentage",
+                estimate_value >= 5,
+                !variable_level %in% c("Signs and symptoms", "Bacterial infection"),
+                group_level %in% c("Ciprofloxacin", "Clarithromycin", "Piperacillin", "Ceftriaxone",
+                                   "Teicoplanin", "Vancomycin", "Cefuroxime"),
+                cdm_name != "CPRD Aurum") |>
+  dplyr::group_by(cdm_name, group_level) |>
+  dplyr::slice_max(order_by = estimate_value, n = 3, with_ties = FALSE)
+
+char_3_gp <- char_3 |>
+  dplyr::filter(estimate_name == "percentage",
+                estimate_value >= 5,
+                !variable_level %in% c("Signs and symptoms", "Bacterial infection"),
+                group_level %in% c("Ciprofloxacin", "Clarithromycin", "Erythromycin", "Fusidate"),
+                cdm_name == "CPRD Aurum") |>
+  dplyr::group_by(cdm_name, group_level) |>
+  dplyr::slice_max(order_by = estimate_value, n = 3, with_ties = FALSE)
+
+ggplot2::ggplot(char_3_hosp, ggplot2::aes(x = group_level, y = estimate_value, fill = variable_level)) +
   ggplot2::geom_bar(stat = "identity", colour = "black", position = "dodge") +
-  ggplot2::facet_wrap(~ group_level, scales = "free") +
+  ggplot2::facet_wrap(~ cdm_name, scales = "free") +
+  ggplot2::theme_minimal() +
   ggplot2::theme(
-    axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1)
+    axis.text.x = ggplot2::element_text(angle = 60, vjust = 1, hjust = 1)
   ) +
-  ggplot2::ggtitle("Indications of Use") +
-  ggplot2::xlab("Database") +
-  ggplot2::ylab("Percentage of Records") +
+  ggplot2::xlab("Watch Antibiotics") +
+  ggplot2::ylab("Proportion of individuals (%)") +
   ggplot2::labs(fill = "Indications") +
-  paletteer::scale_fill_paletteer_d("MetBrewer::Signac")
-```
-```{r indications 2, echo=FALSE, message = FALSE, warning = FALSE}
-char_4 <- data[["summarise_characteristics"]] |>
-  dplyr::filter(variable_name == "Indication flag",
-                strata_level == "overall") |>
-  dplyr::mutate(cdm_name = dplyr::case_when(
-    cdm_name == "IDRIL_1" ~ "Lancs",
-    cdm_name == "LTHT" ~ "Leeds",
-    cdm_name == "Barts Health" ~ "Barts",
-    .default = cdm_name
-  ),
-    group_level = stringr::str_replace(group_level, "^\\d+_", ""),         # remove leading digits and underscore
-    group_level = stringr::str_to_sentence(group_level), # capitalize first letter
-    variable_level = stringr::str_replace(variable_level, "^\\d+ ", ""),         # remove leading digits and underscore
-    variable_level = stringr::str_to_sentence(variable_level), # capitalize first letter
-    estimate_value = as.numeric(estimate_value)
-  ) |>
-  dplyr::filter(estimate_name == "percentage",
-                estimate_value >= 5)
+    ggplot2::coord_flip() +
+  paletteer::scale_fill_paletteer_d("MoMAColors::Lupi")
 
-ggplot2::ggplot(char_4, ggplot2::aes(x = cdm_name, y = estimate_value, fill = variable_level)) +
-  ggplot2::geom_bar(stat = "identity", colour = "black") +
-  ggplot2::facet_wrap(~ group_level, scales = "free") +
+ggplot2::ggplot(char_3_gp, ggplot2::aes(x = group_level, y = estimate_value, fill = variable_level)) +
+  ggplot2::geom_bar(stat = "identity", colour = "black", position = "dodge") +
+  ggplot2::facet_wrap(~ cdm_name, scales = "free") +
+  ggplot2::theme_minimal() +
   ggplot2::theme(
-    axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1)
+    axis.text.x = ggplot2::element_text(angle = 60, vjust = 1, hjust = 1)
   ) +
-  ggplot2::ggtitle("Indications of Use") +
-  ggplot2::xlab("Database") +
-  ggplot2::ylab("Percentage of Records") +
+  ggplot2::xlab("Watch Antibiotics") +
+  ggplot2::ylab("Proportion of individuals (%)") +
   ggplot2::labs(fill = "Indications") +
-  paletteer::scale_fill_paletteer_d("MetBrewer::Signac")
+    ggplot2::coord_flip() +
+  paletteer::scale_fill_paletteer_d("MoMAColors::Lupi")
 ```
+
 ## Figure 4 - Incidence of Ciprofloxacin Use
 
 ```{r incidence, echo=FALSE, message = FALSE, warning = FALSE}
@@ -288,32 +227,47 @@ inc <- data[["incidence"]] |>
   omopgenerics::splitAdditional() |>
   omopgenerics::splitGroup() |>
   omopgenerics::addSettings() |>
-  dplyr::filter(denominator_age_group == "0 to 150",
+  dplyr::filter(denominator_age_group %in% c("0 to 150"),
                 denominator_days_prior_observation == "0",
                 denominator_sex == "Both",
                 analysis_interval == "quarters") |>
-  dplyr::mutate(cdm_name = dplyr::case_when(
-    cdm_name == "IDRIL_1" ~ "Lancashire",
-    cdm_name == "LTHT" ~ "Leeds",
-    .default = cdm_name
-  ),
+  dplyr::mutate(
     outcome_cohort_name = stringr::str_replace(outcome_cohort_name, "^\\d+_", ""),         # remove leading digits and underscore
     outcome_cohort_name = stringr::str_to_sentence(outcome_cohort_name), # capitalize first letter
     estimate_value = as.numeric(estimate_value)
   ) |>
-  dplyr::filter(outcome_cohort_name == "Ciprofloxacin")
+  dplyr::filter(!incidence_start_date %in% c("2025-04-01", "2025-01-01"))
 
-ggplot2::ggplot(inc, ggplot2::aes(x = incidence_start_date, y = estimate_value, colour = outcome_cohort_name, group = outcome_cohort_name)) +
+inc_hosp <- inc |>
+  dplyr::filter(cdm_name != "CPRD Aurum",
+                outcome_cohort_name %in% c("Ciprofloxacin", "Clarithromycin", "Piperacillin", "Ceftriaxone",
+                                   "Teicoplanin", "Vancomycin", "Cefuroxime"))
+inc_gp <- inc |>
+  dplyr::filter(cdm_name == "CPRD Aurum",
+                outcome_cohort_name %in% c("Ciprofloxacin", "Clarithromycin", "Erythromycin", "Fusidate"))
+
+ggplot2::ggplot(inc_hosp, ggplot2::aes(x = incidence_start_date, y = estimate_value, colour = outcome_cohort_name, group = outcome_cohort_name)) +
   ggplot2::geom_point() +
   ggplot2::geom_line() +
   ggplot2::facet_wrap(~ cdm_name, scales = "free") +
-  ggplot2::theme(axis.text.x = ggplot2::element_blank()) 
+  ggplot2::theme_minimal() +
+  ggplot2::theme(axis.text.x = ggplot2::element_blank()) +
+  paletteer::scale_colour_paletteer_d("MoMAColors::Lupi")
+
+ggplot2::ggplot(inc_gp, ggplot2::aes(x = incidence_start_date, y = estimate_value, colour = outcome_cohort_name, group = outcome_cohort_name)) +
+  ggplot2::geom_point() +
+  ggplot2::geom_line() +
+  ggplot2::facet_wrap(~ cdm_name, scales = "free") +
+  ggplot2::theme_minimal() +
+  ggplot2::theme(axis.text.x = ggplot2::element_blank()) +
+  paletteer::scale_colour_paletteer_d("MoMAColors::Lupi")
+  
 ```
 
-## Figure 5 - Incidence of Vancomycin Use (Age + Sex)
+## Figure 5 
 
 ```{r incidence 2, echo=FALSE, message = FALSE, warning = FALSE}
-inc <- data[["incidence"]] |>
+inc_sex <- data[["incidence"]] |>
   dplyr::filter(estimate_name == "incidence_100000_pys") |>
   omopgenerics::splitAdditional() |>
   omopgenerics::splitGroup() |>
@@ -321,48 +275,87 @@ inc <- data[["incidence"]] |>
   dplyr::filter(denominator_age_group == "0 to 150",
                 denominator_days_prior_observation == "0",
                 analysis_interval == "quarters") |>
-  dplyr::mutate(cdm_name = dplyr::case_when(
-    cdm_name == "IDRIL_1" ~ "Lancashire",
-    cdm_name == "LTHT" ~ "Leeds",
-    .default = cdm_name
-  ),
+  dplyr::mutate(
     outcome_cohort_name = stringr::str_replace(outcome_cohort_name, "^\\d+_", ""),         # remove leading digits and underscore
     outcome_cohort_name = stringr::str_to_sentence(outcome_cohort_name), # capitalize first letter
     estimate_value = as.numeric(estimate_value)
   ) |>
-  dplyr::filter(outcome_cohort_name == "Vancomycin")
+  dplyr::filter(!incidence_start_date %in% c("2025-04-01", "2025-01-01"))
 
-ggplot2::ggplot(inc, ggplot2::aes(x = incidence_start_date, y = estimate_value, colour = denominator_sex, group = denominator_sex)) +
+inc_sex_hosp <- inc_sex |>
+  dplyr::filter(cdm_name != "CPRD Aurum",
+                outcome_cohort_name == "Ciprofloxacin",
+                denominator_sex != "Both")
+
+ggplot2::ggplot(inc_sex_hosp, ggplot2::aes(x = incidence_start_date, y = estimate_value, colour = denominator_sex, group = denominator_sex)) +
   ggplot2::geom_point() +
   ggplot2::geom_line() +
   ggplot2::facet_wrap(~ cdm_name, scales = "free") +
+  ggplot2::theme_minimal() +
+  ggplot2::theme(axis.text.x = ggplot2::element_blank()) 
+
+inc_sex_gp <- inc_sex |>
+  dplyr::filter(cdm_name == "CPRD Aurum",
+                outcome_cohort_name %in% c("Ciprofloxacin"),
+                denominator_sex != "Both")
+
+ggplot2::ggplot(inc_sex_gp, ggplot2::aes(x = incidence_start_date, y = estimate_value, colour = denominator_sex, group = denominator_sex)) +
+  ggplot2::geom_point() +
+  ggplot2::geom_line() +
+  ggplot2::facet_wrap(~ outcome_cohort_name, scales = "free") +
+  ggplot2::theme_minimal() +
   ggplot2::theme(axis.text.x = ggplot2::element_blank()) 
 ```
 
 ```{r incidence 3, echo=FALSE, message = FALSE, warning = FALSE}
-inc <- data[["incidence"]] |>
+inc_age <- data[["incidence"]] |>
   dplyr::filter(estimate_name == "incidence_100000_pys") |>
   omopgenerics::splitAdditional() |>
   omopgenerics::splitGroup() |>
   omopgenerics::addSettings() |>
-  dplyr::filter(denominator_age_group %in% c("0 to 150", "0 to 19", "20 to 64", "65 to 150"),
+  dplyr::filter(denominator_age_group != "0 to 150",
                 denominator_sex == "Both",
                 denominator_days_prior_observation == "0",
                 analysis_interval == "quarters") |>
-  dplyr::mutate(cdm_name = dplyr::case_when(
-    cdm_name == "IDRIL_1" ~ "Lancashire",
-    cdm_name == "LTHT" ~ "Leeds",
-    .default = cdm_name
-  ),
+  dplyr::mutate(
     outcome_cohort_name = stringr::str_replace(outcome_cohort_name, "^\\d+_", ""),         # remove leading digits and underscore
-    outcome_cohort_name = stringr::str_to_sentence(outcome_cohort_name), # capitalize first letter
+    outcome_cohort_name = stringr::str_to_sentence(outcome_cohort_name),
     estimate_value = as.numeric(estimate_value)
   ) |>
-  dplyr::filter(outcome_cohort_name == "Vancomycin")
+  dplyr::filter(outcome_cohort_name == "Ciprofloxacin") |>
+  dplyr::filter(!incidence_start_date %in% c("2025-04-01", "2025-01-01"))
 
-ggplot2::ggplot(inc, ggplot2::aes(x = incidence_start_date, y = estimate_value, colour = denominator_age_group, group = denominator_age_group)) +
+inc_age_ped <- inc_age |>
+  dplyr::filter(cdm_name == "GOSH",
+                denominator_age_group %in% c("0 to 4", "5 to 9", "10 to 14", "15 to 18"))
+
+inc_age_hosp <- inc_age |>
+  dplyr::filter(!cdm_name %in% c("GOSH", "CPRD Aurum"),
+                denominator_age_group %in% c("65 to 150"))
+
+inc_age_gp <- inc_age |>
+  dplyr::filter(cdm_name =="CPRD Aurum",
+                denominator_age_group %in% c("65 to 150"))
+
+ggplot2::ggplot(inc_age_ped, ggplot2::aes(x = incidence_start_date, y = estimate_value, colour = denominator_age_group, group = denominator_age_group)) +
   ggplot2::geom_point() +
   ggplot2::geom_line() +
+  ggplot2::theme_minimal() +
+  ggplot2::facet_wrap(~ cdm_name, scales = "free") +
+  ggplot2::theme(axis.text.x = ggplot2::element_blank()) 
+
+ggplot2::ggplot(inc_age_hosp, ggplot2::aes(x = incidence_start_date, y = estimate_value, colour = denominator_age_group, group = denominator_age_group)) +
+  ggplot2::geom_point() +
+  ggplot2::geom_line() +
+  ggplot2::theme_minimal() +
+  ggplot2::facet_wrap(~ cdm_name, scales = "free") +
+  ggplot2::theme(axis.text.x = ggplot2::element_blank()) 
+
+ggplot2::ggplot(inc_age_gp, ggplot2::aes(x = incidence_start_date, y = estimate_value, colour = denominator_age_group, group = denominator_age_group)) +
+  ggplot2::geom_point() +
+  ggplot2::geom_line() +
+  ggplot2::theme_minimal() +
   ggplot2::facet_wrap(~ cdm_name, scales = "free") +
   ggplot2::theme(axis.text.x = ggplot2::element_blank()) 
 ```
+

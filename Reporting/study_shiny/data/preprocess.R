@@ -27,6 +27,8 @@ result <- purrr::map(csv_files, \(x){
     cdm_name == "IDRIL_1" ~ "Lancashire",
     cdm_name == "LTHT" ~ "Leeds",
     cdm_name == "Barts Health" ~ "Barts",
+    cdm_name == "AurumCDM_202409" ~ "CPRD Aurum",
+    cdm_name == "GOSH DRE" ~ "GOSH",
     .default = cdm_name
   ))
 
