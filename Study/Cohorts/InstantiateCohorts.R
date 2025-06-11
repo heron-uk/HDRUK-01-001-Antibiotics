@@ -148,3 +148,64 @@ cdm$access_antibiotics <- conceptCohort(cdm = cdm,
                         name = "access_antibiotics")
 
 cli::cli_alert_success("- Created cohort set")
+
+cli::cli_alert_info(" - Running cohort checks")
+
+cohort_count <- CohortConstructor::cohortCount(cdm$antibiotics)
+cohort_settings <- settings(cdm$antibiotics)
+
+number_cohorts <- cohort_count %>%
+  summarise(n = n_distinct(cohort_definition_id)) %>%
+  pull(n)
+
+cli::cli_alert_info("There are {number_cohorts} cohorts included in the study.")
+if(number_cohorts > 0){
+  
+  cohort_names <- merge(cohort_count, cohort_settings, by = "cohort_definition_id") %>%
+    pull(cohort_name)
+  
+  cli::cli_alert_info("Antibiotics included: {cohort_names}")
+}
+
+num_zero_cohorts <- cohort_count %>%
+  filter(number_records == 0) %>%
+  summarise(n = n_distinct(cohort_definition_id)) %>%
+  pull(n)
+
+cli::cli_alert_info("There are {num_zero_cohorts} cohorts with 0 records.")
+
+if(num_zero_cohorts > 0){
+  num_zero_cohorts <- cohort_count %>%
+    filter(number_records == 0) %>%
+    pull(cohort_definition_id)
+  
+  cohort_settings_zero <- cohort_settings %>%
+    filter(cohort_definition_id %in% num_zero_cohorts) %>%
+    pull(cohort_name)
+  
+  cli::cli_alert_info("Cohorts with 0 records: {cohort_settings_zero}")
+}
+
+num_zero_cohorts_ind <- cohort_count %>%
+  filter(number_subjects == 0) %>%
+  summarise(n = n_distinct(cohort_definition_id)) %>%
+  pull(n)
+
+cli::cli_alert_info("There are {num_zero_cohorts_ind} cohorts with 0 subjects.")
+
+if(num_zero_cohorts_ind > 0){
+  num_zero_cohorts_ind <- cohort_count %>%
+    filter(number_records == 0) %>%
+    pull(cohort_definition_id)
+  
+  cohort_settings_zero_ind <- cohort_settings %>%
+    filter(cohort_definition_id %in% num_zero_cohorts_ind) %>%
+    pull(cohort_name)
+  
+  cli::cli_alert_info("Cohorts with 0 subjects: {cohort_settings_zero_ind}")
+}
+
+cohort_settings <- settings(cdm$antibiotics)
+
+cli::cli_alert_info(" - Cohort checks finished")
+
