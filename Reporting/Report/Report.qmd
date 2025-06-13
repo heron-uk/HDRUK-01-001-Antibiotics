@@ -127,29 +127,61 @@ char_2_gp <- char_2 |>
                 estimate_value >= 5, 
                 group_level %in% c("Ciprofloxacin", "Clarithromycin", "Erythromycin", "Fusidate"))
 
-ggplot2::ggplot(char_2_hosp, ggplot2::aes(x = group_level, y = estimate_value, fill = variable_level)) +
+top_2 <- ggplot2::ggplot(char_2_hosp, ggplot2::aes(x = group_level, y = estimate_value, fill = variable_level)) +
   ggplot2::geom_bar(stat = "identity", colour = "black", position = "dodge") +
-  ggplot2::facet_wrap(~ cdm_name, scales = "free", nrow = 2) +
+  ggplot2::facet_wrap(~ cdm_name, scales = "free") +
   ggplot2::theme_minimal() +
   ggplot2::theme(
-    axis.text.x = ggplot2::element_text(angle = 60, vjust = 1, hjust = 1)
+    axis.text.y = ggplot2::element_text(size = 12),
+    legend.position = "bottom",
+    legend.text = ggplot2::element_text(size = 10),
+    strip.text = ggplot2::element_text(size = 16, face = "bold")
   ) +
-  ggplot2::xlab("Database") +
-  ggplot2::ylab("Proportion of individuals (%)") +
-  ggplot2::labs(fill = "Access antibiotics") +
-  paletteer::scale_fill_paletteer_d("MoMAColors::Lupi")
-  
-  ggplot2::ggplot(char_2_gp, ggplot2::aes(x = group_level, y = estimate_value, fill = variable_level)) +
+  ggplot2::xlab("") +
+  ggplot2::ylab("") +
+  ggplot2::labs(fill = "") +
+    ggplot2::coord_flip() +
+  paletteer::scale_fill_paletteer_d("MoMAColors::Lupi") +
+  ggplot2::guides(fill = ggplot2::guide_legend(ncol = 2))
+
+bottom_2 <- ggplot2::ggplot(char_2_gp, ggplot2::aes(x = group_level, y = estimate_value, fill = variable_level)) +
   ggplot2::geom_bar(stat = "identity", colour = "black", position = "dodge") +
-  ggplot2::facet_wrap(~ cdm_name, scales = "free", nrow = 2) +
+  ggplot2::facet_wrap(~ cdm_name, scales = "free") +
   ggplot2::theme_minimal() +
   ggplot2::theme(
-    axis.text.x = ggplot2::element_text(angle = 60, vjust = 1, hjust = 1)
+    axis.text.y = ggplot2::element_text(size = 12),
+    legend.position = "bottom",
+    legend.text = ggplot2::element_text(size = 10),
+    strip.text = ggplot2::element_text(size = 16, face = "bold")
   ) +
-  ggplot2::xlab("Database") +
-  ggplot2::ylab("Proportion of individuals (%)") +
-  ggplot2::labs(fill = "Access antibiotics") +
-  paletteer::scale_fill_paletteer_d("MoMAColors::Lupi")
+  ggplot2::xlab("") +
+  ggplot2::ylab("") +
+  ggplot2::labs(fill = "") +
+  ggplot2::coord_flip()  +
+   ggplot2::scale_fill_manual(
+    values = c("#B6E7E0FF"))+
+   ggplot2::guides(fill = ggplot2::guide_legend(ncol = 2))
+
+divider <- grid::linesGrob(
+  x = grid::unit(c(0, 0), "npc"),  # vertical line at x=0
+  y = grid::unit(c(1, 0), "npc"),
+  gp = grid::gpar(col = "black", lwd = 2)
+)
+
+# Insert the divider grob as a separate plot using cowplot::ggdraw()
+divider_plot <- cowplot::ggdraw() + 
+  cowplot::draw_grob(divider)
+
+fig2 <- cowplot::plot_grid(top_2,  divider_plot, bottom_2, nrow = 1, labels = c("A", "B"),
+                   rel_widths = c(1, 0.05, 1))
+
+ggplot2::ggsave("fig2.png",
+                 plot = fig2,
+                width = 16,
+                height = 10,    
+                dpi = 300,
+                bg = "white")   # ensures background is white even if theme is transparent)
+```
 ```
 
 ## Figure 3 - Indications
@@ -192,31 +224,60 @@ char_3_gp <- char_3 |>
   dplyr::group_by(cdm_name, group_level) |>
   dplyr::slice_max(order_by = estimate_value, n = 3, with_ties = FALSE)
 
-ggplot2::ggplot(char_3_hosp, ggplot2::aes(x = group_level, y = estimate_value, fill = variable_level)) +
+top_1 <- ggplot2::ggplot(char_3_hosp, ggplot2::aes(x = group_level, y = estimate_value, fill = variable_level)) +
   ggplot2::geom_bar(stat = "identity", colour = "black", position = "dodge") +
   ggplot2::facet_wrap(~ cdm_name, scales = "free") +
   ggplot2::theme_minimal() +
   ggplot2::theme(
-    axis.text.x = ggplot2::element_text(angle = 60, vjust = 1, hjust = 1)
+    axis.text.y = ggplot2::element_text(size = 12),
+    legend.position = "bottom",
+    legend.text = ggplot2::element_text(size = 10),
+    strip.text = ggplot2::element_text(size = 16, face = "bold")
   ) +
-  ggplot2::xlab("Watch Antibiotics") +
-  ggplot2::ylab("Proportion of individuals (%)") +
-  ggplot2::labs(fill = "Indications") +
+  ggplot2::xlab("") +
+  ggplot2::ylab("") +
+  ggplot2::labs(fill = "") +
     ggplot2::coord_flip() +
-  paletteer::scale_fill_paletteer_d("MoMAColors::Lupi")
+  paletteer::scale_fill_paletteer_d("MoMAColors::Lupi") +
+  ggplot2::guides(fill = ggplot2::guide_legend(ncol = 2))
 
-ggplot2::ggplot(char_3_gp, ggplot2::aes(x = group_level, y = estimate_value, fill = variable_level)) +
+bottom_1 <- ggplot2::ggplot(char_3_gp, ggplot2::aes(x = group_level, y = estimate_value, fill = variable_level)) +
   ggplot2::geom_bar(stat = "identity", colour = "black", position = "dodge") +
   ggplot2::facet_wrap(~ cdm_name, scales = "free") +
   ggplot2::theme_minimal() +
   ggplot2::theme(
-    axis.text.x = ggplot2::element_text(angle = 60, vjust = 1, hjust = 1)
+    axis.text.y = ggplot2::element_text(size = 12),
+    legend.position = "bottom",
+    legend.text = ggplot2::element_text(size = 10),
+    strip.text = ggplot2::element_text(size = 16, face = "bold")
   ) +
-  ggplot2::xlab("Watch Antibiotics") +
-  ggplot2::ylab("Proportion of individuals (%)") +
-  ggplot2::labs(fill = "Indications") +
-    ggplot2::coord_flip() +
-  paletteer::scale_fill_paletteer_d("MoMAColors::Lupi")
+  ggplot2::xlab("") +
+  ggplot2::ylab("") +
+  ggplot2::labs(fill = "") +
+  ggplot2::coord_flip() +
+   ggplot2::scale_fill_manual(
+    values = c("#D85A44FF","#DAA5ACFF", "#98A54FFF", "#477088", "#C4B5D0AA","#FFB651FF"))+
+   ggplot2::guides(fill = ggplot2::guide_legend(ncol = 2))
+
+divider <- grid::linesGrob(
+  x = grid::unit(c(0, 0), "npc"),  # vertical line at x=0
+  y = grid::unit(c(1, 0), "npc"),
+  gp = grid::gpar(col = "black", lwd = 2)
+)
+
+# Insert the divider grob as a separate plot using cowplot::ggdraw()
+divider_plot <- cowplot::ggdraw() + 
+  cowplot::draw_grob(divider)
+
+fig1 <- cowplot::plot_grid(top_1,  divider_plot, bottom_1, nrow = 1, labels = c("A", "B"),
+                   rel_widths = c(1, 0.05, 1))
+
+ggplot2::ggsave("fig1.png",
+                 plot = fig1,
+                width = 16,
+                height = 10,    
+                dpi = 300,
+                bg = "white")   # ensures background is white even if theme is transparent)
 ```
 
 ## Figure 4 - Incidence of Ciprofloxacin Use
