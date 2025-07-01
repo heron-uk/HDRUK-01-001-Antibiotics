@@ -89,6 +89,7 @@ restrict_to_paediatric <- FALSE
 # setting to FALSE will skip analysis
 run_characterisation <- TRUE
 run_incidence <- TRUE
+run_code_use <- FALSE
 
 #Only set run_drug_exposure_diagnostics as TRUE if you are running the code for the first time.
 run_drug_exposure_diagnostics <- FALSE
