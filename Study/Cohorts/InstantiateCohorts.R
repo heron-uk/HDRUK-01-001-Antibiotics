@@ -28,16 +28,18 @@ if (run_incidence == TRUE) {
   )
 }
 
+if(isTRUE(restrict_to_inpatient)){
 # Patient visit cohorts
-if(isTRUE(restrict_to_inpatient) & numberRecords(cdm$visit_occurrence) > 0){
+if(isFALSE(isTableEmpty(cdm$visit_occurrence))){
   cdm$inpatient_visit <- conceptCohort(
     cdm = cdm,
     conceptSet = list(inpatient = c(9201, 262, 9203)),
     name = "inpatient_visit"
   ) 
-} else if (isTRUE(restrict_to_inpatient) & numberRecords(cdm$visit_occurrence) == 0) {
+} else if(isTRUE(isTableEmpty(cdm$visit_occurrence))) {
   
-  cli::cli_text("No records in visit occurrence table - skip restriction to inpatients only")
+  cli::cli_text("No records in visit occurrence table - skip restrictions on visit type")
+}
 }
 
 # ingredient cohorts ------
