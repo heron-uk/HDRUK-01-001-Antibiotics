@@ -16,8 +16,8 @@ if (run_characterisation == TRUE) {
         age >= 0 & age <= 4 ~ '0 to 4',
         age >= 5 & age <= 9 ~ '5 to 9',
         age >= 10 & age <= 14 ~ '10 to 14',
-        age >= 15 & age <= 18 ~ '15 to 18',
-        age >= 19 & age <= 29 ~ '19 to 29',
+        age >= 15 & age <= 17 ~ '15 to 17',
+        age >= 18 & age <= 29 ~ '18 to 29',
         age >= 30 & age <= 39 ~ '30 to 39',
         age >= 40 & age <= 49 ~ '40 to 49',
         age >= 50 & age <= 59 ~ '50 to 59',
@@ -27,8 +27,8 @@ if (run_characterisation == TRUE) {
         TRUE ~ 'None'  
       ),
       age_group_broad = case_when(
-        age >= 0 & age <= 18 ~ '0 to 18',
-        age >= 19 & age <= 64 ~ '19 to 64',
+        age >= 0 & age <= 17 ~ '0 to 17',
+        age >= 18 & age <= 64 ~ '18 to 64',
         age >= 65 & age <= 150 ~ '65 to 150',
         TRUE ~ 'None'  
       )
