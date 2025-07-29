@@ -39,11 +39,16 @@ if (run_characterisation == TRUE) {
 
   results[["characteristics"]] <- cdm$antibiotics_chars |>
     summariseCharacteristics(cohortIntersectFlag = list(
-      "Antibiotics (-90 to -15)" = list(
-        targetCohortTable = "access_antibiotics", window = c(-90,-15)
-      ), "Antibiotics (-14 to -1)" = list(
+      # "Antibiotics (-90 to -15)" = list(
+      #   targetCohortTable = "access_antibiotics", window = c(-90,-15)
+      # ), 
+      "Access Antibiotics (-14 to -1)" = list(
         targetCohortTable = "access_antibiotics", window = c(-14,-1)
-      ),"Indication Flag" = list(
+      ),
+      "Watch Antibiotics (-14 to -1)" = list(
+        targetCohortTable = "antibiotics", window = c(-14,-1)
+      ),
+      "Indication Flag" = list(
         targetCohortTable = "indications", window = c(-14,14)
       )), strata = list(c("age_group_broad")
       )
