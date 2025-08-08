@@ -39,31 +39,20 @@ if (run_characterisation == TRUE) {
 
   results[["characteristics"]] <- cdm$antibiotics_chars |>
     summariseCharacteristics(cohortIntersectFlag = list(
-      "Antibiotics (-90 to -15)" = list(
-        targetCohortTable = "access_antibiotics", window = c(-90,-15)
-      ), "Antibiotics (-14 to -1)" = list(
+      # "Antibiotics (-90 to -15)" = list(
+      #   targetCohortTable = "access_antibiotics", window = c(-90,-15)
+      # ), 
+      "Access Antibiotics (-14 to -1)" = list(
         targetCohortTable = "access_antibiotics", window = c(-14,-1)
-      ),"Indication Flag" = list(
+      ),
+      "Watch Antibiotics (-14 to -1)" = list(
+        targetCohortTable = "antibiotics", window = c(-14,-1)
+      ),
+      "Indication Flag" = list(
         targetCohortTable = "indications", window = c(-14,14)
       )), strata = list(c("age_group_broad")
       )
     )
-  
-  if(isTRUE(run_code_use)){
-  for(i in seq_along(indications_list)){
-    results[[paste0("indication_code_use_", i)]] <- summariseCohortCodeUse(x = indications_list[i],
-                                                                           cdm = cdm,
-                                                                           cohortTable = "indications",
-                                                                           cohortId = i)
-  }
-  
-  for(i in seq_along(acc_ingredient_desc)){
-    results[[paste0("access_antibiotic_code_use_", i)]] <- summariseCohortCodeUse(x = acc_ingredient_desc[i],
-                                                                           cdm = cdm,
-                                                                           cohortTable = "access_antibiotics",
-                                                                           cohortId = i)
-  }
-  }
   
   cli::cli_alert_info("- Got characteristics")
 
