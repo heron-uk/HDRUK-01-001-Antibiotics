@@ -1,14 +1,10 @@
 # Upper respiratory infection
-upp_res <- getDescendants(cdm, conceptId = 4181583) %>%
+upp_res <- getDescendants(cdm, conceptId = c(4181583, #Upper respiratory infection
+                          4234533) #tonsillitis
+                          ) %>%
   mutate(name = "Upper respiratory tract infection") %>%
   select(c(name, concept_id, concept_code, concept_name, domain_id, vocabulary_id)) %>%
   unique()
-
-# Bacterial infectious disease
-# bac_inf <- getDescendants(cdm, conceptId = 432545) %>%
-#   mutate(name = "Bacterial infection") %>%
-#   select(c(name, concept_id, concept_code, concept_name, domain_id, vocabulary_id)) %>%
-#   unique()
 
 # Care-related infections
 
@@ -51,7 +47,8 @@ cyst_fib <- getDescendants(cdm, conceptId = c(441267, # Cystic fibrosis
 
 # Ear infections
 
-ear_inf <- getDescendants(cdm, conceptId = c(4044878 # Infection of ear
+ear_inf <- getDescendants(cdm, conceptId = c(4044878, # Infection of ear
+                                             380731 # otitis externa
                                              #4103476 Pain of ear
                                              )) %>%
   mutate(name = "Ear infection") %>%
@@ -95,6 +92,7 @@ neut <- getDescendants(cdm, conceptId = c(320073, #neutropneia
 # Other respiratory infections
 
 lower_resp_inf <- getDescendants(cdm, conceptId = c(4175297, #Lower respiratory tract infection
+                                                    4133224, #lobar pneumonia
                                                     #4147117, Non-standard
                                                     #4306082, Aspiration pneumonitis
                                                     #256449 - bronchiectasis - too broad
@@ -107,7 +105,9 @@ lower_resp_inf <- getDescendants(cdm, conceptId = c(4175297, #Lower respiratory 
 
 # Cardiac infections
 
-card_inf <- getDescendants(cdm, conceptId = c(4164489 # carditis 
+card_inf <- getDescendants(cdm, conceptId = c(314383, # myocarditis 
+                                              4138837,  # pericarditis
+                                              441589 #endocarditis
                                               # 318772 - disorder of pericardium - too broad - infections covered by above
                                               # 319825 - rheumetic heart disease - too broad?
                                               )) %>%
@@ -155,9 +155,17 @@ amr <- getDescendants(cdm, conceptId = c(4249827, # Infection caused by antimicr
 
 ###
 
-indications <- bind_rows(upp_res, care_inf, copd, cyst_fib,
-                         ear_inf, eye_inf, gi_inf, neut, lower_resp_inf, card_inf, 
-                         sepsis, skin_inf, uti, amr)
+indications <- bind_rows(upp_res,ear_inf, eye_inf, gi_inf, lower_resp_inf, card_inf, 
+                         sepsis, skin_inf, uti)
+
+indications <- indications |>
+  filter(!concept_id %in% care_inf$concept_id,
+         !concept_id %in% copd$concept_id, 
+         !concept_id %in% cyst_fib$concept_id,
+         !concept_id %in% neut$concept_id,
+         !concept_id %in% amr$concept_id)
+
+indications <- bind_rows(indications, care_inf, copd, cyst_fib, neut, amr)
 
 ### signs and symptoms
 normal <- getDescendants(cdm, conceptId = c(4297303,603104,4058999,
@@ -200,10 +208,25 @@ signs_sympts <- getDescendants(cdm, conceptId = c(201965,  #shock
 
 ###
 
-indications <- bind_rows(upp_res, care_inf, copd, cyst_fib,
-                         ear_inf, eye_inf, gi_inf, neut, lower_resp_inf, card_inf, 
-                         sepsis, skin_inf, uti, amr, signs_sympts)
+indications <- bind_rows(indications, signs_sympts)
+# Other infections
+other_inf <- getDescendants(cdm, conceptId = 432545) %>% # bacterial infectious disease
+  mutate(name = "Other infection") %>%
+  select(c(name, concept_id, concept_code, concept_name, domain_id, vocabulary_id)) %>%
+  unique() |>
+  filter(!concept_id %in% indications$concept_id) |>
+  filter(domain_id == "Condition")
 
-indications <- indications %>% rename_at('name', ~'indication_category')
+
+indications <- bind_rows(indications, other_inf) 
+
+exclude <- getDescendants(cdm, conceptId = c(440029, #viral disease
+                                             433701, #mycosis (fungal infection)
+                                             432251 #parisitic disease
+))
+
+indications <- indications %>% 
+  filter(!concept_id %in% exclude$concept_id) |>
+  rename_at('name', ~'indication_category')
 
 write.csv(indications, "Cohorts/indications_concepts.csv")
