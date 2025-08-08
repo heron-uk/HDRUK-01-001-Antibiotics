@@ -63,11 +63,6 @@ cli::cli_alert_info("- Creating outpatient cohorts")
   )
 
   cdm$antibiotics <- cdm$antibiotics_outcomes |>
-    requirePriorObservation(
-      indexDate = "cohort_start_date",
-      minPriorObservation = 30,
-      name = "antibiotics"
-    ) |>
     requirePriorDrugWashout(days = 30,
                             name = "antibiotics") |>
     requireTableIntersect(
@@ -90,11 +85,6 @@ cli::cli_alert_info("- Creating outpatient cohorts")
   )
   
   cdm$antibiotics <- cdm$antibiotics_outcomes |>
-    requirePriorObservation(
-      indexDate = "cohort_start_date",
-      minPriorObservation = 30,
-      name = "antibiotics"
-    ) |>
     requirePriorDrugWashout(days = 30,
                             name = "antibiotics") |>
     requireInDateRange(study_period) 
