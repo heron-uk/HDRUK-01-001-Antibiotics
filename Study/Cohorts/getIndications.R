@@ -8,19 +8,12 @@ upp_res <- getDescendants(cdm, conceptId = c(4181583, #Upper respiratory infecti
 
 # Care-related infections
 
-care_inf <- getDescendants(cdm, conceptId = c(#4193161 (Disorder following clinical procedure) - too broad?, 
-                                              #318445 (Post cardiac operation functional disturbance) - only one subsume (postcardiotomy syndrome), 
-                                              #4123283 (disorder of stoma) - too broad? replace with concepts that specify infection, 
-                                              40485376, #Infection of gastrostomy site
-                                              40482636, #Infection of tracheostomy stoma
-                                              #43021974 (Complication associated with device) - too broad?, 
-                                              43021257, #Infection associated with device
-                                              #4201387, Tracheostomy present - irrelevant?
-                                              #442019 (complication of procedure) - too broad?
-                                              42535216, # Infected seroma due to and following procedure
-                                              437746, # Infection after injection, infusion, transfusion and vaccination
-                                              4050438, # Infection following infusion, injection, transfusion AND/OR vaccination
-                                              4256893 # Healthcare associated infectious disease
+care_inf <- getDescendants(cdm, conceptId = c(4193161, #Disorder following clinical procedure 
+                                              318445, #Post cardiac operation functional disturbance - only one subsume (postcardiotomy syndrome), 
+                                              4123283, #disorder of stoma
+                                              43021974, #Complication associated with device
+                                              4201387, #Tracheostomy present
+                                              442019 #complication of procedure
                                               )) %>%
   mutate(name = "Care-related infection") %>%
   select(c(name, concept_id, concept_code, concept_name, domain_id, vocabulary_id)) %>%
