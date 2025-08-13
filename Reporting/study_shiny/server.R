@@ -166,52 +166,7 @@ server <- function(input, output, session) {
       )
     }
   )
-  
-  
-  # summarise_cohort_count -----
-  ## tidy summarise_cohort_count -----
-  getTidyDataSummariseCohortCount <- shiny::reactive({
-    res <- data |>
-      filterData("summarise_cohort_count", input) |>
-      omopgenerics::addSettings() |>
-      omopgenerics::splitAll() |>
-      dplyr::select(!"result_id")
-    
-    # columns to eliminate
-    colsEliminate <- colnames(res)
-    colsEliminate <- colsEliminate[!colsEliminate %in% c(
-      input$summarise_cohort_count_tidy_columns, "variable_name", "variable_level",
-      "estimate_name", "estimate_type", "estimate_value"
-    )]
-    
-    # pivot
-    pivot <- input$summarise_cohort_count_tidy_pivot
-    if (pivot != "none") {
-      vars <- switch(pivot,
-                     "estimates" = "estimate_name",
-                     "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
-      )
-      res <- res |>
-        visOmopResults::pivotEstimates(pivotEstimatesBy = vars)
-    }
-    
-    res |>
-      dplyr::select(!dplyr::all_of(colsEliminate))
-  })
-  output$summarise_cohort_count_tidy <- DT::renderDT({
-    DT::datatable(
-      getTidyDataSummariseCohortCount(),
-      options = list(scrollX = TRUE),
-      rownames = FALSE
-    )
-  })
-  output$summarise_cohort_count_tidy_download <- shiny::downloadHandler(
-    filename = "tidy_summarise_cohort_count.csv",
-    content = function(file) {
-      getTidyDataSummariseCohortCount() |>
-        readr::write_csv(file = file)
-    }
-  )
+
   ## output summarise_cohort_count -----
   ## output 9 -----
   createOutput9 <- shiny::reactive({
@@ -263,234 +218,6 @@ server <- function(input, output, session) {
     }
   )
   
-  
-  # cohort_code_use -----
-  ## tidy cohort_code_use -----
-  getTidyDataCohortCodeUse <- shiny::reactive({
-    res <- data |>
-      filterData("cohort_code_use", input) |>
-      omopgenerics::addSettings() |>
-      omopgenerics::splitAll() |>
-      dplyr::select(!"result_id")
-    
-    # columns to eliminate
-    colsEliminate <- colnames(res)
-    colsEliminate <- colsEliminate[!colsEliminate %in% c(
-      input$cohort_code_use_tidy_columns, "variable_name", "variable_level",
-      "estimate_name", "estimate_type", "estimate_value"
-    )]
-    
-    # pivot
-    pivot <- input$cohort_code_use_tidy_pivot
-    if (pivot != "none") {
-      vars <- switch(pivot,
-                     "estimates" = "estimate_name",
-                     "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
-      )
-      res <- res |>
-        visOmopResults::pivotEstimates(pivotEstimatesBy = vars)
-    }
-    
-    res |>
-      dplyr::select(!dplyr::all_of(colsEliminate))
-  })
-  output$cohort_code_use_tidy <- DT::renderDT({
-    DT::datatable(
-      getTidyDataCohortCodeUse(),
-      options = list(scrollX = TRUE),
-      rownames = FALSE
-    )
-  })
-  output$cohort_code_use_tidy_download <- shiny::downloadHandler(
-    filename = "tidy_cohort_code_use.csv",
-    content = function(file) {
-      getTidyDataCohortCodeUse() |>
-        readr::write_csv(file = file)
-    }
-  )
-  ## output cohort_code_use -----
-  ## output 12 -----
-  createOutput12 <- shiny::reactive({
-    result <- data |>
-      filterData("cohort_code_use", input)
-    CodelistGenerator::tableCohortCodeUse(
-      result,
-      timing = input$cohort_code_use_gt_12_timing,
-      header = input$cohort_code_use_gt_12_header,
-      groupColumn = input$cohort_code_use_gt_12_groupColumn,
-      hide = input$cohort_code_use_gt_12_hide
-    )
-  })
-  output$cohort_code_use_gt_12 <- gt::render_gt({
-    createOutput12()
-  })
-  output$cohort_code_use_gt_12_download <- shiny::downloadHandler(
-    filename = paste0("output_gt_cohort_code_use.", input$cohort_code_use_gt_12_download_type),
-    content = function(file) {
-      obj <- createOutput12()
-      gt::gtsave(data = obj, filename = file)
-    }
-  )
-  
-  
-  # summarise_drug_utilisation -----
-  ## tidy summarise_drug_utilisation -----
-  getTidyDataSummariseDrugUtilisation <- shiny::reactive({
-    res <- data |>
-      filterData("summarise_drug_utilisation", input) |>
-      omopgenerics::addSettings() |>
-      omopgenerics::splitAll() |>
-      dplyr::select(!"result_id")
-    
-    # columns to eliminate
-    colsEliminate <- colnames(res)
-    colsEliminate <- colsEliminate[!colsEliminate %in% c(
-      input$summarise_drug_utilisation_tidy_columns, "variable_name", "variable_level",
-      "estimate_name", "estimate_type", "estimate_value"
-    )]
-    
-    # pivot
-    pivot <- input$summarise_drug_utilisation_tidy_pivot
-    if (pivot != "none") {
-      vars <- switch(pivot,
-                     "estimates" = "estimate_name",
-                     "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
-      )
-      res <- res |>
-        visOmopResults::pivotEstimates(pivotEstimatesBy = vars)
-    }
-    
-    res |>
-      dplyr::select(!dplyr::all_of(colsEliminate))
-  })
-  output$summarise_drug_utilisation_tidy <- DT::renderDT({
-    DT::datatable(
-      getTidyDataSummariseDrugUtilisation(),
-      options = list(scrollX = TRUE),
-      rownames = FALSE
-    )
-  })
-  output$summarise_drug_utilisation_tidy_download <- shiny::downloadHandler(
-    filename = "tidy_summarise_drug_utilisation.csv",
-    content = function(file) {
-      getTidyDataSummariseDrugUtilisation() |>
-        readr::write_csv(file = file)
-    }
-  )
-  ## output summarise_drug_utilisation -----
-  ## output 27 -----
-  createOutput27 <- shiny::reactive({
-    result <- data |>
-      filterData("summarise_drug_utilisation", input)
-    DrugUtilisation::tableDrugUtilisation(
-      result
-    )
-  })
-  output$summarise_drug_utilisation_gt_27 <- gt::render_gt({
-    createOutput27()
-  })
-  output$summarise_drug_utilisation_gt_27_download <- shiny::downloadHandler(
-    filename = paste0("output_gt_summarise_drug_utilisation.", input$summarise_drug_utilisation_gt_27_download_type),
-    content = function(file) {
-      obj <- createOutput27()
-      gt::gtsave(data = obj, filename = file)
-    }
-  )
-  
-  
-  # summarise_cohort_attrition -----
-  ## tidy summarise_cohort_attrition -----
-  getTidyDataSummariseCohortAttrition <- shiny::reactive({
-    res <- data |>
-      filterData("summarise_cohort_attrition", input) |>
-      omopgenerics::addSettings() |>
-      omopgenerics::splitAll() |>
-      dplyr::select(!"result_id")
-    
-    # columns to eliminate
-    colsEliminate <- colnames(res)
-    colsEliminate <- colsEliminate[!colsEliminate %in% c(
-      input$summarise_cohort_attrition_tidy_columns, "variable_name", "variable_level",
-      "estimate_name", "estimate_type", "estimate_value"
-    )]
-    
-    # pivot
-    pivot <- input$summarise_cohort_attrition_tidy_pivot
-    if (pivot != "none") {
-      vars <- switch(pivot,
-                     "estimates" = "estimate_name",
-                     "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
-      )
-      res <- res |>
-        visOmopResults::pivotEstimates(pivotEstimatesBy = vars)
-    }
-    
-    res |>
-      dplyr::select(!dplyr::all_of(colsEliminate))
-  })
-  output$summarise_cohort_attrition_tidy <- DT::renderDT({
-    DT::datatable(
-      getTidyDataSummariseCohortAttrition(),
-      options = list(scrollX = TRUE),
-      rownames = FALSE
-    )
-  })
-  output$summarise_cohort_attrition_tidy_download <- shiny::downloadHandler(
-    filename = "tidy_summarise_cohort_attrition.csv",
-    content = function(file) {
-      getTidyDataSummariseCohortAttrition() |>
-        readr::write_csv(file = file)
-    }
-  )
-  ## output summarise_cohort_attrition -----
-  ## output 3 -----
-  createOutput3 <- shiny::reactive({
-    result <- data |>
-      filterData("summarise_cohort_attrition", input)
-    CohortCharacteristics::tableCohortAttrition(
-      result,
-      header = input$summarise_cohort_attrition_gt_3_header,
-      groupColumn = input$summarise_cohort_attrition_gt_3_groupColumn,
-      hide = input$summarise_cohort_attrition_gt_3_hide
-    )
-  })
-  output$summarise_cohort_attrition_gt_3 <- gt::render_gt({
-    createOutput3()
-  })
-  output$summarise_cohort_attrition_gt_3_download <- shiny::downloadHandler(
-    filename = paste0("output_gt_summarise_cohort_attrition.", input$summarise_cohort_attrition_gt_3_download_type),
-    content = function(file) {
-      obj <- createOutput3()
-      gt::gtsave(data = obj, filename = file)
-    }
-  )
-  
-  ## output 4 -----
-  createOutput4 <- shiny::reactive({
-    result <- data |>
-      filterData("summarise_cohort_attrition", input)
-    CohortCharacteristics::plotCohortAttrition(
-      result
-    )
-  })
-  output$summarise_cohort_attrition_grViz_4 <- DiagrammeR::renderGrViz({
-    createOutput4()
-  })
-  output$summarise_cohort_attrition_grViz_4_download <- shiny::downloadHandler(
-    filename = paste0("output_grViz_summarise_cohort_attrition.", "png"),
-    content = function(file) {
-      obj <- createOutput4()
-      DiagrammeR::export_graph(
-        graph = obj,
-        file_name = file,
-        fily_type = "png",
-        width = as.numeric(input$summarise_cohort_attrition_grViz_4_download_width),
-        height = as.numeric(input$summarise_cohort_attrition_grViz_4_download_height)
-      )
-    }
-  )
-  
-  
   # summarise_characteristics -----
   ## tidy summarise_characteristics -----
   getTidyDataSummariseCharacteristics <- shiny::reactive({
@@ -539,7 +266,10 @@ server <- function(input, output, session) {
   ## output 7 -----
   createOutput7 <- shiny::reactive({
     result <- data |>
-      filterData("summarise_characteristics", input)
+      filterData("summarise_characteristics", input) |>
+      dplyr::filter(!variable_name %in% c("Access antibiotics (-14 to -1)",
+                                          "Watch antibiotics (-14 to -1)",
+                                          "Indication flag"))
     CohortCharacteristics::tableCharacteristics(
       result,
       header = input$summarise_characteristics_gt_7_header,
@@ -554,6 +284,55 @@ server <- function(input, output, session) {
     filename = paste0("output_gt_summarise_characteristics.", input$summarise_characteristics_gt_7_download_type),
     content = function(file) {
       obj <- createOutput7()
+      gt::gtsave(data = obj, filename = file)
+    }
+  )
+  
+  ## output prior use -----
+  ## output 10 -----
+  createOutput10 <- shiny::reactive({
+    result <- data |>
+      filterData("summarise_characteristics", input) |>
+      dplyr::filter(variable_name %in% c("Access antibiotics (-14 to -1)",
+                                          "Watch antibiotics (-14 to -1)"))
+    CohortCharacteristics::tableCharacteristics(
+      result,
+      header = input$summarise_characteristics_gt_10_header,
+      groupColumn = input$summarise_characteristics_gt_10_groupColumn,
+      hide = input$summarise_characteristics_gt_10_hide
+    )
+  })
+  output$summarise_characteristics_gt_10 <- gt::render_gt({
+    createOutput10()
+  })
+  output$summarise_characteristics_gt_10_download <- shiny::downloadHandler(
+    filename = paste0("output_gt_summarise_characteristics.", input$summarise_characteristics_gt_10_download_type),
+    content = function(file) {
+      obj <- createOutput10()
+      gt::gtsave(data = obj, filename = file)
+    }
+  )
+  
+  ## output prior use -----
+  ## output 10 -----
+  createOutput11 <- shiny::reactive({
+    result <- data |>
+      filterData("summarise_characteristics", input) |>
+      dplyr::filter(variable_name %in% c("Indication flag"))
+    CohortCharacteristics::tableCharacteristics(
+      result,
+      header = input$summarise_characteristics_gt_11_header,
+      groupColumn = input$summarise_characteristics_gt_11_groupColumn,
+      hide = input$summarise_characteristics_gt_11_hide
+    )
+  })
+  output$summarise_characteristics_gt_11 <- gt::render_gt({
+    createOutput11()
+  })
+  output$summarise_characteristics_gt_11_download <- shiny::downloadHandler(
+    filename = paste0("output_gt_summarise_characteristics.", input$summarise_characteristics_gt_11_download_type),
+    content = function(file) {
+      obj <- createOutput11()
       gt::gtsave(data = obj, filename = file)
     }
   )
@@ -780,72 +559,6 @@ server <- function(input, output, session) {
         units = input$incidence_ggplot2_20_download_units,
         dpi = as.numeric(input$incidence_ggplot2_20_download_dpi)
       )
-    }
-  )
-  # incidence_attrition -----
-  ## tidy incidence_attrition -----
-  getTidyDataIncidenceAttrition <- shiny::reactive({
-    res <- data |>
-      filterData("incidence_attrition", input) |>
-      omopgenerics::addSettings() |>
-      omopgenerics::splitAll() |>
-      dplyr::select(!"result_id")
-    
-    # columns to eliminate
-    colsEliminate <- colnames(res)
-    colsEliminate <- colsEliminate[!colsEliminate %in% c(
-      input$incidence_attrition_tidy_columns, "variable_name", "variable_level",
-      "estimate_name", "estimate_type", "estimate_value"
-    )]
-    
-    # pivot
-    pivot <- input$incidence_attrition_tidy_pivot
-    if (pivot != "none") {
-      vars <- switch(pivot,
-                     "estimates" = "estimate_name",
-                     "estimates and variables" = c("variable_name", "variable_level", "estimate_name")
-      )
-      res <- res |>
-        visOmopResults::pivotEstimates(pivotEstimatesBy = vars)
-    }
-    
-    res |>
-      dplyr::select(!dplyr::all_of(colsEliminate))
-  })
-  output$incidence_attrition_tidy <- DT::renderDT({
-    DT::datatable(
-      getTidyDataIncidenceAttrition(),
-      options = list(scrollX = TRUE),
-      rownames = FALSE
-    )
-  })
-  output$incidence_attrition_tidy_download <- shiny::downloadHandler(
-    filename = "tidy_incidence_attrition.csv",
-    content = function(file) {
-      getTidyDataIncidenceAttrition() |>
-        readr::write_csv(file = file)
-    }
-  )
-  ## output incidence_attrition -----
-  ## output 22 -----
-  createOutput22 <- shiny::reactive({
-    result <- data |>
-      filterData("incidence_attrition", input)
-    IncidencePrevalence::tableIncidenceAttrition(
-      result,
-      header = input$incidence_attrition_gt_22_header,
-      groupColumn = input$incidence_attrition_gt_22_groupColumn,
-      hide = input$incidence_attrition_gt_22_hide
-    )
-  })
-  output$incidence_attrition_gt_22 <- gt::render_gt({
-    createOutput22()
-  })
-  output$incidence_attrition_gt_22_download <- shiny::downloadHandler(
-    filename = paste0("output_gt_incidence_attrition.", input$incidence_attrition_gt_22_download_type),
-    content = function(file) {
-      obj <- createOutput22()
-      gt::gtsave(data = obj, filename = file)
     }
   )
 }

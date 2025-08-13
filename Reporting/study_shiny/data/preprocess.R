@@ -3,13 +3,9 @@ resultList <- list(
   "summarise_omop_snapshot",
   "summarise_observation_period",
   "summarise_cohort_count",
-  "cohort_code_use",
-  "summarise_cohort_attrition",
   "summarise_characteristics",
   "summarise_large_scale_characteristics",
-  "incidence",
-  "incidence_attrition",
-  "summarise_drug_utilisation"
+  "incidence"
 )
 
 source(file.path(getwd(), "functions.R"))
@@ -33,6 +29,9 @@ result <- purrr::map(csv_files, \(x){
   ))
 
 result$additional_level <- gsub("&&&\\s*&&&", "&&& NULL &&&", result$additional_level)
+result <-  result |>
+  dplyr::mutate(group_level = stringr::str_replace(group_level, "^\\d+_", "")) |>
+  dplyr::mutate(variable_level = stringr::str_replace(variable_level, "^\\d+ ", ""))
 
 resultList <- resultList |>
   purrr::map(\(x) {
