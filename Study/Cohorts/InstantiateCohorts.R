@@ -1,4 +1,5 @@
 # denominator cohorts ------
+info(logger, "GET DENOMINATOR COHORT")
 if (run_incidence == TRUE) {
   cli::cli_alert_info("- Getting denominator cohorts")
   cdm <- generateDenominatorCohortSet(
@@ -9,16 +10,16 @@ if (run_incidence == TRUE) {
       c(0, 4),
       c(5, 9),
       c(10, 14),
-      c(15, 18),
-      c(19, 29),
+      c(15, 17),
+      c(18, 29),
       c(30, 39),
       c(40, 49),
       c(50, 59),
       c(60, 69),
       c(70, 79),
       c(80, 150),
-      c(0, 18),
-      c(19, 64),
+      c(0, 17),
+      c(18, 64),
       c(65, 150)
     ),
     cohortDateRange = study_period,
@@ -27,20 +28,27 @@ if (run_incidence == TRUE) {
     requirementInteractions = FALSE
   )
 }
+info(logger, "GOT DENOMINATOR COHORT")
 
-# Patient visit cohorts
-if(isTRUE(restrict_to_inpatient) & numberRecords(cdm$visit_occurrence) > 0){
+
+
+if(isTRUE(restrict_to_inpatient)){
+  info(logger, "GET INPATIENT COHORT")
+if(isFALSE(isTableEmpty(cdm$visit_occurrence))){
   cdm$inpatient_visit <- conceptCohort(
     cdm = cdm,
     conceptSet = list(inpatient = c(9201, 262, 9203)),
     name = "inpatient_visit"
   ) 
-} else if (isTRUE(restrict_to_inpatient) & numberRecords(cdm$visit_occurrence) == 0) {
+  info(logger, "GOT INPATIENT COHORT")
+} else if(isTRUE(isTableEmpty(cdm$visit_occurrence))) {
   
-  cli::cli_text("No records in visit occurrence table - skip restriction to inpatients only")
+  cli::cli_text("No records in visit occurrence table - skip restrictions on visit type")
+}
 }
 
 # ingredient cohorts ------
+info(logger, "GET WATCH COHORT")
 cli::cli_alert_info("- Creating ingredient cohorts")
 # will always get top 10 ingredients
 if(isTRUE(restrict_to_inpatient)){
@@ -55,11 +63,6 @@ cli::cli_alert_info("- Creating outpatient cohorts")
   )
 
   cdm$antibiotics <- cdm$antibiotics_outcomes |>
-    requirePriorObservation(
-      indexDate = "cohort_start_date",
-      minPriorObservation = 30,
-      name = "antibiotics"
-    ) |>
     requirePriorDrugWashout(days = 30,
                             name = "antibiotics") |>
     requireTableIntersect(
@@ -82,11 +85,6 @@ cli::cli_alert_info("- Creating outpatient cohorts")
   )
   
   cdm$antibiotics <- cdm$antibiotics_outcomes |>
-    requirePriorObservation(
-      indexDate = "cohort_start_date",
-      minPriorObservation = 30,
-      name = "antibiotics"
-    ) |>
     requirePriorDrugWashout(days = 30,
                             name = "antibiotics") |>
     requireInDateRange(study_period) 
@@ -107,21 +105,18 @@ for(i in seq_along(ingredient_desc)){
                                                                                     cdm = cdm, 
                                                                                     cohortId = working_cohort_id,
                                                                                     cohortTable = "antibiotics")
-  
-sum_antibiotics <- summariseCohortCount(cohort = cdm$antibiotics)
-
-results[["sum_antibiotics"]] <- sum_antibiotics
 }
-} else {
-  for(i in seq_along(ingredient_desc)){
+} 
+
+
+sum_watch_antibiotics <- summariseCohortCount(cohort = cdm$antibiotics)
     
-    sum_antibiotics <- summariseCohortCount(cohort = cdm$antibiotics)
-    
-    results[["sum_antibiotics"]] <- sum_antibiotics
-  } 
-  }
+results[["sum_watch_antibiotics"]] <- sum_watch_antibiotics
+
+info(logger, "GOT WATCH COHORT")
 
 ##### Indications
+info(logger, "GET INDICATION COHORT")
 indications <- read_csv("Cohorts/indications_concepts.csv")[,-1]
 
 indications_grouped <- indications %>%
@@ -137,7 +132,26 @@ cdm$indications <- conceptCohort(cdm = cdm,
                         indexDate = "cohort_start_date", 
                         window = c(-Inf, Inf), 
                         name = "indications")
+
+if(isTRUE(run_code_use)){
+  for(i in seq_along(indications_list)){
+    working_cohort_id <- getCohortId(cohort = cdm$indications, cohortName = names(indications_list)[i])
+    results[[paste0("code_use_", i)]] <- summariseCohortCodeUse(indications_list[i], 
+                                                                cdm = cdm, 
+                                                                cohortId = working_cohort_id,
+                                                                cohortTable = "indications")
+  }
+}
+    
+    
+sum_indications <- summariseCohortCount(cohort = cdm$indications)
+    
+results[["sum_indications"]] <- sum_indications
+
+info(logger, "GOT INDICATION COHORT")
+
 ##### Access Antibiotics
+info(logger, "GET ACCESS COHORT")
 
 cdm$access_antibiotics <- conceptCohort(cdm = cdm,
                                         conceptSet = acc_ingredient_desc,
@@ -147,65 +161,28 @@ cdm$access_antibiotics <- conceptCohort(cdm = cdm,
                         window = c(-Inf, Inf), 
                         name = "access_antibiotics")
 
+access_antibiotics_count <- merge(cohortCount(cdm$access_antibiotics), settings(cdm$access_antibiotics), by = "cohort_definition_id") %>%
+  filter(number_subjects > 100)
+
+acc_ingredient_desc <- acc_ingredient_desc[names(acc_ingredient_desc) %in% access_antibiotics_count$cohort_name]
+
+cdm$access_antibiotics <- cdm$access_antibiotics |>
+  subsetCohorts(cohortId = access_antibiotics_count$cohort_definition_id)
+
+if(isTRUE(run_code_use)){
+  for(i in seq_along(acc_ingredient_desc)){
+    working_cohort_id <- getCohortId(cohort = cdm$access_antibiotics, cohortName = names(acc_ingredient_desc)[i])
+    results[[paste0("code_use_", i)]] <- summariseCohortCodeUse(acc_ingredient_desc[i], 
+                                                                cdm = cdm, 
+                                                                cohortId = working_cohort_id,
+                                                                cohortTable = "access_antibiotics")
+  }
+} 
+
+sum_access_antibiotics <- summariseCohortCount(cohort = cdm$access_antibiotics)
+    
+results[["sum_access_antibiotics"]] <- sum_access_antibiotics
+
+
+info(logger, "GOT ACCESS COHORT")
 cli::cli_alert_success("- Created cohort set")
-
-cli::cli_alert_info(" - Running cohort checks")
-
-cohort_count <- CohortConstructor::cohortCount(cdm$antibiotics)
-cohort_settings <- settings(cdm$antibiotics)
-
-number_cohorts <- cohort_count %>%
-  summarise(n = n_distinct(cohort_definition_id)) %>%
-  pull(n)
-
-cli::cli_alert_info("There are {number_cohorts} cohorts included in the study.")
-if(number_cohorts > 0){
-  
-  cohort_names <- merge(cohort_count, cohort_settings, by = "cohort_definition_id") %>%
-    pull(cohort_name)
-  
-  cli::cli_alert_info("Antibiotics included: {cohort_names}")
-}
-
-num_zero_cohorts <- cohort_count %>%
-  filter(number_records == 0) %>%
-  summarise(n = n_distinct(cohort_definition_id)) %>%
-  pull(n)
-
-cli::cli_alert_info("There are {num_zero_cohorts} cohorts with 0 records.")
-
-if(num_zero_cohorts > 0){
-  num_zero_cohorts <- cohort_count %>%
-    filter(number_records == 0) %>%
-    pull(cohort_definition_id)
-  
-  cohort_settings_zero <- cohort_settings %>%
-    filter(cohort_definition_id %in% num_zero_cohorts) %>%
-    pull(cohort_name)
-  
-  cli::cli_alert_info("Cohorts with 0 records: {cohort_settings_zero}")
-}
-
-num_zero_cohorts_ind <- cohort_count %>%
-  filter(number_subjects == 0) %>%
-  summarise(n = n_distinct(cohort_definition_id)) %>%
-  pull(n)
-
-cli::cli_alert_info("There are {num_zero_cohorts_ind} cohorts with 0 subjects.")
-
-if(num_zero_cohorts_ind > 0){
-  num_zero_cohorts_ind <- cohort_count %>%
-    filter(number_records == 0) %>%
-    pull(cohort_definition_id)
-  
-  cohort_settings_zero_ind <- cohort_settings %>%
-    filter(cohort_definition_id %in% num_zero_cohorts_ind) %>%
-    pull(cohort_name)
-  
-  cli::cli_alert_info("Cohorts with 0 subjects: {cohort_settings_zero_ind}")
-}
-
-cohort_settings <- settings(cdm$antibiotics)
-
-cli::cli_alert_info(" - Cohort checks finished")
-
